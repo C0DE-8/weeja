@@ -15,7 +15,7 @@
   padding: 14px 14px;
   background: transparent;
   border: none;
-  cursor: default;
+  cursor: pointer;
 }
 
 .sectionTitle {
@@ -91,4 +91,3 @@
   height: 1px;
   background: rgba(148, 163, 184, 0.3);
 }
-

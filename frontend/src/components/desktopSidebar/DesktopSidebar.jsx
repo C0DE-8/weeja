@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { FiChevronDown, FiChevronRight } from 'react-icons/fi'
 import {
   GiSoccerBall,
@@ -33,36 +34,60 @@ const eventItems = [
   { label: 'Sports', Icon: GiWhistle },
 ]
 
-function SidebarSection({ title, items }) {
+function SidebarSection({ title, items, isOpen, onToggle }) {
   return (
     <div className={styles.section}>
-      <button className={styles.sectionHeader} type="button">
+      <button
+        className={styles.sectionHeader}
+        type="button"
+        onClick={onToggle}
+        aria-expanded={isOpen}
+      >
         <span className={styles.sectionTitle}>{title}</span>
-        <FiChevronDown className={styles.sectionChevron} aria-hidden="true" />
+        {isOpen ? (
+          <FiChevronDown className={styles.sectionChevron} aria-hidden="true" />
+        ) : (
+          <FiChevronRight className={styles.sectionChevron} aria-hidden="true" />
+        )}
       </button>
-      <div className={styles.sectionBody}>
-        {items.map(({ label, Icon }) => (
-          <button key={label} className={styles.itemRow} type="button">
-            <span className={styles.itemLeft}>
-              <span className={styles.itemIcon} aria-hidden="true">
-                <Icon />
+      {isOpen && (
+        <div className={styles.sectionBody}>
+          {items.map(({ label, Icon }) => (
+            <button key={label} className={styles.itemRow} type="button">
+              <span className={styles.itemLeft}>
+                <span className={styles.itemIcon} aria-hidden="true">
+                  <Icon />
+                </span>
+                <span className={styles.itemLabel}>{label}</span>
               </span>
-              <span className={styles.itemLabel}>{label}</span>
-            </span>
-            <FiChevronRight className={styles.itemChevron} aria-hidden="true" />
-          </button>
-        ))}
-      </div>
+              <FiChevronRight className={styles.itemChevron} aria-hidden="true" />
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
 
 export default function DesktopSidebar() {
+  const [isSportOpen, setIsSportOpen] = useState(true)
+  const [isEventOpen, setIsEventOpen] = useState(true)
+
   return (
     <aside className={styles.sidebar} aria-label="Desktop sidebar navigation">
-      <SidebarSection title="SPORT POOL" items={sportItems} />
+      <SidebarSection
+        title="SPORT POOL"
+        items={sportItems}
+        isOpen={isSportOpen}
+        onToggle={() => setIsSportOpen((open) => !open)}
+      />
       <div className={styles.divider} />
-      <SidebarSection title="EVENT POOL" items={eventItems} />
+      <SidebarSection
+        title="EVENT POOL"
+        items={eventItems}
+        isOpen={isEventOpen}
+        onToggle={() => setIsEventOpen((open) => !open)}
+      />
     </aside>
   )
 }
