@@ -1,0 +1,42 @@
+.footer {
+  margin-top: 22px;
+  padding: 22px 18px 12px;
+  background: #ffffff;
+  border-radius: 24px;
+  text-align: center;
+  border: 1px solid #dfe3ee;
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #141b33;
+  margin-bottom: 16px;
+}
+
+.socialRow {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.socialIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #eef1f7;
+  color: #255fdf;
+  font-size: 1rem;
+  text-decoration: none;
+}
+
+.copy {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.9rem;
+}

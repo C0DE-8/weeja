@@ -1,0 +1,135 @@
+.card {
+  background: #ffffff;
+  border: 1px solid #dfe3ee;
+  border-radius: 24px;
+  padding: 18px;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+}
+
+.topRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.question {
+  font-size: 1rem;
+  line-height: 1.4;
+  font-weight: 700;
+  color: #141b33;
+  margin: 0;
+  flex: 1;
+}
+
+.shareButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #f5f7fb;
+  color: #4f5c7a;
+  font-size: 1rem;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  margin-top: 14px;
+}
+
+.details {
+  display: grid;
+  gap: 6px;
+  color: #54617b;
+}
+
+.metaLabel {
+  display: inline-flex;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: #8c97b4;
+}
+
+.metaValue {
+  font-size: 0.92rem;
+  color: #2d3854;
+}
+
+.status {
+  display: inline-flex;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #eef4ff;
+  color: #255fdf;
+  font-size: 0.8rem;
+  font-weight: 700;
+  max-width: fit-content;
+}
+
+.amountBlock {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.currencyToken {
+  font-size: 0.78rem;
+  color: #8c97b4;
+}
+
+.amountValue {
+  color: #141b33;
+  font-size: 1.35rem;
+}
+
+.optionsRow {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.optionButton,
+.optionButtonActive {
+  padding: 12px 14px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.optionButton {
+  background: #f5f7fb;
+  color: #4d5c7a;
+}
+
+.optionButtonActive {
+  background: #ffede0;
+  color: #d94f00;
+  border-color: #ffb58a;
+}
+
+.moreButton {
+  width: 100%;
+  margin-top: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: none;
+  background: #ffffff;
+  color: #255fdf;
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid #dfe3ee;
+}
