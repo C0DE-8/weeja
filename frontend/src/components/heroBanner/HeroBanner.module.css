@@ -1,0 +1,52 @@
+.banner {
+  display: none;
+}
+
+@media (min-width: 992px) {
+  .banner {
+    display: block;
+    width: 100%;
+    border-radius: 18px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    background: #ffffff;
+  }
+
+  .image {
+    aspect-ratio: 16 / 5;
+    min-height: 170px;
+    max-height: 220px;
+    background:
+      radial-gradient(1200px 220px at 15% 40%, rgba(255, 139, 43, 0.35), transparent 55%),
+      radial-gradient(900px 280px at 75% 30%, rgba(29, 77, 213, 0.55), transparent 60%),
+      linear-gradient(135deg, #0f172a 0%, #1d4dd5 45%, #0b1226 100%);
+  }
+
+  .dots {
+    position: absolute;
+    left: 50%;
+    bottom: 12px;
+    transform: translateX(-50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.28);
+    backdrop-filter: blur(6px);
+  }
+
+  .dot,
+  .dotActive {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.45);
+  }
+
+  .dotActive {
+    width: 18px;
+    background: rgba(255, 255, 255, 0.9);
+  }
+}

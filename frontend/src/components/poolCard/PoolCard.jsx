@@ -11,19 +11,36 @@ export default function PoolCard({
   options,
   showMore,
   activeOption,
+  poolSize = '10,000 USDT',
+  weejians = '200',
 }) {
   return (
     <article className={styles.card}>
+      <div className={styles.desktopTopRow}>
+        <h3 className={styles.question}>{question}</h3>
+        <div className={styles.desktopRightGroup}>
+          <button className={styles.shareButton} aria-label="Share pool" type="button">
+            <FiShare2 />
+          </button>
+          <div className={styles.desktopAmount}>
+            <strong className={styles.desktopAmountValue}>{amount}</strong>
+            <span className={styles.desktopCurrencyToken}>{currency}</span>
+          </div>
+        </div>
+      </div>
+
       <div className={styles.topRow}>
         <h3 className={styles.question}>{question}</h3>
-        <button className={styles.shareButton} aria-label="Share pool">
+        <button className={styles.shareButton} aria-label="Share pool" type="button">
           <FiShare2 />
         </button>
       </div>
       <div className={styles.infoRow}>
         <div className={styles.details}>
           <span className={styles.metaLabel}>Ends</span>
-          <span className={styles.metaValue}>{poolEndTime} · {poolEndDate}</span>
+          <span className={styles.metaValue}>
+            {poolEndTime} · {poolEndDate}
+          </span>
           <span className={styles.status}>{status}</span>
         </div>
         <div className={styles.amountBlock}>
@@ -45,6 +62,25 @@ export default function PoolCard({
           )
         })}
       </div>
+
+      <div className={styles.desktopInfoRow}>
+        <div className={styles.desktopInfoLeft}>
+          <span className={styles.desktopInfoItem}>
+            <span className={styles.desktopInfoLabel}>Pool Size:</span> {poolSize}
+          </span>
+          <span className={styles.desktopInfoItem}>
+            <span className={styles.desktopInfoLabel}>Weejians:</span> {weejians}
+          </span>
+        </div>
+        <div className={styles.desktopInfoRight}>
+          <span className={styles.desktopEnds}>
+            <span className={styles.desktopInfoLabel}>Pool Ends:</span> {poolEndTime}{' '}
+            {poolEndDate}
+          </span>
+          <span className={styles.desktopStatus}>{status}</span>
+        </div>
+      </div>
+
       {showMore && (
         <button className={styles.moreButton} type="button">
           <span>View more options</span>

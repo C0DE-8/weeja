@@ -1,0 +1,50 @@
+.header {
+  display: none;
+}
+
+@media (min-width: 992px) {
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 4px 6px;
+  }
+
+  .left {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 135, 34, 0.12);
+    color: #ff8b2b;
+    border-radius: 12px;
+    font-size: 0.9rem;
+  }
+
+  .title {
+    margin: 0;
+    font-size: 0.82rem;
+    letter-spacing: 0.16em;
+    font-weight: 800;
+    color: #161f34;
+  }
+
+  .seeAll {
+    border: none;
+    background: transparent;
+    color: #ff8b2b;
+    font-weight: 800;
+    font-size: 0.82rem;
+    cursor: pointer;
+    padding: 6px 0;
+  }
+}
+

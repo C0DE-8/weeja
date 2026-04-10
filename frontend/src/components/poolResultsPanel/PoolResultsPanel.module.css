@@ -85,3 +85,17 @@
   background: rgba(29, 77, 213, 0.06);
 }
 
+@media (min-width: 992px) and (max-width: 1199.98px) {
+  .headerRow {
+    padding: 12px 12px;
+  }
+
+  .body {
+    padding: 12px 12px 14px;
+    gap: 10px;
+  }
+
+  .resultCard {
+    padding: 9px 9px;
+  }
+}

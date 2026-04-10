@@ -1,0 +1,91 @@
+.tabs {
+  display: none;
+}
+
+@media (min-width: 992px) {
+  .tabs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    margin-top: 12px;
+  }
+
+  .arrowButton {
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    border: none;
+    background: transparent;
+    color: rgba(100, 116, 139, 0.9);
+    cursor: pointer;
+  }
+
+  .arrowButton:hover {
+    background: rgba(29, 77, 213, 0.06);
+    color: rgba(29, 77, 213, 0.9);
+  }
+
+  .tabRow {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 8px 0;
+    border-top: 1px solid rgba(148, 163, 184, 0.3);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .tabRow::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab,
+  .tabActive {
+    border: none;
+    background: transparent;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    cursor: pointer;
+    padding: 6px 0;
+    white-space: nowrap;
+  }
+
+  .tab {
+    color: rgba(100, 116, 139, 0.95);
+  }
+
+  .tabActive {
+    color: #ff8b2b;
+    position: relative;
+  }
+
+  .tabActive::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -10px;
+    height: 2px;
+    background: #ff8b2b;
+    border-radius: 999px;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1100px) {
+  .tabs {
+    gap: 6px;
+  }
+
+  .tabRow {
+    justify-content: flex-start;
+    gap: 14px;
+    padding: 8px 6px;
+  }
+}

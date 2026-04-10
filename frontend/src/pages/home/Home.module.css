@@ -38,6 +38,19 @@
   margin-right: auto;
 }
 
+.mobileBody {
+  display: block;
+}
+
+.desktopBody {
+  display: none;
+}
+
+.cardGridDesktop {
+  display: grid;
+  gap: 14px;
+}
+
 .main {
   margin-top: 16px;
 }
@@ -45,6 +58,28 @@
 .cardGrid {
   display: grid;
   gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .desktopLayout {
+    padding-bottom: 24px;
+  }
+
+  .cardGrid {
+    gap: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .panel {
+    width: min(100%, 480px);
+  }
+}
+
+@media (min-width: 600px) and (max-width: 991.98px) {
+  .panel {
+    width: min(100%, 520px);
+  }
 }
 
 @media (min-width: 640px) {
@@ -55,12 +90,20 @@
 
 @media (min-width: 992px) {
   .desktopLayout {
-    max-width: 1200px;
+    --sidebar-w: 240px;
+    --right-w: 340px;
+    --layout-gap: 18px;
+    --layout-max: 1200px;
+    --center-max: 680px;
+  }
+
+  .desktopLayout {
+    max-width: var(--layout-max);
     margin: 0 auto;
     padding: 22px 20px 32px;
     display: grid;
-    grid-template-columns: 240px minmax(0, 1fr) 340px;
-    gap: 18px;
+    grid-template-columns: var(--sidebar-w) minmax(0, 1fr) var(--right-w);
+    gap: var(--layout-gap);
     align-items: start;
   }
 
@@ -76,10 +119,56 @@
 
   .centerColumn {
     min-width: 0;
+    display: flex;
+    justify-content: center;
   }
 
   .panel {
     width: 100%;
+    max-width: var(--center-max);
     margin: 0;
+    padding: 0;
+  }
+
+  .mobileBody {
+    display: none;
+  }
+
+  .desktopBody {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .cardGridDesktop {
+    gap: 12px;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1199.98px) {
+  .desktopLayout {
+    --sidebar-w: 220px;
+    --right-w: 300px;
+    --layout-gap: 16px;
+    --center-max: 640px;
+    padding: 18px 16px 28px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .desktopLayout {
+    --layout-max: 1240px;
+    --layout-gap: 20px;
+    --center-max: 700px;
+    padding: 24px 24px 36px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .desktopLayout {
+    --layout-max: 1320px;
+    --right-w: 360px;
+    --layout-gap: 24px;
+    --center-max: 740px;
   }
 }

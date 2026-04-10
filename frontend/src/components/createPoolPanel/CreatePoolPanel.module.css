@@ -111,3 +111,14 @@
 .primaryButton:hover {
   filter: brightness(0.98);
 }
+
+@media (min-width: 992px) and (max-width: 1199.98px) {
+  .form {
+    padding: 12px 12px 12px;
+    gap: 10px;
+  }
+
+  .rowTwo {
+    grid-template-columns: 1fr;
+  }
+}
