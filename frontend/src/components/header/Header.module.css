@@ -1,7 +1,12 @@
 .header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
   width: 100%;
   background: #1d4dd5;
   color: #ffffff;
+  z-index: 1200;
 }
 
 .inner {

@@ -1,7 +1,7 @@
 .footer {
-  margin-top: 22px;
+  margin-top: 0;
   padding: 0;
-  background: #f7f8fb;
+  background: #eef2f7;
 }
 
 .topLine {
@@ -61,14 +61,18 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 14px;
-  background: #ffffff;
-  color: #1d4dd5;
-  font-size: 1rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: transparent;
+  color: #334155;
+  font-size: 0.98rem;
   text-decoration: none;
-  border: 1px solid #dbe2f0;
+  border: none;
+}
+
+.socialLink:hover {
+  color: #1d4dd5;
 }
 
 @media (min-width: 992px) {
