@@ -8,8 +8,8 @@ import styles from './Home.module.css'
 export default function Home() {
   return (
     <div className={styles.page}>
+      <Header />
       <div className={styles.panel}>
-        <Header />
         <SectionHeader />
         <main className={styles.main}>
           <div className={styles.cardGrid}>
