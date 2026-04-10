@@ -2,13 +2,15 @@ import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaDiscord } from 're
 import styles from './Footer.module.css'
 
 export default function Footer() {
+  const currentYear = new Date().getFullYear()
+
   return (
     <footer className={styles.footer}>
       <div className={styles.topLine} />
       <div className={styles.inner}>
         <div className={styles.copyrightSection}>
           <p className={styles.copyrightText}>
-            &copy; 2022 <span className={styles.separator}>-</span> Weeja All Rights Reserved
+            &copy; {currentYear} <span className={styles.separator}>-</span> Weeja All Rights Reserved
           </p>
         </div>
 

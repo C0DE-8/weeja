@@ -2,6 +2,8 @@
   margin-top: 0;
   padding: 0;
   background: #eef2f7;
+  width: 100%;
+  align-self: stretch;
 }
 
 .topLine {
