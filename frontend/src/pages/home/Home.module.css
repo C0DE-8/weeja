@@ -7,6 +7,26 @@
   flex-direction: column;
 }
 
+.pageContent {
+  width: 100%;
+  flex: 1 0 auto;
+}
+
+.desktopLayout {
+  width: 100%;
+  padding: 0 0 28px;
+  box-sizing: border-box;
+}
+
+.sidebarColumn,
+.rightColumn {
+  display: none;
+}
+
+.centerColumn {
+  width: 100%;
+}
+
 .panel {
   width: min(100%, 420px);
   padding: 0 16px;
@@ -30,5 +50,36 @@
 @media (min-width: 640px) {
   .panel {
     padding: 0;
+  }
+}
+
+@media (min-width: 992px) {
+  .desktopLayout {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 22px 20px 32px;
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr) 340px;
+    gap: 18px;
+    align-items: start;
+  }
+
+  .sidebarColumn {
+    display: block;
+  }
+
+  .rightColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .centerColumn {
+    min-width: 0;
+  }
+
+  .panel {
+    width: 100%;
+    margin: 0;
   }
 }

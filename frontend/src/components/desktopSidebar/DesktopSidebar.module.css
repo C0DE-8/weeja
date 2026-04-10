@@ -1,0 +1,94 @@
+.sidebar {
+  width: 100%;
+  background: #f4f6fb;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.sectionHeader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 14px;
+  background: transparent;
+  border: none;
+  cursor: default;
+}
+
+.sectionTitle {
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #0f172a;
+}
+
+.sectionChevron {
+  color: rgba(15, 23, 42, 0.75);
+  font-size: 1.05rem;
+}
+
+.sectionBody {
+  padding: 2px 6px 12px;
+}
+
+.itemRow {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 10px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  color: #0f172a;
+}
+
+.itemRow:hover {
+  background: rgba(29, 77, 213, 0.06);
+}
+
+.itemLeft {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.itemIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  color: rgba(15, 23, 42, 0.75);
+  flex: 0 0 auto;
+  font-size: 1rem;
+}
+
+.itemLabel {
+  font-size: 0.95rem;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.itemChevron {
+  color: rgba(100, 116, 139, 0.9);
+  font-size: 1.1rem;
+  flex: 0 0 auto;
+}
+
+.divider {
+  height: 1px;
+  background: rgba(148, 163, 184, 0.3);
+}
+
