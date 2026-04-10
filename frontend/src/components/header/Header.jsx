@@ -6,6 +6,7 @@ import styles from './Header.module.css'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isAllPoolOpen, setIsAllPoolOpen] = useState(true)
 
   return (
     <>
@@ -69,42 +70,50 @@ export default function Header() {
               <span className={styles.closeLabel}>Close</span>
             </button>
 
-            <button className={styles.allPoolRow} type="button">
+            <button
+              className={styles.allPoolRow}
+              type="button"
+              onClick={() => setIsAllPoolOpen((open) => !open)}
+            >
               <span>All Pool</span>
-              <FiChevronDown />
+              {isAllPoolOpen ? <FiChevronDown /> : <FiChevronRight />}
             </button>
 
-            <div className={styles.submenu}>
-              <button className={styles.submenuRow} type="button">
-                Popular
-              </button>
-              <button className={styles.submenuRow} type="button">
-                Opened
-              </button>
-              <button className={styles.submenuRow} type="button">
-                Newest
-              </button>
-              <button className={styles.submenuRow} type="button">
-                Pool Size
-              </button>
-              <button className={styles.submenuRow} type="button">
-                Location
-              </button>
-            </div>
+            <div className={styles.menuContent}>
+              {isAllPoolOpen && (
+                <div className={styles.submenu}>
+                  <button className={styles.submenuRow} type="button">
+                    Popular
+                  </button>
+                  <button className={styles.submenuRow} type="button">
+                    Opened
+                  </button>
+                  <button className={styles.submenuRow} type="button">
+                    Newest
+                  </button>
+                  <button className={styles.submenuRow} type="button">
+                    Pool Size
+                  </button>
+                  <button className={styles.submenuRow} type="button">
+                    Location
+                  </button>
+                </div>
+              )}
 
-            <div className={styles.mainMenuSection}>
-              <button className={styles.mainMenuRow} type="button">
-                <span>Sport Pool</span>
-                <FiChevronRight />
-              </button>
-              <button className={styles.mainMenuRow} type="button">
-                <span>Event Pool</span>
-                <FiChevronRight />
-              </button>
-              <button className={styles.mainMenuRow} type="button">
-                <span>Pool Results</span>
-                <FiChevronRight />
-              </button>
+                <div className={styles.mainMenuSection}>
+                <button className={styles.mainMenuRow} type="button">
+                  <span>Sport Pool</span>
+                  <FiChevronRight />
+                </button>
+                <button className={styles.mainMenuRow} type="button">
+                  <span>Event Pool</span>
+                  <FiChevronRight />
+                </button>
+                <button className={styles.mainMenuRow} type="button">
+                  <span>Pool Results</span>
+                  <FiChevronRight />
+                </button>
+              </div>
             </div>
 
             <div className={styles.bottomActions}>
