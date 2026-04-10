@@ -130,3 +130,136 @@
     display: flex;
   }
 }
+
+.mobileMenuOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.92);
+  z-index: 1200;
+  display: flex;
+  justify-content: flex-start;
+  overflow: hidden;
+}
+
+.mobileMenuPanel {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
+  background: #f8f9fb;
+  padding: 20px 20px 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.mobileMenuHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: #0f172a;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 12px 0;
+  cursor: pointer;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.closeIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 1.2rem;
+}
+
+.closeLabel {
+  color: #0f172a;
+}
+
+.allPoolRow,
+.mainMenuRow,
+.submenuRow {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: none;
+  background: transparent;
+  color: #0f172a;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 18px 0;
+}
+
+.allPoolRow {
+  border-bottom: 1px solid #e5e7eb;
+  font-weight: 700;
+}
+
+.submenu {
+  display: flex;
+  flex-direction: column;
+  padding-left: 16px;
+  border-left: 2px solid #e5e7eb;
+}
+
+.submenuRow {
+  padding: 16px 0;
+  color: #475569;
+  font-weight: 500;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.mainMenuSection {
+  display: flex;
+  flex-direction: column;
+  margin-top: 6px;
+}
+
+.mainMenuRow {
+  border-bottom: 1px solid #e5e7eb;
+  font-weight: 700;
+}
+
+.bottomActions {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 18px;
+}
+
+.menuLoginButton,
+.menuSignUpButton {
+  border-radius: 999px;
+  flex: 1;
+  padding: 14px 16px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.menuLoginButton {
+  background: #ffffff;
+  border: 1px solid #ff8b2b;
+  color: #ff8b2b;
+}
+
+.menuSignUpButton {
+  background: #ff8b2b;
+  border: none;
+  color: #ffffff;
+}
+
+@media (min-width: 992px) {
+  .mobileMenuOverlay {
+    display: none;
+  }
+}
