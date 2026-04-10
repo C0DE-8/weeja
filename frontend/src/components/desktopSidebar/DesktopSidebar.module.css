@@ -48,8 +48,26 @@
   color: #0f172a;
 }
 
+.itemRowSelected {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 10px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(255, 139, 43, 0.12);
+  cursor: pointer;
+  color: #0f172a;
+}
+
 .itemRow:hover {
   background: rgba(29, 77, 213, 0.06);
+}
+
+.itemRowSelected:hover {
+  background: rgba(255, 139, 43, 0.18);
 }
 
 .itemLeft {

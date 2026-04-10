@@ -1,7 +1,7 @@
 import { FaFire } from 'react-icons/fa'
 import styles from './PopularPoolHeader.module.css'
 
-export default function PopularPoolHeader() {
+export default function PopularPoolHeader({ onSeeAll }) {
   return (
     <div className={styles.header} aria-label="Popular pool header">
       <div className={styles.left}>
@@ -11,10 +11,9 @@ export default function PopularPoolHeader() {
         <h2 className={styles.title}>POPULAR POOL</h2>
       </div>
 
-      <button className={styles.seeAll} type="button">
+      <button className={styles.seeAll} type="button" onClick={onSeeAll}>
         See All
       </button>
     </div>
   )
 }
-

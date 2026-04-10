@@ -17,10 +17,28 @@
     aspect-ratio: 16 / 5;
     min-height: 170px;
     max-height: 220px;
+    background: linear-gradient(135deg, #0f172a 0%, #1d4dd5 45%, #0b1226 100%);
+  }
+
+  .variant_premier {
     background:
       radial-gradient(1200px 220px at 15% 40%, rgba(255, 139, 43, 0.35), transparent 55%),
       radial-gradient(900px 280px at 75% 30%, rgba(29, 77, 213, 0.55), transparent 60%),
       linear-gradient(135deg, #0f172a 0%, #1d4dd5 45%, #0b1226 100%);
+  }
+
+  .variant_nba {
+    background:
+      radial-gradient(1200px 260px at 25% 40%, rgba(255, 139, 43, 0.42), transparent 58%),
+      radial-gradient(900px 260px at 80% 35%, rgba(16, 185, 129, 0.45), transparent 62%),
+      linear-gradient(135deg, #0b1226 0%, #0f2a6b 52%, #0b1226 100%);
+  }
+
+  .variant_crypto {
+    background:
+      radial-gradient(1100px 240px at 18% 35%, rgba(168, 85, 247, 0.42), transparent 60%),
+      radial-gradient(900px 260px at 78% 40%, rgba(59, 130, 246, 0.45), transparent 62%),
+      linear-gradient(135deg, #0b1226 0%, #1d4dd5 55%, #0b1226 100%);
   }
 
   .dots {
@@ -43,6 +61,9 @@
     height: 6px;
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.45);
+    border: none;
+    padding: 0;
+    cursor: pointer;
   }
 
   .dotActive {

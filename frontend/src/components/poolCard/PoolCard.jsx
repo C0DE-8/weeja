@@ -1,3 +1,4 @@
+import { useMemo, useState } from 'react'
 import { FiShare2, FiChevronDown } from 'react-icons/fi'
 import styles from './PoolCard.module.css'
 
@@ -14,6 +15,20 @@ export default function PoolCard({
   poolSize = '10,000 USDT',
   weejians = '200',
 }) {
+  const [selectedOption, setSelectedOption] = useState(activeOption ?? options?.[0] ?? null)
+  const [isExpanded, setIsExpanded] = useState(false)
+
+  const hasMoreOptions = useMemo(() => {
+    if (typeof showMore === 'boolean') return showMore
+    return (options?.length ?? 0) > 3
+  }, [options, showMore])
+
+  const visibleOptions = useMemo(() => {
+    if (!options) return []
+    if (isExpanded) return options
+    return options.slice(0, 3)
+  }, [isExpanded, options])
+
   return (
     <article className={styles.card}>
       <div className={styles.desktopTopRow}>
@@ -49,13 +64,14 @@ export default function PoolCard({
         </div>
       </div>
       <div className={styles.optionsRow}>
-        {options.map((option) => {
-          const isActive = option === activeOption
+        {visibleOptions.map((option) => {
+          const isActive = option === selectedOption
           return (
             <button
               key={option}
               className={isActive ? styles.optionButtonActive : styles.optionButton}
               type="button"
+              onClick={() => setSelectedOption(option)}
             >
               {option}
             </button>
@@ -81,9 +97,14 @@ export default function PoolCard({
         </div>
       </div>
 
-      {showMore && (
-        <button className={styles.moreButton} type="button">
-          <span>View more options</span>
+      {hasMoreOptions && (
+        <button
+          className={styles.moreButton}
+          type="button"
+          onClick={() => setIsExpanded((open) => !open)}
+          aria-expanded={isExpanded}
+        >
+          <span>{isExpanded ? 'Hide extra options' : 'View more options'}</span>
           <FiChevronDown />
         </button>
       )}

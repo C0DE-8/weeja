@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { FiChevronDown, FiChevronRight } from 'react-icons/fi'
 import {
   GiSoccerBall,
@@ -34,7 +34,7 @@ const eventItems = [
   { label: 'Sports', Icon: GiWhistle },
 ]
 
-function SidebarSection({ title, items, isOpen, onToggle }) {
+function SidebarSection({ title, items, isOpen, onToggle, selectedItem, onSelectItem }) {
   return (
     <div className={styles.section}>
       <button
@@ -53,7 +53,12 @@ function SidebarSection({ title, items, isOpen, onToggle }) {
       {isOpen && (
         <div className={styles.sectionBody}>
           {items.map(({ label, Icon }) => (
-            <button key={label} className={styles.itemRow} type="button">
+            <button
+              key={label}
+              className={label === selectedItem ? styles.itemRowSelected : styles.itemRow}
+              type="button"
+              onClick={() => onSelectItem(label)}
+            >
               <span className={styles.itemLeft}>
                 <span className={styles.itemIcon} aria-hidden="true">
                   <Icon />
@@ -69,9 +74,27 @@ function SidebarSection({ title, items, isOpen, onToggle }) {
   )
 }
 
-export default function DesktopSidebar() {
+export default function DesktopSidebar({ selectedCategory, onCategoryChange }) {
   const [isSportOpen, setIsSportOpen] = useState(true)
   const [isEventOpen, setIsEventOpen] = useState(true)
+  const [internalSelected, setInternalSelected] = useState('Soccer')
+
+  const selected = selectedCategory ?? internalSelected
+
+  const handleSelect = (label) => {
+    setInternalSelected(label)
+    onCategoryChange?.(label)
+  }
+
+  const isSportSelected = useMemo(
+    () => sportItems.some((item) => item.label === selected),
+    [selected],
+  )
+
+  const isEventSelected = useMemo(
+    () => eventItems.some((item) => item.label === selected),
+    [selected],
+  )
 
   return (
     <aside className={styles.sidebar} aria-label="Desktop sidebar navigation">
@@ -80,6 +103,8 @@ export default function DesktopSidebar() {
         items={sportItems}
         isOpen={isSportOpen}
         onToggle={() => setIsSportOpen((open) => !open)}
+        selectedItem={isSportSelected ? selected : null}
+        onSelectItem={handleSelect}
       />
       <div className={styles.divider} />
       <SidebarSection
@@ -87,6 +112,8 @@ export default function DesktopSidebar() {
         items={eventItems}
         isOpen={isEventOpen}
         onToggle={() => setIsEventOpen((open) => !open)}
+        selectedItem={isEventSelected ? selected : null}
+        onSelectItem={handleSelect}
       />
     </aside>
   )

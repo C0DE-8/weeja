@@ -149,6 +149,14 @@
   cursor: pointer;
 }
 
+.moreButton svg {
+  transition: transform 0.2s ease;
+}
+
+.moreButton[aria-expanded='true'] svg {
+  transform: rotate(180deg);
+}
+
 @media (min-width: 992px) {
   .card {
     border-radius: 16px;
