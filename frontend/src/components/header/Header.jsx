@@ -1,10 +1,12 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { HiOutlineMenuAlt3 } from 'react-icons/hi'
 import { FiSearch, FiChevronDown, FiChevronRight } from 'react-icons/fi'
 import { IoClose } from 'react-icons/io5'
 import styles from './Header.module.css'
 
 export default function Header() {
+  const navigate = useNavigate()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isAllPoolOpen, setIsAllPoolOpen] = useState(true)
 
@@ -39,10 +41,18 @@ export default function Header() {
             </div>
 
             <div className={styles.authButtons}>
-              <button className={styles.loginButton} type="button">
+              <button
+                className={styles.loginButton}
+                type="button"
+                onClick={() => navigate('/login')}
+              >
                 Login
               </button>
-              <button className={styles.signUpButton} type="button">
+              <button
+                className={styles.signUpButton}
+                type="button"
+                onClick={() => navigate('/signup')}
+              >
                 Sign Up
               </button>
             </div>
@@ -117,10 +127,24 @@ export default function Header() {
             </div>
 
             <div className={styles.bottomActions}>
-              <button className={styles.menuLoginButton} type="button">
+              <button
+                className={styles.menuLoginButton}
+                type="button"
+                onClick={() => {
+                  setIsMenuOpen(false)
+                  navigate('/login')
+                }}
+              >
                 Login
               </button>
-              <button className={styles.menuSignUpButton} type="button">
+              <button
+                className={styles.menuSignUpButton}
+                type="button"
+                onClick={() => {
+                  setIsMenuOpen(false)
+                  navigate('/signup')
+                }}
+              >
                 Sign up
               </button>
             </div>
