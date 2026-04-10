@@ -4,15 +4,35 @@ import styles from './Footer.module.css'
 export default function Footer() {
   return (
     <footer className={styles.footer}>
-      <h2 className={styles.title}>Our Community</h2>
-      <div className={styles.socialRow}>
-        <a href="#" aria-label="Facebook" className={styles.socialIcon}><FaFacebookF /></a>
-        <a href="#" aria-label="Twitter" className={styles.socialIcon}><FaTwitter /></a>
-        <a href="#" aria-label="Instagram" className={styles.socialIcon}><FaInstagram /></a>
-        <a href="#" aria-label="LinkedIn" className={styles.socialIcon}><FaLinkedinIn /></a>
-        <a href="#" aria-label="Discord" className={styles.socialIcon}><FaDiscord /></a>
+      <div className={styles.topLine} />
+      <div className={styles.inner}>
+        <div className={styles.copyrightSection}>
+          <p className={styles.copyrightText}>
+            &copy; 2022 <span className={styles.separator}>-</span> Weeja All Rights Reserved
+          </p>
+        </div>
+
+        <div className={styles.communitySection}>
+          <p className={styles.communityTitle}>Our Community</p>
+          <div className={styles.socialIcons}>
+            <a href="#" aria-label="Facebook" className={styles.socialLink}>
+              <FaFacebookF />
+            </a>
+            <a href="#" aria-label="Twitter" className={styles.socialLink}>
+              <FaTwitter />
+            </a>
+            <a href="#" aria-label="Instagram" className={styles.socialLink}>
+              <FaInstagram />
+            </a>
+            <a href="#" aria-label="LinkedIn" className={styles.socialLink}>
+              <FaLinkedinIn />
+            </a>
+            <a href="#" aria-label="Discord" className={styles.socialLink}>
+              <FaDiscord />
+            </a>
+          </div>
+        </div>
       </div>
-      <p className={styles.copy}>&copy; 2026 Weeja. All rights reserved.</p>
     </footer>
   )
 }
