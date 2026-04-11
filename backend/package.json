@@ -1,0 +1,20 @@
+{
+  "name": "weeja-backend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.3",
+    "mysql2": "^3.22.0"
+  },
+  "description": "",
+  "keywords": [],
+  "author": ""
+}
