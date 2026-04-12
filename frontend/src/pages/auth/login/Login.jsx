@@ -1,17 +1,30 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Header from '../../../components/header/Header'
 import Footer from '../../../components/footer/Footer'
+import { loginUser } from '../../../api/authApi'
+import { TOKEN_STORAGE_KEY } from '../../../api/axios'
 import styles from './Login.module.css'
 
 export default function Login() {
+  const navigate = useNavigate()
+  const location = useLocation()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  const handleSubmit = (event) => {
+  useEffect(() => {
+    const msg = location.state?.verifiedMessage
+    if (msg) {
+      setSuccess(msg)
+      navigate('/login', { replace: true, state: {} })
+    }
+  }, [location.state, navigate])
+
+  const handleSubmit = async (event) => {
     event.preventDefault()
     setError('')
     setSuccess('')
@@ -21,8 +34,19 @@ export default function Login() {
       return
     }
 
-    console.log('Login data:', { email, password })
-    setSuccess('Login submitted successfully.')
+    setLoading(true)
+    try {
+      const res = await loginUser({
+        email: email.trim(),
+        password,
+      })
+      localStorage.setItem(TOKEN_STORAGE_KEY, res.token)
+      navigate('/')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Login failed.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -42,6 +66,8 @@ export default function Login() {
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               placeholder="you@email.com"
+              autoComplete="email"
+              disabled={loading}
             />
 
             <label className={styles.label} htmlFor="password">
@@ -55,11 +81,14 @@ export default function Login() {
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 placeholder="Enter your password"
+                autoComplete="current-password"
+                disabled={loading}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
                 className={styles.toggleButton}
+                disabled={loading}
               >
                 {showPassword ? 'Hide' : 'Show'}
               </button>
@@ -69,6 +98,7 @@ export default function Login() {
               type="button"
               className={styles.forgotLink}
               onClick={() => console.log('Forgot password clicked')}
+              disabled={loading}
             >
               Forgot Password?
             </button>
@@ -76,8 +106,12 @@ export default function Login() {
             {error && <p className={styles.feedbackError}>{error}</p>}
             {success && <p className={styles.feedbackSuccess}>{success}</p>}
 
-            <button type="submit" className={styles.submitButton}>
-              Login
+            <button
+              type="submit"
+              className={styles.submitButton}
+              disabled={loading}
+            >
+              {loading ? 'Logging in…' : 'Login'}
             </button>
           </form>
 

@@ -42,7 +42,7 @@
 }
 
 .input {
-  width: 100%;
+  width: 94%;
   min-height: 48px;
   padding: 12px 14px;
   border: 1px solid #d6d6d9;
@@ -127,6 +127,56 @@
   background: #e58b0b;
 }
 
+.submitButton:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.otpHint {
+  margin: 0 0 20px;
+  text-align: center;
+  color: #475569;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.otpEmail {
+  font-weight: 700;
+  color: #0f172a;
+  word-break: break-all;
+}
+
+.otpInput {
+  text-align: center;
+  letter-spacing: 0.35em;
+  font-size: 1.15rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.resendButton,
+.backButton {
+  border: none;
+  background: transparent;
+  color: #f39c12;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.95rem;
+  text-align: center;
+  align-self: center;
+}
+
+.resendButton:disabled,
+.backButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.backButton {
+  color: #64748b;
+  margin-top: 4px;
+}
+
 .feedbackError {
   margin: 0;
   color: #b91c1c;
@@ -142,6 +192,7 @@
 .termsText,
 .footerText {
   margin: 0;
+  margin-top: 0.6rem;
   text-align: center;
   color: #475569;
   font-size: 0.92rem;

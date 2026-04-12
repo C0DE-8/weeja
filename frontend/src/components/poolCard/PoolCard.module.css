@@ -1,4 +1,8 @@
 .card {
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
   background: #ffffff;
   border: 1px solid #dfe3ee;
   border-radius: 24px;
@@ -174,6 +178,7 @@
     align-items: flex-start;
     justify-content: space-between;
     gap: 12px;
+    min-width: 0;
   }
 
   .question {
@@ -214,12 +219,16 @@
   .optionsRow {
     margin-top: 12px;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(min(100%, 140px), 1fr)
+    );
     gap: 10px;
   }
 
   .optionButton,
   .optionButtonActive {
+    min-width: 0;
     padding: 10px 12px;
     font-size: 0.9rem;
   }
@@ -253,7 +262,9 @@
 
   .desktopInfoItem,
   .desktopEnds {
-    white-space: nowrap;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 
   .desktopInfoLabel {
@@ -280,12 +291,63 @@
 
 @media (min-width: 992px) and (max-width: 1100px) {
   .optionsRow {
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(min(100%, 120px), 1fr)
+    );
+    gap: 8px;
+  }
+}
+
+@media screen and (max-width: 768px) and (min-width: 480px) {
+  .card {
+    padding: 14px;
+  }
+
+  .question {
+    font-size: 0.9rem;
+  }
+
+  .infoRow {
+    flex-direction: column;
+  }
+
+  .amountBlock {
+    align-items: flex-start;
+  }
+
+  .currencyToken {
+    font-size: 0.7rem;
+  }
+  
+  .amountValue {
+    font-size: 1.2rem;
+  }
+
+  .optionsRow {
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(min(100%, 100px), 1fr)
+    );
+    gap: 8px;
+  }
+  
+  .optionButton,
+  .optionButtonActive {
+    padding: 8px 10px;
+    font-size: 0.85rem;
+  }
+  
+  .moreButton {
+    padding: 10px 12px;
+    font-size: 0.85rem;
+  }
+}
+@media screen and (max-width: 525px) {
+  .topRow {
+    flex-direction: column;
+    align-items: flex-start;
     gap: 8px;
   }
 
-  .desktopInfoItem,
-  .desktopEnds {
-    white-space: normal;
-  }
 }
