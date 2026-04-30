@@ -47,13 +47,14 @@ export async function resendOtp(data) {
 }
 
 /**
- * @param {{ email: string; password: string }} data
+ * @param {{ email?: string; identifier?: string; password: string }} data
  * @returns {Promise<{ message: string; token: string; user: object }>}
  */
 export async function loginUser(data) {
   try {
     const { data: res } = await api.post('/auth/login', {
       email: data.email,
+      identifier: data.identifier,
       password: data.password,
     })
     return res

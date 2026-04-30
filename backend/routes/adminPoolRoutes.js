@@ -5,6 +5,7 @@ const {
   buildPoolUpdateFields,
   createWalletTransaction,
   ensurePoolIsEditable,
+  fetchPoolsWithOptions,
   fetchPoolWithOptions,
   normalizeDateTime,
   normalizeOptionalText,
@@ -14,6 +15,21 @@ const {
 } = require("../utils/poolUtils");
 
 const router = express.Router();
+
+router.get("/", async (req, res) => {
+  try {
+    const pools = await fetchPoolsWithOptions({
+      status: req.query.status,
+      category: req.query.category,
+      currencyId: req.query.currency_id,
+    });
+
+    res.json({ pools });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ message: err.message || "Could not load admin pools" });
+  }
+});
 
 router.post("/", async (req, res) => {
   const connection = await db.getConnection();

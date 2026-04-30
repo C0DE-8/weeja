@@ -20,6 +20,10 @@ function generateOtp() {
   return crypto.randomInt(100000, 1000000).toString();
 }
 
+function isStrongEnoughPassword(password) {
+  return typeof password === "string" && password.length >= 6;
+}
+
 async function issueOtpForUser(userId, email, plainOtp) {
   const otpHash = await bcrypt.hash(plainOtp, 10);
   const expiresAt = new Date(Date.now() + OTP_TTL_MS);
@@ -56,8 +60,8 @@ router.post("/register", async (req, res) => {
     if (!isValidEmail(trimmedEmail)) {
       return res.status(400).json({ message: "Invalid email address" });
     }
-    if (typeof password !== "string" || password.length < 8) {
-      return res.status(400).json({ message: "Password must be at least 8 characters" });
+    if (!isStrongEnoughPassword(password)) {
+      return res.status(400).json({ message: "Password must be at least 6 characters" });
     }
 
     const [existing] = await db.execute(
@@ -110,6 +114,125 @@ router.post("/register", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Register error" });
+  }
+});
+
+router.post("/register-admin", async (req, res) => {
+  const connection = await db.getConnection();
+  let inTransaction = false;
+
+  try {
+    const username = typeof req.body.username === "string" ? req.body.username.trim() : "";
+    const email = typeof req.body.email === "string" ? req.body.email.trim().toLowerCase() : "";
+    const password = req.body.password;
+    const passkey = typeof req.body.passkey === "string" ? req.body.passkey.trim() : "";
+
+    if (!username || !email || !password || !passkey) {
+      return res.status(400).json({
+        message: "username, email, password, and passkey are required",
+      });
+    }
+
+    if (username.length < 3) {
+      return res.status(400).json({ message: "username must be at least 3 characters" });
+    }
+
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ message: "Invalid email address" });
+    }
+
+    if (!isStrongEnoughPassword(password)) {
+      return res.status(400).json({ message: "Password must be at least 6 characters" });
+    }
+
+    await connection.beginTransaction();
+    inTransaction = true;
+
+    const [existingUsers] = await connection.execute(
+      "SELECT id FROM users WHERE email = ? OR name = ? LIMIT 1",
+      [email, username]
+    );
+
+    if (existingUsers.length > 0) {
+      await connection.rollback();
+      inTransaction = false;
+      return res.status(400).json({ message: "Email or username already exists" });
+    }
+
+    const [passkeyRows] = await connection.execute(
+      `SELECT id, passkey_hash, is_active, expires_at, used_by, used_at
+       FROM admin_registration_passkeys
+       WHERE is_active = 1 AND used_at IS NULL
+       ORDER BY created_at ASC`,
+    );
+
+    let matchedPasskey = null;
+
+    for (const row of passkeyRows) {
+      const isMatch = await bcrypt.compare(passkey, row.passkey_hash);
+
+      if (!isMatch) {
+        continue;
+      }
+
+      if (row.used_by || row.used_at) {
+        continue;
+      }
+
+      if (row.expires_at && new Date(row.expires_at).getTime() < Date.now()) {
+        continue;
+      }
+
+      matchedPasskey = row;
+      break;
+    }
+
+    if (!matchedPasskey) {
+      await connection.rollback();
+      inTransaction = false;
+      return res.status(400).json({ message: "Invalid or expired admin passkey" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const [result] = await connection.execute(
+      `INSERT INTO users (name, email, password, role, email_verified)
+       VALUES (?, ?, ?, 'admin', 1)`,
+      [username, email, hashedPassword]
+    );
+
+    await connection.execute(
+      `UPDATE admin_registration_passkeys
+       SET used_by = ?, used_at = NOW(), is_active = 0
+       WHERE id = ?`,
+      [result.insertId, matchedPasskey.id]
+    );
+
+    await connection.commit();
+    inTransaction = false;
+
+    try {
+      await ensureWalletsForUser(result.insertId);
+    } catch (walletErr) {
+      console.error(walletErr);
+    }
+
+    res.status(201).json({
+      message: "Admin registered successfully",
+      user: {
+        id: result.insertId,
+        name: username,
+        email,
+        role: "admin",
+      },
+    });
+  } catch (err) {
+    if (inTransaction) {
+      await connection.rollback();
+    }
+    console.error(err);
+    res.status(500).json({ message: "Admin registration error" });
+  } finally {
+    connection.release();
   }
 });
 
@@ -218,16 +341,25 @@ router.post("/resend-otp", async (req, res) => {
  */
 router.post("/login", async (req, res) => {
   try {
-    const { email, password } = req.body;
-    const trimmedEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
+    const password = req.body.password;
+    const rawIdentifier =
+      typeof req.body.identifier === "string"
+        ? req.body.identifier.trim()
+        : typeof req.body.email === "string"
+          ? req.body.email.trim()
+          : "";
+    const normalizedIdentifier = rawIdentifier.toLowerCase();
 
-    if (!trimmedEmail || !password) {
-      return res.status(400).json({ message: "Email and password are required" });
+    if (!normalizedIdentifier || !password) {
+      return res.status(400).json({ message: "Email/username and password are required" });
     }
 
     const [users] = await db.execute(
-      "SELECT id, name, email, password, role, email_verified FROM users WHERE email = ?",
-      [trimmedEmail]
+      `SELECT id, name, email, password, role, email_verified
+       FROM users
+       WHERE LOWER(email) = ? OR LOWER(name) = ?
+       LIMIT 1`,
+      [normalizedIdentifier, normalizedIdentifier]
     );
 
     if (users.length === 0) {

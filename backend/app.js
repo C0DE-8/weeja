@@ -9,7 +9,10 @@ const poolRoutes = require("./routes/poolRoutes");
 const voteRoutes = require("./routes/voteRoutes");
 const withdrawalRoutes = require("./routes/withdrawalRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const adminPoolRoutes = require("./routes/adminPoolRoutes");
 const superAdminRoutes = require("./routes/superAdminRoutes");
+const { authenticateToken } = require("./middleware/authMiddleware");
+const { authorizeRoles } = require("./middleware/roleMiddleware");
 
 const app = express();
 
@@ -27,7 +30,12 @@ app.use("/api/pools", poolRoutes);
 app.use("/api/votes", voteRoutes);
 app.use("/api/withdrawals", withdrawalRoutes);
 app.use("/api/admin", adminRoutes);
+app.use(
+  "/api/admin/pools",
+  authenticateToken,
+  authorizeRoles("admin", "super_admin"),
+  adminPoolRoutes
+);
 app.use("/api/super-admin", superAdminRoutes);
 
 module.exports = app;
-

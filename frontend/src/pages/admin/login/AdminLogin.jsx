@@ -7,7 +7,7 @@ import styles from './AdminLogin.module.css'
 export default function AdminLogin() {
   const navigate = useNavigate()
   const location = useLocation()
-  const [email, setEmail] = useState('')
+  const [identifier, setIdentifier] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -18,8 +18,8 @@ export default function AdminLogin() {
     event.preventDefault()
     setError('')
 
-    if (!email.trim() || !password.trim()) {
-      setError('Email and password are required.')
+    if (!identifier.trim() || !password.trim()) {
+      setError('Username/email and password are required.')
       return
     }
 
@@ -27,7 +27,7 @@ export default function AdminLogin() {
 
     try {
       const response = await loginUser({
-        email: email.trim(),
+        identifier: identifier.trim(),
         password,
       })
 
@@ -59,17 +59,17 @@ export default function AdminLogin() {
         </div>
 
         <form className={styles.form} onSubmit={handleSubmit} noValidate>
-          <label className={styles.label} htmlFor="admin-email">
-            Email address
+          <label className={styles.label} htmlFor="admin-identifier">
+            Username or email
           </label>
           <input
-            id="admin-email"
+            id="admin-identifier"
             className={styles.input}
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            placeholder="admin@weeja.com"
-            autoComplete="email"
+            type="text"
+            value={identifier}
+            onChange={(event) => setIdentifier(event.target.value)}
+            placeholder="superadmin or admin@weeja.com"
+            autoComplete="username"
             disabled={loading}
           />
 
