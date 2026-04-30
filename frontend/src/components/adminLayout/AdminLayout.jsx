@@ -89,30 +89,32 @@ export default function AdminLayout() {
 
       <aside className={styles.sidebar}>
         <div className={styles.sidebarInner}>
-          <div className={styles.sidebarTop}>
-            <div className={styles.brandBlock}>
-              <p className={styles.eyebrow}>Weeja Admin</p>
-              {!isDesktopCollapsed && <h1 className={styles.brand}>Control Center</h1>}
-              {!isDesktopCollapsed && (
-                <p className={styles.meta}>
-                  {user?.name || 'Admin'}
-                  {' · '}
-                  {(user?.role || 'admin').replace('_', ' ')}
-                </p>
-              )}
-            </div>
+          <div className={styles.sidebarHeaderBlock}>
+            <div className={styles.sidebarTop}>
+              <div className={styles.brandBlock}>
+                <p className={styles.eyebrow}>Weeja Admin</p>
+                {!isDesktopCollapsed && <h1 className={styles.brand}>Control Center</h1>}
+                {!isDesktopCollapsed && (
+                  <p className={styles.meta}>
+                    {user?.name || 'Admin'}
+                    {' · '}
+                    {(user?.role || 'admin').replace('_', ' ')}
+                  </p>
+                )}
+              </div>
 
-            <button
-              aria-label={isDesktopCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-              className={styles.collapseButton}
-              onClick={() => setIsDesktopCollapsed((current) => !current)}
-              type="button"
-            >
-              {isDesktopCollapsed ? <FiChevronRight /> : <FiChevronLeft />}
-            </button>
+              <button
+                aria-label={isDesktopCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+                className={styles.collapseButton}
+                onClick={() => setIsDesktopCollapsed((current) => !current)}
+                type="button"
+              >
+                {isDesktopCollapsed ? <FiChevronRight /> : <FiChevronLeft />}
+              </button>
+            </div>
           </div>
 
-          {renderNav(isDesktopCollapsed)}
+          <div className={styles.sidebarNavArea}>{renderNav(isDesktopCollapsed)}</div>
         </div>
 
         <button
@@ -148,12 +150,14 @@ export default function AdminLayout() {
               </button>
             </div>
 
-            <div className={styles.mobileUserCard}>
-              <strong>{user?.name || 'Admin'}</strong>
-              <span>{(user?.role || 'admin').replace('_', ' ')}</span>
-            </div>
+            <div className={styles.mobileDrawerBody}>
+              <div className={styles.mobileUserCard}>
+                <strong>{user?.name || 'Admin'}</strong>
+                <span>{(user?.role || 'admin').replace('_', ' ')}</span>
+              </div>
 
-            {renderNav(false)}
+              <div className={styles.mobileNavArea}>{renderNav(false)}</div>
+            </div>
 
             <button
               className={styles.mobilePrimaryAction}

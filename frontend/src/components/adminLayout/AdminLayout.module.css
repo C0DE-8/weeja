@@ -20,19 +20,36 @@
 .sidebar {
   position: sticky;
   top: 0;
-  height: 100vh;
+  height: 100dvh;
+  max-height: 100vh;
   padding: 18px 16px;
+  box-sizing: border-box;
   background: linear-gradient(180deg, #0f172a 0%, #111c33 100%);
   color: #dbeafe;
   border-right: 1px solid rgba(148, 163, 184, 0.12);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .sidebarInner {
-  height: 100%;
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 22px;
+  gap: 18px;
+  overflow: hidden;
+}
+
+.sidebarHeaderBlock {
+  flex: 0 0 auto;
+}
+
+.sidebarNavArea {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
 .sidebarTop {
@@ -138,6 +155,8 @@
   width: 100%;
   cursor: pointer;
   font-weight: 700;
+  margin-top: 10px;
+  flex: 0 0 auto;
 }
 
 .main {
@@ -274,13 +293,17 @@
 
   .mobileDrawer {
     width: min(92vw, 360px);
-    height: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
     padding: 18px 16px;
+    padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+    box-sizing: border-box;
     background: #ffffff;
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 16px;
     box-shadow: 0 24px 48px rgba(15, 23, 42, 0.2);
+    overflow-y: auto;
   }
 
   .mobileDrawerHeader {
@@ -311,6 +334,22 @@
     color: #0f172a;
   }
 
+  .mobileDrawerBody {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow: hidden;
+  }
+
+  .mobileNavArea {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 2px;
+  }
+
   .mobileDrawer .navLink {
     color: #0f172a;
     background: #ffffff;
@@ -323,7 +362,7 @@
   }
 
   .mobilePrimaryAction {
-    margin-top: auto;
+    margin-top: 6px;
     min-height: 50px;
     border: none;
     border-radius: 999px;
