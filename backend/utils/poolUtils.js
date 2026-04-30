@@ -1,4 +1,5 @@
 const db = require("../config/db");
+const { ensurePoolCreationSchema } = require("./poolCreationUtils");
 
 const POOL_STATUSES = new Set([
   "pending",
@@ -117,6 +118,7 @@ async function fetchPoolOptions(connection, poolId) {
 
 async function fetchPoolWithOptions(connection, poolId) {
   await ensurePoolScheduleSchema();
+  await ensurePoolCreationSchema();
 
   const [pools] = await connection.execute(
     `SELECT
@@ -136,15 +138,26 @@ async function fetchPoolWithOptions(connection, poolId) {
         p.lock_time,
         p.end_time,
         p.status,
+        p.review_status,
+        p.review_notes,
+        p.reviewed_by,
+        p.reviewed_at,
+        p.approved_at,
+        p.rejected_at,
         p.winning_option_id,
         p.created_by,
+        p.creation_fee_amount,
+        p.creation_fee_wallet_id,
+        creator.role AS created_by_role,
         COALESCE(creator.name, creator.email, 'Unknown admin') AS created_by_name,
+        COALESCE(reviewer.name, reviewer.email, 'Unreviewed') AS reviewed_by_name,
         p.created_at,
         p.updated_at
       FROM pools p
       LEFT JOIN categories cat ON cat.id = p.category_id
       LEFT JOIN currencies c ON c.id = p.currency_id
       LEFT JOIN users creator ON creator.id = p.created_by
+      LEFT JOIN users reviewer ON reviewer.id = p.reviewed_by
       WHERE p.id = ?`,
     [poolId]
   );
@@ -350,8 +363,9 @@ function buildPoolUpdateFields(payload, existingPool) {
 
 async function fetchPoolsWithOptions(filters = {}) {
   await ensurePoolScheduleSchema();
+  await ensurePoolCreationSchema();
 
-  const { status, categoryId, type, currencyId } = filters;
+  const { status, categoryId, type, currencyId, reviewStatus, createdByRole, createdByUserId } = filters;
   const where = [];
   const params = [];
 
@@ -391,6 +405,33 @@ async function fetchPoolsWithOptions(filters = {}) {
     params.push(Number(currencyId));
   }
 
+  if (reviewStatus) {
+    if (!["approved", "under_review", "rejected"].includes(reviewStatus)) {
+      throw new Error("Invalid review_status filter");
+    }
+
+    where.push("p.review_status = ?");
+    params.push(reviewStatus);
+  }
+
+  if (createdByRole) {
+    if (!["user", "admin", "super_admin"].includes(createdByRole)) {
+      throw new Error("Invalid creator role filter");
+    }
+
+    where.push("creator.role = ?");
+    params.push(createdByRole);
+  }
+
+  if (createdByUserId !== undefined) {
+    if (!Number.isInteger(Number(createdByUserId)) || Number(createdByUserId) <= 0) {
+      throw new Error("Invalid created_by_user_id filter");
+    }
+
+    where.push("p.created_by = ?");
+    params.push(Number(createdByUserId));
+  }
+
   const sql = `
     SELECT
       p.id,
@@ -409,15 +450,26 @@ async function fetchPoolsWithOptions(filters = {}) {
       p.lock_time,
       p.end_time,
       p.status,
+      p.review_status,
+      p.review_notes,
+      p.reviewed_by,
+      p.reviewed_at,
+      p.approved_at,
+      p.rejected_at,
       p.winning_option_id,
       p.created_by,
+      p.creation_fee_amount,
+      p.creation_fee_wallet_id,
+      creator.role AS created_by_role,
       COALESCE(creator.name, creator.email, 'Unknown admin') AS created_by_name,
+      COALESCE(reviewer.name, reviewer.email, 'Unreviewed') AS reviewed_by_name,
       p.created_at,
       p.updated_at
     FROM pools p
     LEFT JOIN categories cat ON cat.id = p.category_id
     LEFT JOIN currencies c ON c.id = p.currency_id
     LEFT JOIN users creator ON creator.id = p.created_by
+    LEFT JOIN users reviewer ON reviewer.id = p.reviewed_by
     ${where.length ? `WHERE ${where.join(" AND ")}` : ""}
     ORDER BY p.created_at DESC, p.id DESC`;
 

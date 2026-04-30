@@ -15,6 +15,7 @@ const {
   requireStatus,
   toDecimal,
 } = require("../utils/poolUtils");
+const { ensurePoolCreationSchema } = require("../utils/poolCreationUtils");
 
 const router = express.Router();
 
@@ -26,6 +27,8 @@ router.get("/", async (req, res) => {
       categoryId: req.query.category_id,
       type: req.query.type,
       currencyId: req.query.currency_id,
+      reviewStatus: req.query.review_status,
+      createdByRole: req.query.created_by_role,
     });
 
     res.json({ pools });
@@ -42,6 +45,7 @@ router.post("/", async (req, res) => {
 
   try {
     await ensurePoolScheduleSchema();
+    await ensurePoolCreationSchema();
 
     const title = normalizeRequiredText(req.body.title, "title");
     const description = normalizeOptionalText(req.body.description);
@@ -126,8 +130,8 @@ router.post("/", async (req, res) => {
 
     const [result] = await connection.execute(
       `INSERT INTO pools
-        (title, description, category_id, currency_id, min_stake, platform_fee_percent, start_time, lock_time, end_time, status, winning_option_id, created_by)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?)`,
+        (title, description, category_id, currency_id, min_stake, platform_fee_percent, start_time, lock_time, end_time, status, review_status, winning_option_id, created_by, approved_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'approved', NULL, ?, NOW())`,
       [
         title,
         description,

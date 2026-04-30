@@ -1,0 +1,213 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.header,
+.queueCard,
+.feeCard {
+  border-radius: 24px;
+  border: 1px solid rgba(22, 22, 22, 0.08);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 18px 40px rgba(22, 22, 22, 0.06);
+}
+
+.header {
+  padding: 26px;
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.75rem;
+  color: #8a5c16;
+}
+
+.header h1,
+.sectionHeader h2,
+.queueCard h3 {
+  margin: 0;
+}
+
+.header p,
+.sectionHeader span,
+.metaRow span,
+.reviewStamp {
+  color: #62584f;
+}
+
+.headerStat {
+  min-width: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.headerStat strong {
+  font-size: 2rem;
+}
+
+.errorBanner,
+.successBanner,
+.loadingCard {
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: #fff;
+}
+
+.errorBanner {
+  color: #b03a2e;
+}
+
+.successBanner {
+  color: #1f8c55;
+}
+
+.feeSection,
+.queueSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.feeGrid,
+.queueList {
+  display: grid;
+  gap: 16px;
+}
+
+.feeGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.feeCard,
+.queueCard {
+  padding: 20px;
+}
+
+.feeCard {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.feeCard input,
+.field input,
+.field textarea {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid rgba(22, 22, 22, 0.12);
+  padding: 12px 14px;
+  font: inherit;
+  background: #fffcf7;
+}
+
+.queueCard {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.queueTop,
+.metaRow,
+.optionRow,
+.actionRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.statusStack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.statusPill,
+.statusMuted,
+.optionChip {
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 0.9rem;
+}
+
+.statusPill {
+  background: #f8d48e;
+  color: #6f4b0f;
+}
+
+.statusMuted {
+  background: #eee4d7;
+  color: #62584f;
+}
+
+.optionChip {
+  background: #f7efe4;
+}
+
+.reviewGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field span {
+  font-weight: 600;
+}
+
+.primaryButton,
+.dangerButton {
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 18px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.primaryButton {
+  background: #1d1a17;
+  color: #fff;
+}
+
+.dangerButton {
+  background: #fde7e3;
+  color: #b03a2e;
+}
+
+@media (max-width: 1024px) {
+  .feeGrid,
+  .reviewGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .header,
+  .sectionHeader,
+  .queueTop {
+    flex-direction: column;
+  }
+
+  .headerStat,
+  .statusStack {
+    align-items: flex-start;
+  }
+}

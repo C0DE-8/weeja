@@ -19,6 +19,7 @@ router.get("/", async (req, res) => {
       categoryId: req.query.category_id,
       type: req.query.type,
       currencyId: req.query.currency_id,
+      reviewStatus: "approved",
     });
 
     res.json({ pools });
@@ -40,7 +41,7 @@ router.get("/:id", async (req, res) => {
   try {
     const pool = await fetchPoolWithOptions(connection, poolId);
 
-    if (!pool) {
+    if (!pool || pool.review_status !== "approved") {
       return res.status(404).json({ message: "Pool not found" });
     }
 
@@ -65,7 +66,7 @@ router.get("/:id/totals", async (req, res) => {
   try {
     const pool = await fetchPoolWithOptions(connection, poolId);
 
-    if (!pool) {
+    if (!pool || pool.review_status !== "approved") {
       return res.status(404).json({ message: "Pool not found" });
     }
 

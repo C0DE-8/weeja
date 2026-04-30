@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 30, 2026 at 04:33 PM
+-- Generation Time: Apr 30, 2026 at 05:33 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -123,8 +123,16 @@ CREATE TABLE `pools` (
   `lock_time` datetime DEFAULT NULL,
   `end_time` datetime DEFAULT NULL,
   `status` enum('pending','open','locked','awaiting_result','settled','cancelled') NOT NULL DEFAULT 'pending',
+  `review_status` enum('approved','under_review','rejected') NOT NULL DEFAULT 'approved',
+  `review_notes` varchar(255) DEFAULT NULL,
+  `reviewed_by` int(11) DEFAULT NULL,
+  `reviewed_at` datetime DEFAULT NULL,
+  `approved_at` datetime DEFAULT NULL,
+  `rejected_at` datetime DEFAULT NULL,
   `winning_option_id` int(11) DEFAULT NULL,
   `created_by` int(11) NOT NULL,
+  `creation_fee_amount` decimal(24,8) NOT NULL DEFAULT 0.00000000,
+  `creation_fee_wallet_id` int(11) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -133,10 +141,36 @@ CREATE TABLE `pools` (
 -- Dumping data for table `pools`
 --
 
-INSERT INTO `pools` (`id`, `title`, `description`, `category_id`, `currency_id`, `min_stake`, `platform_fee_percent`, `start_time`, `lock_time`, `end_time`, `status`, `winning_option_id`, `created_by`, `created_at`, `updated_at`) VALUES
-(1, 'Arsenal vs Chelsea Winner', 'Test pool created without schedule so admin can set start, lock, and end later.', 1, 1, 5.00000000, 8.50, NULL, NULL, NULL, 'pending', NULL, 1, '2026-04-30 14:25:15', '2026-04-30 14:25:15'),
-(2, 'Presidential Debate Outcome', 'Test event pool with start, lock, and end already set.', 9, 2, 1000.00000000, 10.00, '2026-05-01 09:00:00', '2026-05-01 18:00:00', '2026-05-01 21:00:00', 'open', NULL, 1, '2026-04-30 14:25:15', '2026-04-30 14:25:15'),
-(3, 'Lakers vs Celtics Total Points', 'Test pool for status updates after lock.', 1, 1, 10.00000000, 7.50, '2026-05-02 12:00:00', '2026-05-02 15:00:00', '2026-05-02 17:00:00', 'awaiting_result', NULL, 1, '2026-04-30 14:25:15', '2026-04-30 14:25:15');
+INSERT INTO `pools` (`id`, `title`, `description`, `category_id`, `currency_id`, `min_stake`, `platform_fee_percent`, `start_time`, `lock_time`, `end_time`, `status`, `review_status`, `review_notes`, `reviewed_by`, `reviewed_at`, `approved_at`, `rejected_at`, `winning_option_id`, `created_by`, `creation_fee_amount`, `creation_fee_wallet_id`, `created_at`, `updated_at`) VALUES
+(1, 'Arsenal vs Chelsea Winner', 'Test pool created without schedule so admin can set start, lock, and end later.', 1, 1, 5.00000000, 8.50, NULL, NULL, NULL, 'open', 'approved', NULL, NULL, NULL, NULL, NULL, NULL, 1, 0.00000000, NULL, '2026-04-30 14:25:15', '2026-04-30 15:02:09'),
+(2, 'Presidential Debate Outcome', 'Test event pool with start, lock, and end already set.', 9, 2, 1000.00000000, 10.00, '2026-05-01 09:00:00', '2026-05-01 18:00:00', '2026-05-01 21:00:00', 'open', 'approved', NULL, NULL, NULL, NULL, NULL, NULL, 1, 0.00000000, NULL, '2026-04-30 14:25:15', '2026-04-30 14:25:15'),
+(3, 'Lakers vs Celtics Total Points', 'Test pool for status updates after lock.', 1, 1, 10.00000000, 7.50, '2026-05-02 12:00:00', '2026-05-02 15:00:00', '2026-05-02 17:00:00', 'awaiting_result', 'approved', NULL, NULL, NULL, NULL, NULL, NULL, 1, 0.00000000, NULL, '2026-04-30 14:25:15', '2026-04-30 14:25:15');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pool_creation_fee_settings`
+--
+
+CREATE TABLE `pool_creation_fee_settings` (
+  `id` int(11) NOT NULL,
+  `currency_id` int(11) NOT NULL,
+  `amount` decimal(24,8) NOT NULL DEFAULT 0.00000000,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `created_by` int(11) DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `pool_creation_fee_settings`
+--
+
+INSERT INTO `pool_creation_fee_settings` (`id`, `currency_id`, `amount`, `is_active`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
+(1, 3, 0.00000000, 1, NULL, NULL, '2026-04-30 15:31:51', '2026-04-30 15:31:51'),
+(2, 2, 0.00000000, 1, NULL, NULL, '2026-04-30 15:31:51', '2026-04-30 15:31:51'),
+(3, 1, 0.00000000, 1, NULL, NULL, '2026-04-30 15:31:51', '2026-04-30 15:31:51');
 
 -- --------------------------------------------------------
 
@@ -211,7 +245,12 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `email_verified`, `otp_hash`, `otp_expires_at`, `role`, `created_at`) VALUES
 (1, 'Super Admin', 'admin@weeja.com', '$2b$10$57OmnYGe3az9DfP5VECwqORuv0BtxpdUQq10FWE8ntOCj0xOg8.1S', 1, NULL, NULL, 'super_admin', '2026-04-30 10:04:09'),
-(2, 'Samuel Oghenchovwe', '8amlight@gmail.com', '$2b$10$57OmnYGe3az9DfP5VECwqORuv0BtxpdUQq10FWE8ntOCj0xOg8.1S', 1, NULL, NULL, 'user', '2026-04-30 10:10:19');
+(2, 'Samuel Oghenchovwe', '8amlight@gmail.com', '$2b$10$57OmnYGe3az9DfP5VECwqORuv0BtxpdUQq10FWE8ntOCj0xOg8.1S', 1, NULL, NULL, 'user', '2026-04-30 10:10:19'),
+(3, 'one', 'one@gmail.com', '$2b$10$57OmnYGe3az9DfP5VECwqORuv0BtxpdUQq10FWE8ntOCj0xOg8.1S', 1, NULL, NULL, 'user', '2026-04-30 10:10:19'),
+(4, 'two', 'two@gmail.com', '$2b$10$57OmnYGe3az9DfP5VECwqORuv0BtxpdUQq10FWE8ntOCj0xOg8.1S', 1, NULL, NULL, 'user', '2026-04-30 10:10:19'),
+(5, 'three', 'three@gmail.com', '$2b$10$57OmnYGe3az9DfP5VECwqORuv0BtxpdUQq10FWE8ntOCj0xOg8.1S', 1, NULL, NULL, 'user', '2026-04-30 10:10:19'),
+(6, 'four', 'four@gmail.com', '$2b$10$57OmnYGe3az9DfP5VECwqORuv0BtxpdUQq10FWE8ntOCj0xOg8.1S', 1, NULL, NULL, 'user', '2026-04-30 10:10:19'),
+(7, 'five', 'five@gmail.com', '$2b$10$57OmnYGe3az9DfP5VECwqORuv0BtxpdUQq10FWE8ntOCj0xOg8.1S', 1, NULL, NULL, 'user', '2026-04-30 10:10:19');
 
 -- --------------------------------------------------------
 
@@ -295,7 +334,20 @@ ALTER TABLE `pools`
   ADD KEY `idx_pools_created_by` (`created_by`),
   ADD KEY `idx_pools_winning_option` (`winning_option_id`),
   ADD KEY `idx_pools_category` (`category_id`),
-  ADD KEY `idx_pools_end_time` (`end_time`);
+  ADD KEY `idx_pools_end_time` (`end_time`),
+  ADD KEY `idx_pools_review_status` (`review_status`),
+  ADD KEY `idx_pools_reviewed_by` (`reviewed_by`),
+  ADD KEY `idx_pools_creation_fee_wallet` (`creation_fee_wallet_id`);
+
+--
+-- Indexes for table `pool_creation_fee_settings`
+--
+ALTER TABLE `pool_creation_fee_settings`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_pool_creation_fee_currency` (`currency_id`),
+  ADD KEY `idx_pool_creation_fee_active` (`is_active`),
+  ADD KEY `idx_pool_creation_fee_created_by` (`created_by`),
+  ADD KEY `idx_pool_creation_fee_updated_by` (`updated_by`);
 
 --
 -- Indexes for table `pool_entries`
@@ -371,6 +423,12 @@ ALTER TABLE `pools`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
+-- AUTO_INCREMENT for table `pool_creation_fee_settings`
+--
+ALTER TABLE `pool_creation_fee_settings`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT for table `pool_entries`
 --
 ALTER TABLE `pool_entries`
@@ -386,7 +444,7 @@ ALTER TABLE `pool_options`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `user_wallets`
@@ -417,8 +475,18 @@ ALTER TABLE `admin_registration_passkeys`
 ALTER TABLE `pools`
   ADD CONSTRAINT `fk_pools_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`),
   ADD CONSTRAINT `fk_pools_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `fk_pools_creation_fee_wallet` FOREIGN KEY (`creation_fee_wallet_id`) REFERENCES `user_wallets` (`id`) ON DELETE SET NULL,
   ADD CONSTRAINT `fk_pools_currency` FOREIGN KEY (`currency_id`) REFERENCES `currencies` (`id`),
+  ADD CONSTRAINT `fk_pools_reviewed_by` FOREIGN KEY (`reviewed_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   ADD CONSTRAINT `fk_pools_winning_option` FOREIGN KEY (`winning_option_id`) REFERENCES `pool_options` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `pool_creation_fee_settings`
+--
+ALTER TABLE `pool_creation_fee_settings`
+  ADD CONSTRAINT `fk_pool_creation_fee_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_pool_creation_fee_currency` FOREIGN KEY (`currency_id`) REFERENCES `currencies` (`id`),
+  ADD CONSTRAINT `fk_pool_creation_fee_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `pool_entries`

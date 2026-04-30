@@ -40,6 +40,7 @@ export default function AdminLayout() {
       children: [
         { to: '/admin/pools/create', label: 'Create pool' },
         { to: '/admin/pools/existing', label: 'Existing pools' },
+        { to: '/admin/pools/submissions', label: 'User submissions' },
       ],
     },
     ...(isSuperAdmin ? [{ to: '/admin/passkeys', label: 'Passkeys', icon: FiKey }] : []),

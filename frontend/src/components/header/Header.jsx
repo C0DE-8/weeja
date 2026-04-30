@@ -25,7 +25,13 @@ export default function Header() {
             >
               <HiOutlineMenuAlt3 />
             </button>
-            <button className={styles.mobileCreateButton}>Create Event</button>
+            <button
+              className={styles.mobileCreateButton}
+              type="button"
+              onClick={() => navigate(user ? '/account' : '/login')}
+            >
+              Create Event
+            </button>
           </div>
 
           <div className={styles.desktopBar}>
@@ -59,8 +65,17 @@ export default function Header() {
                       Dashboard
                     </button>
                   )}
+                  {!adminUser && (
+                    <button
+                      className={styles.signUpButton}
+                      type="button"
+                      onClick={() => navigate('/account')}
+                    >
+                      Account
+                    </button>
+                  )}
                   <button
-                    className={styles.signUpButton}
+                    className={styles.loginButton}
                     type="button"
                     onClick={() => {
                       clearSession()
@@ -167,7 +182,7 @@ export default function Header() {
                     type="button"
                     onClick={() => {
                       setIsMenuOpen(false)
-                      navigate(adminUser ? '/admin/dashboard' : '/')
+                      navigate(adminUser ? '/admin/dashboard' : '/account')
                     }}
                   >
                     {adminUser ? 'Dashboard' : 'Account'}
