@@ -1,0 +1,133 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 18px;
+  align-items: stretch;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: #2563eb;
+}
+
+.title {
+  margin: 0;
+  color: #0f172a;
+  font-size: 2.3rem;
+}
+
+.subtitle {
+  margin-top: 10px;
+  max-width: 50ch;
+  color: #475569;
+}
+
+.userCard,
+.panel,
+.statCard {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.06);
+}
+
+.userCard {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.userLabel {
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.rolePill {
+  width: fit-content;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #dbeafe;
+  color: #1d4ed8;
+  font-weight: 700;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.statCard {
+  padding: 22px;
+}
+
+.statCard span {
+  display: block;
+  color: #64748b;
+}
+
+.statCard strong {
+  display: block;
+  margin-top: 10px;
+  color: #0f172a;
+  font-size: 2rem;
+}
+
+.panel {
+  padding: 22px;
+}
+
+.panelHeader {
+  margin-bottom: 18px;
+}
+
+.panelTitle {
+  margin: 0;
+  color: #0f172a;
+}
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 14px 12px;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.table th {
+  color: #64748b;
+  font-size: 0.88rem;
+}
+
+.error {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+@media (max-width: 980px) {
+  .hero,
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Header from '../../../components/header/Header'
 import Footer from '../../../components/footer/Footer'
 import { loginUser } from '../../../api/authApi'
-import { TOKEN_STORAGE_KEY } from '../../../api/axios'
+import { setSession } from '../../../api/session'
 import styles from './Login.module.css'
 
 export default function Login() {
@@ -40,8 +40,11 @@ export default function Login() {
         email: email.trim(),
         password,
       })
-      localStorage.setItem(TOKEN_STORAGE_KEY, res.token)
-      navigate('/')
+      setSession({
+        token: res.token,
+        user: res.user,
+      })
+      navigate(res.user?.role === 'admin' || res.user?.role === 'super_admin' ? '/admin/dashboard' : '/')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed.')
     } finally {

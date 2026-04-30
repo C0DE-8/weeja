@@ -52,18 +52,18 @@ function SidebarSection({ title, items, isOpen, onToggle, selectedItem, onSelect
       </button>
       {isOpen && (
         <div className={styles.sectionBody}>
-          {items.map(({ label, Icon }) => (
+          {items.map((item) => (
             <button
-              key={label}
-              className={label === selectedItem ? styles.itemRowSelected : styles.itemRow}
+              key={item.label}
+              className={item.label === selectedItem ? styles.itemRowSelected : styles.itemRow}
               type="button"
-              onClick={() => onSelectItem(label)}
+              onClick={() => onSelectItem(item.label)}
             >
               <span className={styles.itemLeft}>
                 <span className={styles.itemIcon} aria-hidden="true">
-                  <Icon />
+                  <item.Icon />
                 </span>
-                <span className={styles.itemLabel}>{label}</span>
+                <span className={styles.itemLabel}>{item.label}</span>
               </span>
               <FiChevronRight className={styles.itemChevron} aria-hidden="true" />
             </button>

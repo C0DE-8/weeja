@@ -3,12 +3,15 @@ import { useNavigate } from 'react-router-dom'
 import { HiOutlineMenuAlt3 } from 'react-icons/hi'
 import { FiSearch, FiChevronDown, FiChevronRight } from 'react-icons/fi'
 import { IoClose } from 'react-icons/io5'
+import { clearSession, getStoredUser, isAdminUser } from '../../api/session'
 import styles from './Header.module.css'
 
 export default function Header() {
   const navigate = useNavigate()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isAllPoolOpen, setIsAllPoolOpen] = useState(true)
+  const user = getStoredUser()
+  const adminUser = isAdminUser(user)
 
   return (
     <>
@@ -41,20 +44,50 @@ export default function Header() {
             </div>
 
             <div className={styles.authButtons}>
-              <button
-                className={styles.loginButton}
-                type="button"
-                onClick={() => navigate('/login')}
-              >
-                Login
-              </button>
-              <button
-                className={styles.signUpButton}
-                type="button"
-                onClick={() => navigate('/signup')}
-              >
-                Sign Up
-              </button>
+              {user ? (
+                <>
+                  <div className={styles.userBadge}>
+                    <strong>{user.name}</strong>
+                    <span>{user.role}</span>
+                  </div>
+                  {adminUser && (
+                    <button
+                      className={styles.loginButton}
+                      type="button"
+                      onClick={() => navigate('/admin/dashboard')}
+                    >
+                      Dashboard
+                    </button>
+                  )}
+                  <button
+                    className={styles.signUpButton}
+                    type="button"
+                    onClick={() => {
+                      clearSession()
+                      navigate('/login')
+                    }}
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    className={styles.loginButton}
+                    type="button"
+                    onClick={() => navigate('/login')}
+                  >
+                    Login
+                  </button>
+                  <button
+                    className={styles.signUpButton}
+                    type="button"
+                    onClick={() => navigate('/signup')}
+                  >
+                    Sign Up
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -127,26 +160,54 @@ export default function Header() {
             </div>
 
             <div className={styles.bottomActions}>
-              <button
-                className={styles.menuLoginButton}
-                type="button"
-                onClick={() => {
-                  setIsMenuOpen(false)
-                  navigate('/login')
-                }}
-              >
-                Login
-              </button>
-              <button
-                className={styles.menuSignUpButton}
-                type="button"
-                onClick={() => {
-                  setIsMenuOpen(false)
-                  navigate('/signup')
-                }}
-              >
-                Sign up
-              </button>
+              {user ? (
+                <>
+                  <button
+                    className={styles.menuLoginButton}
+                    type="button"
+                    onClick={() => {
+                      setIsMenuOpen(false)
+                      navigate(adminUser ? '/admin/dashboard' : '/')
+                    }}
+                  >
+                    {adminUser ? 'Dashboard' : 'Account'}
+                  </button>
+                  <button
+                    className={styles.menuSignUpButton}
+                    type="button"
+                    onClick={() => {
+                      clearSession()
+                      setIsMenuOpen(false)
+                      navigate('/login')
+                    }}
+                  >
+                    Log out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    className={styles.menuLoginButton}
+                    type="button"
+                    onClick={() => {
+                      setIsMenuOpen(false)
+                      navigate('/login')
+                    }}
+                  >
+                    Login
+                  </button>
+                  <button
+                    className={styles.menuSignUpButton}
+                    type="button"
+                    onClick={() => {
+                      setIsMenuOpen(false)
+                      navigate('/signup')
+                    }}
+                  >
+                    Sign up
+                  </button>
+                </>
+              )}
             </div>
           </aside>
         </div>

@@ -1,0 +1,283 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #ea580c;
+}
+
+.title {
+  margin: 0;
+  color: #0f172a;
+  font-size: 2.2rem;
+}
+
+.subtitle {
+  margin-top: 10px;
+  max-width: 56ch;
+  color: #475569;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(340px, 460px) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.createCard,
+.listCard {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.06);
+}
+
+.createCard {
+  padding: 22px;
+}
+
+.listCard {
+  padding: 22px;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.cardHeader h3,
+.cardHeader h4 {
+  margin: 0;
+  color: #0f172a;
+}
+
+.cardHeader span {
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field span {
+  color: #334155;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.field input,
+.field select,
+.field textarea,
+.optionRow input,
+.actionRow select {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+  background: #f8fafc;
+  color: #0f172a;
+  padding: 12px 14px;
+}
+
+.fieldWide {
+  grid-column: 1 / -1;
+}
+
+.optionsCard {
+  margin-top: 20px;
+  padding: 18px;
+  border-radius: 20px;
+  background: #f8fafc;
+}
+
+.optionList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.optionRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 96px;
+  gap: 10px;
+}
+
+.primaryButton,
+.secondaryButton,
+.dangerButton,
+.ghostButton,
+.removeButton {
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.primaryButton {
+  width: 100%;
+  min-height: 52px;
+  border-radius: 999px;
+  margin-top: 20px;
+  background: linear-gradient(135deg, #2563eb, #0ea5e9);
+  color: #ffffff;
+}
+
+.secondaryButton,
+.dangerButton,
+.ghostButton,
+.removeButton {
+  min-height: 42px;
+  border-radius: 12px;
+  padding: 0 14px;
+}
+
+.secondaryButton {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.dangerButton,
+.removeButton {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.ghostButton {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.poolList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.poolCard {
+  padding: 18px;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+}
+
+.poolTop {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.poolTop h4 {
+  margin: 0;
+  color: #0f172a;
+}
+
+.poolTop p {
+  margin-top: 6px;
+  color: #64748b;
+}
+
+.pill {
+  height: fit-content;
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-weight: 700;
+}
+
+.descriptionText {
+  margin-top: 14px;
+  color: #475569;
+}
+
+.metaGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+  color: #334155;
+  font-size: 0.92rem;
+}
+
+.optionBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.optionBadge {
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.actionRow {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.feedbackError,
+.feedbackSuccess,
+.emptyState {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: 16px;
+}
+
+.feedbackError {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.feedbackSuccess {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.emptyState {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+@media (max-width: 1180px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 820px) {
+  .grid,
+  .metaGrid,
+  .actionRow,
+  .optionRow {
+    grid-template-columns: 1fr;
+  }
+}
