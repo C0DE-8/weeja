@@ -6,9 +6,27 @@ import {
   lockAdminPool,
   setAdminPoolResult,
   settleAdminPool,
+  updateAdminPool,
 } from '../../../api/adminPoolApi'
 import { fetchAdminCategories } from '../../../api/categoryApi'
 import styles from './AdminPools.module.css'
+
+const MONTH_NAMES = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+]
+
+const WEEKDAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 const INITIAL_FORM = {
   title: '',
@@ -17,8 +35,12 @@ const INITIAL_FORM = {
   currency_id: '1',
   min_stake: '0',
   platform_fee_percent: '0',
+  start_date: '',
   start_time: '',
+  lock_date: '',
   lock_time: '',
+  end_date: '',
+  end_time: '',
   status: 'pending',
   options: [
     { id: 'option-1', value: 'Option 1' },
@@ -32,6 +54,252 @@ const CURRENCIES = [
   { id: 3, label: 'CRYPTO' },
 ]
 
+function combineDateTime(date, time) {
+  if (!date || !time) {
+    return ''
+  }
+
+  return `${date}T${time}`
+}
+
+function splitDateTime(value) {
+  if (!value) {
+    return { date: '', time: '' }
+  }
+
+  const normalized = String(value).replace(' ', 'T')
+  const [date = '', time = ''] = normalized.split('T')
+
+  return {
+    date,
+    time: time.slice(0, 5),
+  }
+}
+
+function parseDateValue(dateValue) {
+  if (!dateValue) {
+    return null
+  }
+
+  const [year, month, day] = dateValue.split('-').map(Number)
+
+  if (!year || !month || !day) {
+    return null
+  }
+
+  return new Date(year, month - 1, day)
+}
+
+function formatDateValue(date) {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+function formatHumanDate(dateValue) {
+  const parsed = parseDateValue(dateValue)
+
+  if (!parsed) {
+    return 'Choose a date'
+  }
+
+  return parsed.toLocaleDateString(undefined, {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  })
+}
+
+function buildCalendarDays(monthValue) {
+  const [year, month] = monthValue.split('-').map(Number)
+  const firstDay = new Date(year, month - 1, 1)
+  const firstWeekday = firstDay.getDay()
+  const daysInMonth = new Date(year, month, 0).getDate()
+  const cells = []
+
+  for (let index = 0; index < firstWeekday; index += 1) {
+    cells.push(null)
+  }
+
+  for (let day = 1; day <= daysInMonth; day += 1) {
+    cells.push(formatDateValue(new Date(year, month - 1, day)))
+  }
+
+  while (cells.length % 7 !== 0) {
+    cells.push(null)
+  }
+
+  return cells
+}
+
+function shiftMonth(monthValue, delta) {
+  const [year, month] = monthValue.split('-').map(Number)
+  const nextDate = new Date(year, month - 1 + delta, 1)
+  return `${nextDate.getFullYear()}-${String(nextDate.getMonth() + 1).padStart(2, '0')}`
+}
+
+function formatMonthHeading(monthValue) {
+  const [year, month] = monthValue.split('-').map(Number)
+  return `${MONTH_NAMES[month - 1]} ${year}`
+}
+
+function splitTimeParts(timeValue) {
+  const [hour = '09', minute = '00'] = timeValue.split(':')
+  return { hour, minute }
+}
+
+function buildScheduleForm(pool) {
+  const start = splitDateTime(pool.start_time)
+  const lock = splitDateTime(pool.lock_time)
+  const end = splitDateTime(pool.end_time)
+
+  return {
+    status: pool.status || 'pending',
+    start_date: start.date,
+    start_time: start.time,
+    lock_date: lock.date,
+    lock_time: lock.time,
+    end_date: end.date,
+    end_time: end.time,
+  }
+}
+
+function PoolDateTimePicker({
+  label,
+  dateValue,
+  timeValue,
+  onDateChange,
+  onTimeChange,
+  minDate,
+  hint,
+}) {
+  const initialMonth = dateValue ? dateValue.slice(0, 7) : formatDateValue(new Date()).slice(0, 7)
+  const [isOpen, setIsOpen] = useState(false)
+  const [visibleMonth, setVisibleMonth] = useState(initialMonth)
+
+  const { hour, minute } = splitTimeParts(timeValue)
+  const minDateValue = minDate || ''
+  const calendarDays = buildCalendarDays(visibleMonth)
+
+  return (
+    <div className={styles.dateTimeField}>
+      <span>{label}</span>
+      <button
+        className={styles.dateTimeTrigger}
+        type="button"
+        onClick={() => {
+          if (!isOpen) {
+            setVisibleMonth(
+              (dateValue || minDateValue || formatDateValue(new Date())).slice(0, 7),
+            )
+          }
+          setIsOpen((current) => !current)
+        }}
+      >
+        <span className={styles.dateTimeTriggerText}>
+          <strong>{formatHumanDate(dateValue)}</strong>
+          <small>{timeValue || 'Set time'}</small>
+        </span>
+        <span className={styles.dateTimeTriggerIcon}>{isOpen ? '−' : '+'}</span>
+      </button>
+
+      {isOpen ? (
+        <div className={styles.dateTimePanel}>
+          <div className={styles.calendarHeader}>
+            <button
+              className={styles.calendarNavButton}
+              type="button"
+              onClick={() => setVisibleMonth((current) => shiftMonth(current, -1))}
+            >
+              Prev
+            </button>
+            <strong>{formatMonthHeading(visibleMonth)}</strong>
+            <button
+              className={styles.calendarNavButton}
+              type="button"
+              onClick={() => setVisibleMonth((current) => shiftMonth(current, 1))}
+            >
+              Next
+            </button>
+          </div>
+
+          <div className={styles.weekdayRow}>
+            {WEEKDAY_LABELS.map((dayLabel) => (
+              <span key={dayLabel}>{dayLabel}</span>
+            ))}
+          </div>
+
+          <div className={styles.calendarGrid}>
+            {calendarDays.map((dayValue, index) => {
+              if (!dayValue) {
+                return <span className={styles.calendarSpacer} key={`empty-${index}`} />
+              }
+
+              const isSelected = dayValue === dateValue
+              const isDisabled = Boolean(minDateValue) && dayValue < minDateValue
+
+              return (
+                <button
+                  className={`${styles.calendarDay} ${isSelected ? styles.calendarDaySelected : ''}`}
+                  disabled={isDisabled}
+                  key={dayValue}
+                  type="button"
+                  onClick={() => {
+                    onDateChange(dayValue)
+                    setVisibleMonth(dayValue.slice(0, 7))
+                  }}
+                >
+                  {dayValue.slice(-2).replace(/^0/, '')}
+                </button>
+              )
+            })}
+          </div>
+
+          <div className={styles.timePickerRow}>
+            <label className={styles.timeSelectField}>
+              <span>Hour</span>
+              <select
+                value={hour}
+                onChange={(event) => onTimeChange(`${event.target.value}:${minute}`)}
+              >
+                {Array.from({ length: 24 }, (_, index) => {
+                  const value = String(index).padStart(2, '0')
+                  return (
+                    <option key={value} value={value}>
+                      {value}
+                    </option>
+                  )
+                })}
+              </select>
+            </label>
+
+            <label className={styles.timeSelectField}>
+              <span>Minute</span>
+              <select
+                value={minute}
+                onChange={(event) => onTimeChange(`${hour}:${event.target.value}`)}
+              >
+                {Array.from({ length: 60 }, (_, index) => {
+                  const value = String(index).padStart(2, '0')
+                  return (
+                    <option key={value} value={value}>
+                      {value}
+                    </option>
+                  )
+                })}
+              </select>
+            </label>
+          </div>
+
+          <p className={styles.fieldHint}>{hint}</p>
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
 function toPayload(form) {
   return {
     title: form.title.trim(),
@@ -40,8 +308,9 @@ function toPayload(form) {
     currency_id: Number(form.currency_id),
     min_stake: Number(form.min_stake),
     platform_fee_percent: Number(form.platform_fee_percent),
-    start_time: form.start_time,
-    lock_time: form.lock_time,
+    start_time: combineDateTime(form.start_date, form.start_time),
+    lock_time: combineDateTime(form.lock_date, form.lock_time),
+    end_time: combineDateTime(form.end_date, form.end_time),
     status: form.status,
     options: form.options
       .map((option) => option.value.trim())
@@ -59,16 +328,27 @@ export default function AdminPools() {
   const [categories, setCategories] = useState([])
   const [form, setForm] = useState(INITIAL_FORM)
   const [winningOptionIds, setWinningOptionIds] = useState({})
+  const [scheduleForms, setScheduleForms] = useState({})
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
   const [creating, setCreating] = useState(false)
+  const [savingPoolId, setSavingPoolId] = useState(null)
 
   async function loadPools() {
     setLoading(true)
     try {
       const nextPools = await fetchAdminPools()
       setPools(nextPools)
+      setScheduleForms((current) => {
+        const next = {}
+
+        for (const pool of nextPools) {
+          next[pool.id] = current[pool.id] || buildScheduleForm(pool)
+        }
+
+        return next
+      })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not load pools.')
     } finally {
@@ -95,6 +375,10 @@ export default function AdminPools() {
     loadCategories()
   }, [])
 
+  const startTimestamp = combineDateTime(form.start_date, form.start_time)
+  const lockTimestamp = combineDateTime(form.lock_date, form.lock_time)
+  const endTimestamp = combineDateTime(form.end_date, form.end_time)
+
   const handleCreatePool = async (event) => {
     event.preventDefault()
     setError('')
@@ -108,10 +392,33 @@ export default function AdminPools() {
         return
       }
 
+      if (!payload.start_time && payload.lock_time) {
+        setError('Set a start time before adding a lock time.')
+        return
+      }
+
+      if (payload.lock_time && new Date(payload.lock_time).getTime() < new Date(payload.start_time).getTime()) {
+        setError('Lock time cannot be earlier than start time.')
+        return
+      }
+
+      if (payload.end_time && !payload.lock_time) {
+        setError('Set lock time before adding an end time.')
+        return
+      }
+
+      if (payload.end_time && new Date(payload.end_time).getTime() <= new Date(payload.lock_time).getTime()) {
+        setError('End time must be later than lock time.')
+        return
+      }
+
       setCreating(true)
       const response = await createAdminPool(payload)
       setPools((current) => [response.pool, ...current])
-      setForm(INITIAL_FORM)
+      setForm(() => ({
+        ...INITIAL_FORM,
+        category_id: String(categories.find((item) => item.is_active)?.id || ''),
+      }))
       setSuccess('Pool created successfully.')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not create pool.')
@@ -130,6 +437,73 @@ export default function AdminPools() {
       setSuccess(successMessage)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Pool action failed.')
+    }
+  }
+
+  const handleScheduleChange = (poolId, field, value) => {
+    setScheduleForms((current) => ({
+      ...current,
+      [poolId]: {
+        ...current[poolId],
+        [field]: value,
+      },
+    }))
+  }
+
+  const handleScheduleSave = async (poolId) => {
+    const currentForm = scheduleForms[poolId]
+
+    if (!currentForm) {
+      return
+    }
+
+    const payload = {
+      status: currentForm.status,
+      start_time: combineDateTime(currentForm.start_date, currentForm.start_time) || null,
+      lock_time: combineDateTime(currentForm.lock_date, currentForm.lock_time) || null,
+      end_time: combineDateTime(currentForm.end_date, currentForm.end_time) || null,
+    }
+
+    if (!payload.start_time && payload.lock_time) {
+      setError('Set a start time before adding a lock time.')
+      setSuccess('')
+      return
+    }
+
+    if (payload.lock_time && new Date(payload.lock_time).getTime() <= new Date(payload.start_time).getTime()) {
+      setError('Lock time must be later than start time.')
+      setSuccess('')
+      return
+    }
+
+    if (payload.end_time && !payload.lock_time) {
+      setError('Set lock time before adding an end time.')
+      setSuccess('')
+      return
+    }
+
+    if (payload.end_time && new Date(payload.end_time).getTime() <= new Date(payload.lock_time).getTime()) {
+      setError('End time must be later than lock time.')
+      setSuccess('')
+      return
+    }
+
+    setError('')
+    setSuccess('')
+    setSavingPoolId(poolId)
+
+    try {
+      const response = await updateAdminPool(poolId, payload)
+      setPools((current) => current.map((pool) => (pool.id === poolId ? response.pool : pool)))
+      setScheduleForms((current) => ({
+        ...current,
+        [poolId]: buildScheduleForm(response.pool),
+      }))
+      setSuccess('Pool schedule updated.')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not update pool schedule.')
+    } finally {
+      setSavingPoolId(null)
     }
   }
 
@@ -244,24 +618,49 @@ export default function AdminPools() {
               />
             </label>
 
-            <label className={styles.field}>
-              <span>Start time</span>
-              <input
-                value={form.start_time}
-                onChange={(event) => setForm({ ...form, start_time: event.target.value })}
-                type="datetime-local"
+            <div className={styles.field}>
+              <PoolDateTimePicker
+                dateValue={form.start_date}
+                hint="Choose the date, hour, and minute users can start."
+                label="Start time"
+                onDateChange={(value) => setForm({ ...form, start_date: value })}
+                onTimeChange={(value) => setForm({ ...form, start_time: value })}
+                timeValue={form.start_time}
               />
-            </label>
+            </div>
 
-            <label className={styles.field}>
-              <span>Lock time</span>
-              <input
-                value={form.lock_time}
-                onChange={(event) => setForm({ ...form, lock_time: event.target.value })}
-                type="datetime-local"
+            <div className={styles.field}>
+              <PoolDateTimePicker
+                dateValue={form.lock_date}
+                hint="Lock time must be the same as or later than the start time."
+                label="Lock time"
+                minDate={form.start_date}
+                onDateChange={(value) => setForm({ ...form, lock_date: value })}
+                onTimeChange={(value) => setForm({ ...form, lock_time: value })}
+                timeValue={form.lock_time}
               />
-            </label>
+            </div>
+
+            <div className={styles.field}>
+              <PoolDateTimePicker
+                dateValue={form.end_date}
+                hint="Optional. Leave this empty and add it later if needed."
+                label="End time"
+                minDate={form.lock_date || form.start_date}
+                onDateChange={(value) => setForm({ ...form, end_date: value })}
+                onTimeChange={(value) => setForm({ ...form, end_time: value })}
+                timeValue={form.end_time}
+              />
+            </div>
           </div>
+
+          {startTimestamp && lockTimestamp && new Date(lockTimestamp) < new Date(startTimestamp) ? (
+            <p className={styles.inlineError}>Lock time cannot be earlier than start time.</p>
+          ) : null}
+
+          {lockTimestamp && endTimestamp && new Date(endTimestamp) <= new Date(lockTimestamp) ? (
+            <p className={styles.inlineError}>End time must be later than lock time.</p>
+          ) : null}
 
           <div className={styles.optionsCard}>
             <div className={styles.cardHeader}>
@@ -354,8 +753,16 @@ export default function AdminPools() {
                   <div className={styles.metaGrid}>
                     <span>Min stake: {pool.min_stake}</span>
                     <span>Fee: {pool.platform_fee_percent}%</span>
-                    <span>Start: {new Date(pool.start_time).toLocaleString()}</span>
-                    <span>Lock: {new Date(pool.lock_time).toLocaleString()}</span>
+                    <span>
+                      Start: {pool.start_time ? new Date(pool.start_time).toLocaleString() : 'Not set'}
+                    </span>
+                    <span>
+                      Lock: {pool.lock_time ? new Date(pool.lock_time).toLocaleString() : 'Not set'}
+                    </span>
+                    <span>
+                      End: {pool.end_time ? new Date(pool.end_time).toLocaleString() : 'Not set'}
+                    </span>
+                    <span>Status: {pool.status}</span>
                   </div>
 
                   <div className={styles.optionBadges}>
@@ -365,6 +772,92 @@ export default function AdminPools() {
                       </span>
                     ))}
                   </div>
+
+                  {scheduleForms[pool.id] ? (
+                    <div className={styles.scheduleCard}>
+                      <div className={styles.cardHeader}>
+                        <h4>Schedule and status</h4>
+                        <span>Manual update</span>
+                      </div>
+
+                      <div className={styles.scheduleGrid}>
+                        <label className={styles.field}>
+                          <span>Status</span>
+                          <select
+                            value={scheduleForms[pool.id].status}
+                            onChange={(event) =>
+                              handleScheduleChange(pool.id, 'status', event.target.value)
+                            }
+                          >
+                            <option value="pending">pending</option>
+                            <option value="open">open</option>
+                            <option value="locked">locked</option>
+                            <option value="awaiting_result">awaiting_result</option>
+                            <option value="settled">settled</option>
+                            <option value="cancelled">cancelled</option>
+                          </select>
+                        </label>
+
+                        <div className={styles.field}>
+                          <PoolDateTimePicker
+                            dateValue={scheduleForms[pool.id].start_date}
+                            hint="Set start now or leave it for later."
+                            label="Start time"
+                            onDateChange={(value) =>
+                              handleScheduleChange(pool.id, 'start_date', value)
+                            }
+                            onTimeChange={(value) =>
+                              handleScheduleChange(pool.id, 'start_time', value)
+                            }
+                            timeValue={scheduleForms[pool.id].start_time}
+                          />
+                        </div>
+
+                        <div className={styles.field}>
+                          <PoolDateTimePicker
+                            dateValue={scheduleForms[pool.id].lock_date}
+                            hint="Lock time must be later than start time."
+                            label="Lock time"
+                            minDate={scheduleForms[pool.id].start_date}
+                            onDateChange={(value) =>
+                              handleScheduleChange(pool.id, 'lock_date', value)
+                            }
+                            onTimeChange={(value) =>
+                              handleScheduleChange(pool.id, 'lock_time', value)
+                            }
+                            timeValue={scheduleForms[pool.id].lock_time}
+                          />
+                        </div>
+
+                        <div className={styles.field}>
+                          <PoolDateTimePicker
+                            dateValue={scheduleForms[pool.id].end_date}
+                            hint="End time must be later than lock time."
+                            label="End time"
+                            minDate={
+                              scheduleForms[pool.id].lock_date || scheduleForms[pool.id].start_date
+                            }
+                            onDateChange={(value) =>
+                              handleScheduleChange(pool.id, 'end_date', value)
+                            }
+                            onTimeChange={(value) =>
+                              handleScheduleChange(pool.id, 'end_time', value)
+                            }
+                            timeValue={scheduleForms[pool.id].end_time}
+                          />
+                        </div>
+                      </div>
+
+                      <button
+                        className={styles.primaryInlineButton}
+                        type="button"
+                        onClick={() => handleScheduleSave(pool.id)}
+                        disabled={savingPoolId === pool.id}
+                      >
+                        {savingPoolId === pool.id ? 'Saving...' : 'Update schedule'}
+                      </button>
+                    </div>
+                  ) : null}
 
                   <div className={styles.actionRow}>
                     <button

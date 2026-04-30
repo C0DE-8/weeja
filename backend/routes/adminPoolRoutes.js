@@ -5,9 +5,11 @@ const {
   buildPoolUpdateFields,
   createWalletTransaction,
   ensurePoolIsEditable,
+  ensurePoolScheduleSchema,
   fetchPoolsWithOptions,
   fetchPoolWithOptions,
   normalizeDateTime,
+  normalizeOptionalDateTime,
   normalizeOptionalText,
   normalizeRequiredText,
   requireStatus,
@@ -39,6 +41,8 @@ router.post("/", async (req, res) => {
   let inTransaction = false;
 
   try {
+    await ensurePoolScheduleSchema();
+
     const title = normalizeRequiredText(req.body.title, "title");
     const description = normalizeOptionalText(req.body.description);
     const categoryId = Number(req.body.category_id);
@@ -48,8 +52,9 @@ router.post("/", async (req, res) => {
       req.body.platform_fee_percent ?? 0,
       "platform_fee_percent"
     );
-    const startTime = normalizeDateTime(req.body.start_time, "start_time");
-    const lockTime = normalizeDateTime(req.body.lock_time, "lock_time");
+    const startTime = normalizeOptionalDateTime(req.body.start_time, "start_time");
+    const lockTime = normalizeOptionalDateTime(req.body.lock_time, "lock_time");
+    const endTime = normalizeOptionalDateTime(req.body.end_time, "end_time");
     const status = requireStatus(req.body.status ?? "pending", POOL_STATUSES);
     const optionsPayload = Array.isArray(req.body.options) ? req.body.options : [];
 
@@ -71,8 +76,20 @@ router.post("/", async (req, res) => {
       });
     }
 
-    if (lockTime <= startTime) {
+    if (lockTime && !startTime) {
+      return res.status(400).json({ message: "start_time must be set before lock_time" });
+    }
+
+    if (lockTime && startTime && lockTime <= startTime) {
       return res.status(400).json({ message: "lock_time must be after start_time" });
+    }
+
+    if (endTime && !lockTime) {
+      return res.status(400).json({ message: "lock_time must be set before end_time" });
+    }
+
+    if (endTime && lockTime && endTime <= lockTime) {
+      return res.status(400).json({ message: "end_time must be after lock_time" });
     }
 
     if (optionsPayload.length < 2) {
@@ -109,8 +126,8 @@ router.post("/", async (req, res) => {
 
     const [result] = await connection.execute(
       `INSERT INTO pools
-        (title, description, category_id, currency_id, min_stake, platform_fee_percent, start_time, lock_time, status, winning_option_id, created_by)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?)`,
+        (title, description, category_id, currency_id, min_stake, platform_fee_percent, start_time, lock_time, end_time, status, winning_option_id, created_by)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?)`,
       [
         title,
         description,
@@ -120,6 +137,7 @@ router.post("/", async (req, res) => {
         feePercent,
         startTime,
         lockTime,
+        endTime,
         status,
         req.user.id,
       ]

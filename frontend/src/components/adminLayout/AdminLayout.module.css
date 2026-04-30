@@ -357,7 +357,25 @@
   }
 
   .mobileDrawer .navLinkActive {
+    background: linear-gradient(135deg, #2563eb, #0ea5e9);
     color: #ffffff;
+    border-color: transparent;
+    box-shadow: 0 12px 24px rgba(37, 99, 235, 0.22);
+  }
+
+  .mobileDrawer .navLinkActive .navLabel,
+  .mobileDrawer .navLinkActive .navIcon {
+    color: #ffffff;
+  }
+
+  .mobileDrawer .navLink:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+  }
+
+  .mobileDrawer .navLinkActive:hover,
+  .mobileDrawer .navLinkActive:focus-visible {
+    background: linear-gradient(135deg, #2563eb, #0ea5e9);
     border-color: transparent;
   }
 

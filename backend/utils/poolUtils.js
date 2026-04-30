@@ -9,6 +9,8 @@ const POOL_STATUSES = new Set([
   "cancelled",
 ]);
 
+let poolScheduleSchemaReady = false;
+
 function toDecimal(value, fieldName) {
   const num = Number(value);
 
@@ -52,12 +54,53 @@ function normalizeDateTime(value, fieldName) {
   return date;
 }
 
+function normalizeOptionalDateTime(value, fieldName) {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  if (value === null || value === "") {
+    return null;
+  }
+
+  return normalizeDateTime(value, fieldName);
+}
+
 function requireStatus(status, allowedStatuses, fieldName = "status") {
   if (!allowedStatuses.has(status)) {
     throw new Error(`${fieldName} is invalid`);
   }
 
   return status;
+}
+
+async function ensurePoolScheduleSchema() {
+  if (poolScheduleSchemaReady) {
+    return;
+  }
+
+  const [columns] = await db.query("SHOW COLUMNS FROM pools");
+  const columnMap = new Map(columns.map((column) => [column.Field, column]));
+  const alterStatements = [];
+
+  if (!columnMap.has("end_time")) {
+    alterStatements.push("ADD COLUMN `end_time` datetime DEFAULT NULL AFTER `lock_time`");
+    alterStatements.push("ADD KEY `idx_pools_end_time` (`end_time`)");
+  }
+
+  if (columnMap.get("start_time")?.Null === "NO") {
+    alterStatements.push("MODIFY `start_time` datetime DEFAULT NULL");
+  }
+
+  if (columnMap.get("lock_time")?.Null === "NO") {
+    alterStatements.push("MODIFY `lock_time` datetime DEFAULT NULL");
+  }
+
+  if (alterStatements.length > 0) {
+    await db.query(`ALTER TABLE pools ${alterStatements.join(", ")}`);
+  }
+
+  poolScheduleSchemaReady = true;
 }
 
 async function fetchPoolOptions(connection, poolId) {
@@ -73,6 +116,8 @@ async function fetchPoolOptions(connection, poolId) {
 }
 
 async function fetchPoolWithOptions(connection, poolId) {
+  await ensurePoolScheduleSchema();
+
   const [pools] = await connection.execute(
     `SELECT
         p.id,
@@ -89,6 +134,7 @@ async function fetchPoolWithOptions(connection, poolId) {
         p.platform_fee_percent,
         p.start_time,
         p.lock_time,
+        p.end_time,
         p.status,
         p.winning_option_id,
         p.created_by,
@@ -239,24 +285,59 @@ function buildPoolUpdateFields(payload, existingPool) {
 
   let startTime;
   let lockTime;
+  let endTime;
 
   if (payload.start_time !== undefined) {
-    startTime = normalizeDateTime(payload.start_time, "start_time");
+    startTime = normalizeOptionalDateTime(payload.start_time, "start_time");
     fields.push("start_time = ?");
     values.push(startTime);
   }
 
   if (payload.lock_time !== undefined) {
-    lockTime = normalizeDateTime(payload.lock_time, "lock_time");
+    lockTime = normalizeOptionalDateTime(payload.lock_time, "lock_time");
     fields.push("lock_time = ?");
     values.push(lockTime);
   }
 
-  const effectiveStartTime = startTime || new Date(existingPool.start_time);
-  const effectiveLockTime = lockTime || new Date(existingPool.lock_time);
+  if (payload.end_time !== undefined) {
+    endTime = normalizeOptionalDateTime(payload.end_time, "end_time");
+    fields.push("end_time = ?");
+    values.push(endTime);
+  }
 
-  if (effectiveLockTime <= effectiveStartTime) {
+  const effectiveStartTime =
+    startTime !== undefined
+      ? startTime
+      : existingPool.start_time
+        ? new Date(existingPool.start_time)
+        : null;
+  const effectiveLockTime =
+    lockTime !== undefined
+      ? lockTime
+      : existingPool.lock_time
+        ? new Date(existingPool.lock_time)
+        : null;
+  const effectiveEndTime =
+    endTime !== undefined
+      ? endTime
+      : existingPool.end_time
+        ? new Date(existingPool.end_time)
+        : null;
+
+  if (effectiveLockTime && !effectiveStartTime) {
+    throw new Error("start_time must be set before lock_time");
+  }
+
+  if (effectiveLockTime && effectiveStartTime && effectiveLockTime <= effectiveStartTime) {
     throw new Error("lock_time must be after start_time");
+  }
+
+  if (effectiveEndTime && !effectiveLockTime) {
+    throw new Error("lock_time must be set before end_time");
+  }
+
+  if (effectiveEndTime && effectiveLockTime && effectiveEndTime <= effectiveLockTime) {
+    throw new Error("end_time must be after lock_time");
   }
 
   if (payload.status !== undefined) {
@@ -268,6 +349,8 @@ function buildPoolUpdateFields(payload, existingPool) {
 }
 
 async function fetchPoolsWithOptions(filters = {}) {
+  await ensurePoolScheduleSchema();
+
   const { status, categoryId, type, currencyId } = filters;
   const where = [];
   const params = [];
@@ -324,6 +407,7 @@ async function fetchPoolsWithOptions(filters = {}) {
       p.platform_fee_percent,
       p.start_time,
       p.lock_time,
+      p.end_time,
       p.status,
       p.winning_option_id,
       p.created_by,
@@ -377,7 +461,9 @@ module.exports = {
   fetchPoolTotals,
   fetchPoolWithOptions,
   fetchPoolsWithOptions,
+  ensurePoolScheduleSchema,
   normalizeDateTime,
+  normalizeOptionalDateTime,
   normalizeOptionalText,
   normalizeRequiredText,
   requireStatus,
