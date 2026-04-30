@@ -217,7 +217,7 @@ export default function AdminPasskeys() {
         <form className={styles.createCard} onSubmit={handleCreatePasskey} noValidate>
           <div className={styles.cardHeader}>
             <h3>Create passkey</h3>
-            <span>{submitting ? 'Saving...' : 'Super admin only'}</span>
+            <span>{submitting ? 'Saving...' : 'Private access'}</span>
           </div>
 
           <label className={styles.field}>

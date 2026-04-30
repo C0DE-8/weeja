@@ -16,6 +16,7 @@ const {
 
 const router = express.Router();
 
+// api/admin/pools
 router.get("/", async (req, res) => {
   try {
     const pools = await fetchPoolsWithOptions({
@@ -32,6 +33,7 @@ router.get("/", async (req, res) => {
   }
 });
 
+// api/admin/pools/:id
 router.post("/", async (req, res) => {
   const connection = await db.getConnection();
   let inTransaction = false;
@@ -167,6 +169,7 @@ router.post("/", async (req, res) => {
   }
 });
 
+// api/admin/pools/:id
 router.patch("/:id", async (req, res) => {
   const connection = await db.getConnection();
 
@@ -285,6 +288,7 @@ router.post("/:id/options", async (req, res) => {
   }
 });
 
+// update api/admin/pools/:id/options/:optionId
 router.patch("/:id/options/:optionId", async (req, res) => {
   const connection = await db.getConnection();
 
@@ -364,6 +368,7 @@ router.patch("/:id/options/:optionId", async (req, res) => {
   }
 });
 
+// delete api/admin/pools/:id/options/:optionId 
 router.delete("/:id/options/:optionId", async (req, res) => {
   const connection = await db.getConnection();
 
@@ -700,6 +705,7 @@ router.post("/:id/settle", async (req, res) => {
   }
 });
 
+// api/admin/pools/:id/cancel
 router.post("/:id/cancel", async (req, res) => {
   const connection = await db.getConnection();
   let inTransaction = false;

@@ -140,7 +140,7 @@ export default function AdminPools() {
           <p className={styles.eyebrow}>Pool Management</p>
           <h2 className={styles.title}>Create and control pools</h2>
           <p className={styles.subtitle}>
-            Admin pools use their own API layer and operate directly on `/api/admin/pools`.
+            Create new pools, manage outcomes, and keep everything organized from one place.
           </p>
         </div>
       </div>
@@ -152,7 +152,7 @@ export default function AdminPools() {
         <form className={styles.createCard} onSubmit={handleCreatePool} noValidate>
           <div className={styles.cardHeader}>
             <h3>Create pool</h3>
-            <span>Admin API</span>
+            <span>New entry</span>
           </div>
 
           <div className={styles.grid}>
