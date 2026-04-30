@@ -1,0 +1,26 @@
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 999px;
+  text-decoration: none;
+  color: #1e3a8a;
+  background: rgba(219, 234, 254, 0.75);
+  border: 1px solid rgba(96, 165, 250, 0.2);
+  font-weight: 700;
+}
+
+.linkActive {
+  background: linear-gradient(135deg, #1d4dd5, #2563eb);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 14px 28px rgba(37, 99, 235, 0.16);
+}

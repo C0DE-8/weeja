@@ -245,11 +245,38 @@
   border-left: 2px solid #e5e7eb;
 }
 
+.submenuGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 0 4px;
+}
+
+.submenuGroupTitle {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .submenuRow {
   padding: 16px 0;
   color: #475569;
   font-weight: 500;
   border-bottom: 1px solid #e5e7eb;
+}
+
+.submenuChildRow {
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: transparent;
+  color: #334155;
+  font-size: 0.95rem;
+  padding: 10px 0 10px 14px;
+  cursor: pointer;
 }
 
 .mainMenuSection {

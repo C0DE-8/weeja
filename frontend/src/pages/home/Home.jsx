@@ -99,10 +99,18 @@ export default function Home() {
 
   useEffect(() => {
     const nextTab = String(searchParams.get('tab') || 'OPEN').toUpperCase()
+    const nextCategory = searchParams.get('category')
     if (TABS.includes(nextTab)) {
       setActiveTab(nextTab)
     } else {
       setActiveTab('OPEN')
+    }
+
+    if (nextCategory) {
+      setSelectedCategoryId(Number(nextCategory))
+      setMobileCategoryId(nextCategory)
+    } else {
+      setMobileCategoryId('')
     }
   }, [searchParams])
 
@@ -173,13 +181,11 @@ export default function Home() {
   }, [activeTab, pools, selectedCategoryId])
 
   const mobilePools = useMemo(() => {
-    const eventPools = pools.filter((pool) => pool.type === 'EVENTS')
-
     if (!mobileCategoryId) {
-      return eventPools
+      return pools
     }
 
-    return eventPools.filter((pool) => String(pool.categoryId) === String(mobileCategoryId))
+    return pools.filter((pool) => String(pool.categoryId) === String(mobileCategoryId))
   }, [mobileCategoryId, pools])
 
   return (
@@ -230,7 +236,7 @@ export default function Home() {
                       ))
                     ) : (
                       <div className={styles.emptyState}>
-                        No event pools match this category yet.
+                        No pools match this category yet.
                       </div>
                     )}
                   </div>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 30, 2026 at 05:33 PM
+-- Generation Time: Apr 30, 2026 at 11:36 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -91,7 +91,7 @@ CREATE TABLE `currencies` (
   `id` int(11) NOT NULL,
   `code` varchar(20) NOT NULL,
   `name` varchar(100) NOT NULL,
-  `decimal_places` tinyint(3) unsigned NOT NULL DEFAULT 2,
+  `decimal_places` tinyint(3) UNSIGNED NOT NULL DEFAULT 2,
   `status` enum('active','inactive') NOT NULL DEFAULT 'active',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
@@ -104,7 +104,7 @@ CREATE TABLE `currencies` (
 INSERT INTO `currencies` (`id`, `code`, `name`, `decimal_places`, `status`, `created_at`, `updated_at`) VALUES
 (1, 'USD', 'US Dollar', 2, 'active', '2026-04-12 14:01:00', '2026-04-12 14:01:00'),
 (2, 'NGN', 'Nigerian Naira', 2, 'active', '2026-04-12 14:01:00', '2026-04-12 14:01:00'),
-(3, 'CRYPTO', 'Cryptocurrency', 8, 'active', '2026-04-12 14:01:00', '2026-04-12 14:01:00');
+(3, 'CRYPTO', 'Cryptocurrency', 8, 'active', '2026-04-12 14:01:00', '2026-04-30 19:40:44');
 
 -- --------------------------------------------------------
 
@@ -144,7 +144,7 @@ CREATE TABLE `pools` (
 
 INSERT INTO `pools` (`id`, `title`, `description`, `category_id`, `currency_id`, `min_stake`, `platform_fee_percent`, `start_time`, `lock_time`, `end_time`, `status`, `review_status`, `review_notes`, `reviewed_by`, `reviewed_at`, `approved_at`, `rejected_at`, `winning_option_id`, `created_by`, `creation_fee_amount`, `creation_fee_wallet_id`, `created_at`, `updated_at`) VALUES
 (1, 'Arsenal vs Chelsea Winner', 'Test pool created without schedule so admin can set start, lock, and end later.', 1, 1, 5.00000000, 8.50, NULL, NULL, NULL, 'open', 'approved', NULL, NULL, NULL, NULL, NULL, NULL, 1, 0.00000000, NULL, '2026-04-30 14:25:15', '2026-04-30 15:02:09'),
-(2, 'Presidential Debate Outcome', 'Test event pool with start, lock, and end already set.', 9, 2, 1000.00000000, 10.00, '2026-05-01 09:00:00', '2026-05-01 18:00:00', '2026-05-01 21:00:00', 'open', 'approved', NULL, NULL, NULL, NULL, NULL, NULL, 1, 0.00000000, NULL, '2026-04-30 14:25:15', '2026-04-30 14:25:15'),
+(2, 'Presidential Debate Outcome', 'Test event pool with start, lock, and end already set.', 9, 2, 1000.00000000, 10.00, NULL, '2026-05-01 18:00:00', '2026-05-01 21:00:00', 'open', 'approved', NULL, NULL, NULL, NULL, NULL, NULL, 1, 0.00000000, NULL, '2026-04-30 14:25:15', '2026-04-30 20:53:45'),
 (3, 'Lakers vs Celtics Total Points', 'Test pool for status updates after lock.', 1, 1, 10.00000000, 7.50, '2026-05-02 12:00:00', '2026-05-02 15:00:00', '2026-05-02 17:00:00', 'awaiting_result', 'approved', NULL, NULL, NULL, NULL, NULL, NULL, 1, 0.00000000, NULL, '2026-04-30 14:25:15', '2026-04-30 14:25:15');
 
 -- --------------------------------------------------------
@@ -169,9 +169,9 @@ CREATE TABLE `pool_creation_fee_settings` (
 --
 
 INSERT INTO `pool_creation_fee_settings` (`id`, `currency_id`, `amount`, `is_active`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
-(1, 3, 0.00000000, 1, NULL, NULL, '2026-04-30 15:31:51', '2026-04-30 15:31:51'),
-(2, 2, 0.00000000, 1, NULL, NULL, '2026-04-30 15:31:51', '2026-04-30 15:31:51'),
-(3, 1, 0.00000000, 1, NULL, NULL, '2026-04-30 15:31:51', '2026-04-30 15:31:51');
+(1, 3, 0.00010000, 1, NULL, NULL, '2026-04-30 15:31:51', '2026-04-30 20:22:40'),
+(2, 2, 5000.00000000, 1, NULL, NULL, '2026-04-30 15:31:51', '2026-04-30 20:22:40'),
+(3, 1, 5.00000000, 1, NULL, NULL, '2026-04-30 15:31:51', '2026-04-30 20:22:40');
 
 -- --------------------------------------------------------
 
@@ -191,6 +191,19 @@ CREATE TABLE `pool_entries` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `pool_entries`
+--
+
+INSERT INTO `pool_entries` (`id`, `pool_id`, `pool_option_id`, `user_id`, `wallet_id`, `stake_amount`, `payout_amount`, `status`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 2, 1, 5.00000000, 0.00000000, 'active', '2026-04-30 20:47:25', '2026-04-30 20:47:25'),
+(2, 1, 1, 2, 1, 5.00000000, 0.00000000, 'active', '2026-04-30 20:47:29', '2026-04-30 20:47:29'),
+(3, 1, 1, 2, 1, 5.00000000, 0.00000000, 'active', '2026-04-30 20:47:31', '2026-04-30 20:47:31'),
+(4, 1, 1, 2, 1, 5.00000000, 0.00000000, 'active', '2026-04-30 20:51:11', '2026-04-30 20:51:11'),
+(5, 1, 1, 2, 1, 5.00000000, 0.00000000, 'active', '2026-04-30 20:51:13', '2026-04-30 20:51:13'),
+(6, 1, 1, 2, 1, 5.00000000, 0.00000000, 'active', '2026-04-30 20:51:16', '2026-04-30 20:51:16'),
+(7, 1, 1, 2, 1, 5.00000000, 0.00000000, 'active', '2026-04-30 20:51:20', '2026-04-30 20:51:20');
 
 -- --------------------------------------------------------
 
@@ -247,11 +260,11 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `email_verified`, `otp_hash`, `otp_expires_at`, `role`, `created_at`) VALUES
 (1, 'Super Admin', 'admin@weeja.com', '$2b$10$57OmnYGe3az9DfP5VECwqORuv0BtxpdUQq10FWE8ntOCj0xOg8.1S', 1, NULL, NULL, 'super_admin', '2026-04-30 10:04:09'),
 (2, 'Samuel Oghenchovwe', '8amlight@gmail.com', '$2b$10$57OmnYGe3az9DfP5VECwqORuv0BtxpdUQq10FWE8ntOCj0xOg8.1S', 1, NULL, NULL, 'user', '2026-04-30 10:10:19'),
-(3, 'one', 'one@gmail.com', '$2b$10$57OmnYGe3az9DfP5VECwqORuv0BtxpdUQq10FWE8ntOCj0xOg8.1S', 1, NULL, NULL, 'user', '2026-04-30 10:10:19'),
-(4, 'two', 'two@gmail.com', '$2b$10$57OmnYGe3az9DfP5VECwqORuv0BtxpdUQq10FWE8ntOCj0xOg8.1S', 1, NULL, NULL, 'user', '2026-04-30 10:10:19'),
-(5, 'three', 'three@gmail.com', '$2b$10$57OmnYGe3az9DfP5VECwqORuv0BtxpdUQq10FWE8ntOCj0xOg8.1S', 1, NULL, NULL, 'user', '2026-04-30 10:10:19'),
-(6, 'four', 'four@gmail.com', '$2b$10$57OmnYGe3az9DfP5VECwqORuv0BtxpdUQq10FWE8ntOCj0xOg8.1S', 1, NULL, NULL, 'user', '2026-04-30 10:10:19'),
-(7, 'five', 'five@gmail.com', '$2b$10$57OmnYGe3az9DfP5VECwqORuv0BtxpdUQq10FWE8ntOCj0xOg8.1S', 1, NULL, NULL, 'user', '2026-04-30 10:10:19');
+(8, 'one', 'one@gmail.com', '$2b$10$BkGtoHJKLoGPZ/Ed/iG/.uUByz4iPYJN9q.gjtWO1tWyDjhT2z20y', 1, '$2b$10$Vm61HyL2q5ZU0eI3lj9bDu.c8e4PDerC0hYTZS2Y9D3IS5Taw8zSS', '2026-04-30 14:38:48', 'user', '2026-04-30 21:23:48'),
+(9, 'two', 'two@gmail.com', '$2b$10$xlHx3vCf8sFkZWwD2qsJSu9FkeBUJBCfp9D6N/UmOxK3wWPG/EpJ.', 1, '$2b$10$tpL1jFb0JGsznm5M4X.VKOy/05LZYHF0zMd9R7/JgSsEq0SLBdQ1O', '2026-04-30 14:40:47', 'user', '2026-04-30 21:25:47'),
+(10, 'three', 'three@gmail.com', '$2b$10$683.uVN/iVnOYL0Li760TukZI7Y5ZgFEXgX6EqdwHRlLW3DPt.MwW', 1, '$2b$10$xsfGpu.pkxHKUP8xrftyFuuKApTGr8jj3KGIyf4AW4PfcZF.NATE.', '2026-04-30 14:41:18', 'user', '2026-04-30 21:26:18'),
+(11, 'four', 'four@gmail.com', '$2b$10$W2Lbg.HD1GGQamKxWxCkZ.NikESJOOq2/HVRhC6kis0dlPVduva7W', 1, '$2b$10$HdT5fjPlAYHg0RaKB1HoGuiB3x9.HEd1x5VWn5uN0ZYzNE2KLT6..', '2026-04-30 14:41:53', 'user', '2026-04-30 21:26:52'),
+(12, 'five', 'five@gmail.com', '$2b$10$Z7tDgf8k0.UDadp2GC5fP.gyQ/Ph3ddzqfHhRA4yqZkTMInt1Sw4e', 1, '$2b$10$LKpxPacvxqwXG4P0pz9GnuslhaJSGjA9all467RFcqFnE2SQyKl.K', '2026-04-30 14:42:20', 'user', '2026-04-30 21:27:19');
 
 -- --------------------------------------------------------
 
@@ -274,9 +287,15 @@ CREATE TABLE `user_wallets` (
 --
 
 INSERT INTO `user_wallets` (`id`, `user_id`, `currency_id`, `balance`, `status`, `created_at`, `updated_at`) VALUES
-(1, 2, 1, 0.00000000, 'active', '2026-04-30 10:11:18', '2026-04-30 10:11:18'),
-(2, 2, 2, 0.00000000, 'active', '2026-04-30 10:11:18', '2026-04-30 10:11:18'),
-(3, 2, 3, 0.00000000, 'active', '2026-04-30 10:11:18', '2026-04-30 10:11:18');
+(1, 2, 1, 965.00000000, 'active', '2026-04-30 10:11:18', '2026-04-30 20:51:20'),
+(2, 2, 2, 7000.00000000, 'active', '2026-04-30 10:11:18', '2026-04-30 20:46:23'),
+(3, 2, 3, 1000.00000000, 'active', '2026-04-30 10:11:18', '2026-04-30 20:45:13'),
+(28, 1, 2, 0.00000000, 'active', '2026-04-30 19:34:33', '2026-04-30 19:34:33'),
+(29, 1, 3, 0.00000000, 'active', '2026-04-30 19:34:33', '2026-04-30 19:34:33'),
+(142, 1, 1, 0.00000000, 'active', '2026-04-30 19:34:33', '2026-04-30 19:34:33'),
+(215, 8, 1, 0.00000000, 'active', '2026-04-30 21:24:55', '2026-04-30 21:24:55'),
+(216, 8, 2, 0.00000000, 'active', '2026-04-30 21:24:55', '2026-04-30 21:24:55'),
+(217, 8, 3, 0.00000000, 'active', '2026-04-30 21:24:55', '2026-04-30 21:24:55');
 
 -- --------------------------------------------------------
 
@@ -295,6 +314,19 @@ CREATE TABLE `wallet_transactions` (
   `description` varchar(255) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `wallet_transactions`
+--
+
+INSERT INTO `wallet_transactions` (`id`, `wallet_id`, `type`, `amount`, `balance_after`, `reference`, `status`, `description`, `created_at`) VALUES
+(1, 1, 'debit', 5.00000000, 995.00000000, 'pool-join-1-be43e0cb-4bda-42c1-bd35-8d872c2706b1', 'completed', 'Joined pool Arsenal vs Chelsea Winner with option Arsenal', '2026-04-30 20:47:25'),
+(2, 1, 'debit', 5.00000000, 990.00000000, 'pool-join-1-8ea4fcba-6aad-4fa5-9286-2d67bcffc778', 'completed', 'Joined pool Arsenal vs Chelsea Winner with option Arsenal', '2026-04-30 20:47:29'),
+(3, 1, 'debit', 5.00000000, 985.00000000, 'pool-join-1-e0e9e1eb-6729-4c3a-b897-51cc1ea30c68', 'completed', 'Joined pool Arsenal vs Chelsea Winner with option Arsenal', '2026-04-30 20:47:31'),
+(4, 1, 'debit', 5.00000000, 980.00000000, 'pool-join-1-abd1635f-aabe-4dcb-ae35-507db14dbc51', 'completed', 'Joined pool Arsenal vs Chelsea Winner with option Arsenal', '2026-04-30 20:51:11'),
+(5, 1, 'debit', 5.00000000, 975.00000000, 'pool-join-1-00047f45-9f8e-4473-a866-d1a9c3a2b87e', 'completed', 'Joined pool Arsenal vs Chelsea Winner with option Arsenal', '2026-04-30 20:51:13'),
+(6, 1, 'debit', 5.00000000, 970.00000000, 'pool-join-1-bcadce08-3b64-4fe9-869f-bc39e6b1e14c', 'completed', 'Joined pool Arsenal vs Chelsea Winner with option Arsenal', '2026-04-30 20:51:16'),
+(7, 1, 'debit', 5.00000000, 965.00000000, 'pool-join-1-be98ad85-7cdf-44b3-99f3-24bdd960ad0f', 'completed', 'Joined pool Arsenal vs Chelsea Winner with option Arsenal', '2026-04-30 20:51:20');
 
 --
 -- Indexes for dumped tables
@@ -427,13 +459,13 @@ ALTER TABLE `pools`
 -- AUTO_INCREMENT for table `pool_creation_fee_settings`
 --
 ALTER TABLE `pool_creation_fee_settings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `pool_entries`
 --
 ALTER TABLE `pool_entries`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `pool_options`
@@ -445,19 +477,19 @@ ALTER TABLE `pool_options`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `user_wallets`
 --
 ALTER TABLE `user_wallets`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=272;
 
 --
 -- AUTO_INCREMENT for table `wallet_transactions`
 --
 ALTER TABLE `wallet_transactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Constraints for dumped tables

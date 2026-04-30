@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { HiOutlineMenuAlt3 } from 'react-icons/hi'
 import { FiChevronDown, FiChevronRight } from 'react-icons/fi'
 import { IoClose } from 'react-icons/io5'
+import { fetchActiveCategories } from '../../api/categoryApi'
 import { clearSession, getStoredUser, isAdminUser } from '../../api/session'
 import styles from './Header.module.css'
 
@@ -19,8 +20,36 @@ export default function Header() {
   const navigate = useNavigate()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isAllPoolOpen, setIsAllPoolOpen] = useState(true)
+  const [categoriesByType, setCategoriesByType] = useState({ sport: [], event: [] })
   const user = getStoredUser()
   const adminUser = isAdminUser(user)
+
+  useEffect(() => {
+    let active = true
+
+    async function loadCategories() {
+      try {
+        const data = await fetchActiveCategories()
+        if (!active) return
+        setCategoriesByType(data.grouped || { sport: [], event: [] })
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    loadCategories()
+    return () => {
+      active = false
+    }
+  }, [])
+
+  const poolCategorySections = useMemo(
+    () => [
+      { label: 'Sport categories', items: categoriesByType.sport || [] },
+      { label: 'Event categories', items: categoriesByType.event || [] },
+    ].filter((section) => section.items.length > 0),
+    [categoriesByType],
+  )
 
   return (
     <>
@@ -37,7 +66,7 @@ export default function Header() {
             <button
               className={styles.mobileCreateButton}
               type="button"
-              onClick={() => navigate(user ? '/account' : '/login')}
+              onClick={() => navigate(user ? '/create' : '/login')}
             >
               Create Pool
             </button>
@@ -169,10 +198,40 @@ export default function Header() {
                       {item.label}
                     </button>
                   ))}
+
+                  {poolCategorySections.map((section) => (
+                    <div className={styles.submenuGroup} key={section.label}>
+                      <p className={styles.submenuGroupTitle}>{section.label}</p>
+                      {section.items.map((item) => (
+                        <button
+                          key={`${section.label}-${item.id}`}
+                          className={styles.submenuChildRow}
+                          type="button"
+                          onClick={() => {
+                            setIsMenuOpen(false)
+                            navigate(`/?category=${item.id}`)
+                          }}
+                        >
+                          {item.name}
+                        </button>
+                      ))}
+                    </div>
+                  ))}
                 </div>
               )}
 
               <div className={styles.mainMenuSection}>
+                <button
+                  className={styles.mainMenuRow}
+                  type="button"
+                  onClick={() => {
+                    setIsMenuOpen(false)
+                    navigate('/')
+                  }}
+                >
+                  <span>Home</span>
+                  <FiChevronRight />
+                </button>
                 <button
                   className={styles.mainMenuRow}
                   type="button"
@@ -206,6 +265,43 @@ export default function Header() {
                   <span>Pool Results</span>
                   <FiChevronRight />
                 </button>
+                {user && !adminUser ? (
+                  <>
+                    <button
+                      className={styles.mainMenuRow}
+                      type="button"
+                      onClick={() => {
+                        setIsMenuOpen(false)
+                        navigate('/account')
+                      }}
+                    >
+                      <span>Account</span>
+                      <FiChevronRight />
+                    </button>
+                    <button
+                      className={styles.mainMenuRow}
+                      type="button"
+                      onClick={() => {
+                        setIsMenuOpen(false)
+                        navigate('/wallet')
+                      }}
+                    >
+                      <span>Wallet</span>
+                      <FiChevronRight />
+                    </button>
+                    <button
+                      className={styles.mainMenuRow}
+                      type="button"
+                      onClick={() => {
+                        setIsMenuOpen(false)
+                        navigate('/create')
+                      }}
+                    >
+                      <span>Create</span>
+                      <FiChevronRight />
+                    </button>
+                  </>
+                ) : null}
               </div>
             </div>
 

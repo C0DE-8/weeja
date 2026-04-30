@@ -13,6 +13,8 @@ import AdminRegister from './pages/admin/register/AdminRegister'
 import AdminPasskeys from './pages/admin/passkeys/AdminPasskeys'
 import AdminPoolSubmissions from './pages/admin/poolSubmissions/AdminPoolSubmissions'
 import AccountDashboard from './pages/account/AccountDashboard'
+import AccountWallets from './pages/account/AccountWallets'
+import AccountCreate from './pages/account/AccountCreate'
 import PoolResultsPage from './pages/results/PoolResultsPage'
 
 function App() {
@@ -25,6 +27,8 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route element={<RequireAuthRoute />}>
           <Route path="/account" element={<AccountDashboard />} />
+          <Route path="/wallet" element={<AccountWallets />} />
+          <Route path="/create" element={<AccountCreate />} />
         </Route>
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/register" element={<AdminRegister />} />

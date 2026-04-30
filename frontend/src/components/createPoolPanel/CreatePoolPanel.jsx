@@ -66,7 +66,7 @@ export default function CreatePoolPanel() {
             <button
               className={styles.primaryButton}
               type="button"
-              onClick={() => navigate(isAuthenticated ? '/account' : '/login')}
+              onClick={() => navigate(isAuthenticated ? '/create' : '/login')}
             >
               {isAuthenticated ? 'Open creator workspace' : 'Login to create a pool'}
             </button>
