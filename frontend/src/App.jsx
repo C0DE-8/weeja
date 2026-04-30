@@ -24,7 +24,9 @@ function App() {
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="pools" element={<AdminPools />} />
+            <Route path="pools" element={<Navigate to="/admin/pools/create" replace />} />
+            <Route path="pools/create" element={<AdminPools view="create" />} />
+            <Route path="pools/existing" element={<AdminPools view="existing" />} />
             <Route element={<RequireSuperAdminRoute />}>
               <Route path="passkeys" element={<AdminPasskeys />} />
             </Route>

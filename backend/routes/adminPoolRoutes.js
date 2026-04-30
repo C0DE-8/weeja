@@ -511,7 +511,7 @@ router.post("/:id/result", async (req, res) => {
 
     await connection.execute(
       `UPDATE pools
-       SET winning_option_id = ?, status = 'awaiting_result'
+       SET winning_option_id = ?, status = 'awaiting_result', end_time = COALESCE(end_time, NOW())
        WHERE id = ?`,
       [winningOptionId, poolId]
     );

@@ -39,8 +39,6 @@ const INITIAL_FORM = {
   start_time: '',
   lock_date: '',
   lock_time: '',
-  end_date: '',
-  end_time: '',
   status: 'pending',
   options: [
     { id: 'option-1', value: 'Option 1' },
@@ -153,7 +151,6 @@ function splitTimeParts(timeValue) {
 function buildScheduleForm(pool) {
   const start = splitDateTime(pool.start_time)
   const lock = splitDateTime(pool.lock_time)
-  const end = splitDateTime(pool.end_time)
 
   return {
     status: pool.status || 'pending',
@@ -161,8 +158,6 @@ function buildScheduleForm(pool) {
     start_time: start.time,
     lock_date: lock.date,
     lock_time: lock.time,
-    end_date: end.date,
-    end_time: end.time,
   }
 }
 
@@ -310,7 +305,6 @@ function toPayload(form) {
     platform_fee_percent: Number(form.platform_fee_percent),
     start_time: combineDateTime(form.start_date, form.start_time),
     lock_time: combineDateTime(form.lock_date, form.lock_time),
-    end_time: combineDateTime(form.end_date, form.end_time),
     status: form.status,
     options: form.options
       .map((option) => option.value.trim())
@@ -323,7 +317,9 @@ function toPayload(form) {
   }
 }
 
-export default function AdminPools() {
+export default function AdminPools({ view = 'create' }) {
+  const showCreate = view !== 'existing'
+  const showExisting = view !== 'create'
   const [pools, setPools] = useState([])
   const [categories, setCategories] = useState([])
   const [form, setForm] = useState(INITIAL_FORM)
@@ -340,6 +336,7 @@ export default function AdminPools() {
     try {
       const nextPools = await fetchAdminPools()
       setPools(nextPools)
+      setError('')
       setScheduleForms((current) => {
         const next = {}
 
@@ -377,7 +374,6 @@ export default function AdminPools() {
 
   const startTimestamp = combineDateTime(form.start_date, form.start_time)
   const lockTimestamp = combineDateTime(form.lock_date, form.lock_time)
-  const endTimestamp = combineDateTime(form.end_date, form.end_time)
 
   const handleCreatePool = async (event) => {
     event.preventDefault()
@@ -399,16 +395,6 @@ export default function AdminPools() {
 
       if (payload.lock_time && new Date(payload.lock_time).getTime() < new Date(payload.start_time).getTime()) {
         setError('Lock time cannot be earlier than start time.')
-        return
-      }
-
-      if (payload.end_time && !payload.lock_time) {
-        setError('Set lock time before adding an end time.')
-        return
-      }
-
-      if (payload.end_time && new Date(payload.end_time).getTime() <= new Date(payload.lock_time).getTime()) {
-        setError('End time must be later than lock time.')
         return
       }
 
@@ -461,7 +447,6 @@ export default function AdminPools() {
       status: currentForm.status,
       start_time: combineDateTime(currentForm.start_date, currentForm.start_time) || null,
       lock_time: combineDateTime(currentForm.lock_date, currentForm.lock_time) || null,
-      end_time: combineDateTime(currentForm.end_date, currentForm.end_time) || null,
     }
 
     if (!payload.start_time && payload.lock_time) {
@@ -472,18 +457,6 @@ export default function AdminPools() {
 
     if (payload.lock_time && new Date(payload.lock_time).getTime() <= new Date(payload.start_time).getTime()) {
       setError('Lock time must be later than start time.')
-      setSuccess('')
-      return
-    }
-
-    if (payload.end_time && !payload.lock_time) {
-      setError('Set lock time before adding an end time.')
-      setSuccess('')
-      return
-    }
-
-    if (payload.end_time && new Date(payload.end_time).getTime() <= new Date(payload.lock_time).getTime()) {
-      setError('End time must be later than lock time.')
       setSuccess('')
       return
     }
@@ -512,9 +485,13 @@ export default function AdminPools() {
       <div className={styles.pageHeader}>
         <div>
           <p className={styles.eyebrow}>Pool Management</p>
-          <h2 className={styles.title}>Create and control pools</h2>
+          <h2 className={styles.title}>
+            {showCreate && !showExisting ? 'Create a new pool' : 'Manage existing pools'}
+          </h2>
           <p className={styles.subtitle}>
-            Create new pools, manage outcomes, and keep everything organized from one place.
+            {showCreate && !showExisting
+              ? 'Set up a new pool with options, timing, and category details.'
+              : 'Review pool activity, update schedules, and manage outcomes from one place.'}
           </p>
         </div>
       </div>
@@ -522,7 +499,8 @@ export default function AdminPools() {
       {error && <p className={styles.feedbackError}>{error}</p>}
       {success && <p className={styles.feedbackSuccess}>{success}</p>}
 
-      <div className={styles.layout}>
+      <div className={`${styles.layout} ${!showCreate || !showExisting ? styles.layoutSingle : ''}`}>
+        {showCreate ? (
         <form className={styles.createCard} onSubmit={handleCreatePool} noValidate>
           <div className={styles.cardHeader}>
             <h3>Create pool</h3>
@@ -641,25 +619,10 @@ export default function AdminPools() {
               />
             </div>
 
-            <div className={styles.field}>
-              <PoolDateTimePicker
-                dateValue={form.end_date}
-                hint="Optional. Leave this empty and add it later if needed."
-                label="End time"
-                minDate={form.lock_date || form.start_date}
-                onDateChange={(value) => setForm({ ...form, end_date: value })}
-                onTimeChange={(value) => setForm({ ...form, end_time: value })}
-                timeValue={form.end_time}
-              />
-            </div>
           </div>
 
           {startTimestamp && lockTimestamp && new Date(lockTimestamp) < new Date(startTimestamp) ? (
             <p className={styles.inlineError}>Lock time cannot be earlier than start time.</p>
-          ) : null}
-
-          {lockTimestamp && endTimestamp && new Date(endTimestamp) <= new Date(lockTimestamp) ? (
-            <p className={styles.inlineError}>End time must be later than lock time.</p>
           ) : null}
 
           <div className={styles.optionsCard}>
@@ -723,7 +686,9 @@ export default function AdminPools() {
             {creating ? 'Creating pool...' : 'Create Pool'}
           </button>
         </form>
+        ) : null}
 
+        {showExisting ? (
         <div className={styles.listCard}>
           <div className={styles.cardHeader}>
             <h3>Existing pools</h3>
@@ -830,21 +795,15 @@ export default function AdminPools() {
                         </div>
 
                         <div className={styles.field}>
-                          <PoolDateTimePicker
-                            dateValue={scheduleForms[pool.id].end_date}
-                            hint="End time must be later than lock time."
-                            label="End time"
-                            minDate={
-                              scheduleForms[pool.id].lock_date || scheduleForms[pool.id].start_date
-                            }
-                            onDateChange={(value) =>
-                              handleScheduleChange(pool.id, 'end_date', value)
-                            }
-                            onTimeChange={(value) =>
-                              handleScheduleChange(pool.id, 'end_time', value)
-                            }
-                            timeValue={scheduleForms[pool.id].end_time}
-                          />
+                          <span>End time</span>
+                          <div className={styles.readOnlyValue}>
+                            {pool.end_time
+                              ? new Date(pool.end_time).toLocaleString()
+                              : 'Will be set automatically when a winner is recorded.'}
+                          </div>
+                          <small className={styles.fieldHint}>
+                            End time is managed automatically by the system.
+                          </small>
                         </div>
                       </div>
 
@@ -924,6 +883,7 @@ export default function AdminPools() {
             )}
           </div>
         </div>
+        ) : null}
       </div>
     </section>
   )

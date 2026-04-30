@@ -336,9 +336,7 @@ router.post("/resend-otp", async (req, res) => {
   }
 });
 
-/**
- * LOGIN
- */
+// login api/auth/login
 router.post("/login", async (req, res) => {
   try {
     const password = req.body.password;

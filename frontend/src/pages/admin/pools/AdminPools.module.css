@@ -37,6 +37,10 @@
   align-items: start;
 }
 
+.layoutSingle {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .createCard,
 .listCard {
   background: rgba(255, 255, 255, 0.95);
@@ -269,6 +273,19 @@
   color: #64748b;
   font-size: 0.82rem;
   line-height: 1.4;
+}
+
+.readOnlyValue {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 52px;
+  padding: 14px 16px;
+  border: 1px solid #dbeafe;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  color: #0f172a;
+  display: flex;
+  align-items: center;
 }
 
 .inlineError {

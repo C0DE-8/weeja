@@ -124,12 +124,12 @@ async function fetchPoolWithOptions(connection, poolId) {
         p.title,
         p.description,
         p.category_id,
-        cat.name AS category_name,
-        cat.type AS category_type,
-        cat.is_active AS category_is_active,
+        COALESCE(cat.name, 'Unknown category') AS category_name,
+        COALESCE(cat.type, 'event') AS category_type,
+        COALESCE(cat.is_active, 0) AS category_is_active,
         p.currency_id,
-        c.code AS currency_code,
-        c.name AS currency_name,
+        COALESCE(c.code, 'N/A') AS currency_code,
+        COALESCE(c.name, 'Unknown currency') AS currency_name,
         p.min_stake,
         p.platform_fee_percent,
         p.start_time,
@@ -138,13 +138,13 @@ async function fetchPoolWithOptions(connection, poolId) {
         p.status,
         p.winning_option_id,
         p.created_by,
-        creator.name AS created_by_name,
+        COALESCE(creator.name, creator.email, 'Unknown admin') AS created_by_name,
         p.created_at,
         p.updated_at
       FROM pools p
-      INNER JOIN categories cat ON cat.id = p.category_id
-      INNER JOIN currencies c ON c.id = p.currency_id
-      INNER JOIN users creator ON creator.id = p.created_by
+      LEFT JOIN categories cat ON cat.id = p.category_id
+      LEFT JOIN currencies c ON c.id = p.currency_id
+      LEFT JOIN users creator ON creator.id = p.created_by
       WHERE p.id = ?`,
     [poolId]
   );
@@ -397,12 +397,12 @@ async function fetchPoolsWithOptions(filters = {}) {
       p.title,
       p.description,
       p.category_id,
-      cat.name AS category_name,
-      cat.type AS category_type,
-      cat.is_active AS category_is_active,
+      COALESCE(cat.name, 'Unknown category') AS category_name,
+      COALESCE(cat.type, 'event') AS category_type,
+      COALESCE(cat.is_active, 0) AS category_is_active,
       p.currency_id,
-      c.code AS currency_code,
-      c.name AS currency_name,
+      COALESCE(c.code, 'N/A') AS currency_code,
+      COALESCE(c.name, 'Unknown currency') AS currency_name,
       p.min_stake,
       p.platform_fee_percent,
       p.start_time,
@@ -411,13 +411,13 @@ async function fetchPoolsWithOptions(filters = {}) {
       p.status,
       p.winning_option_id,
       p.created_by,
-      creator.name AS created_by_name,
+      COALESCE(creator.name, creator.email, 'Unknown admin') AS created_by_name,
       p.created_at,
       p.updated_at
     FROM pools p
-    INNER JOIN categories cat ON cat.id = p.category_id
-    INNER JOIN currencies c ON c.id = p.currency_id
-    INNER JOIN users creator ON creator.id = p.created_by
+    LEFT JOIN categories cat ON cat.id = p.category_id
+    LEFT JOIN currencies c ON c.id = p.currency_id
+    LEFT JOIN users creator ON creator.id = p.created_by
     ${where.length ? `WHERE ${where.join(" AND ")}` : ""}
     ORDER BY p.created_at DESC, p.id DESC`;
 

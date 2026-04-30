@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import {
+  FiChevronDown,
+  FiChevronUp,
   FiChevronLeft,
   FiChevronRight,
   FiGrid,
@@ -17,6 +19,10 @@ function navClassName({ isActive }) {
   return isActive ? `${styles.navLink} ${styles.navLinkActive}` : styles.navLink
 }
 
+function subNavClassName({ isActive }) {
+  return isActive ? `${styles.subNavLink} ${styles.subNavLinkActive}` : styles.subNavLink
+}
+
 export default function AdminLayout() {
   const navigate = useNavigate()
   const location = useLocation()
@@ -27,18 +33,76 @@ export default function AdminLayout() {
 
   const navItems = [
     { to: '/admin/dashboard', label: 'Dashboard', icon: FiHome },
-    { to: '/admin/pools', label: 'Pools', icon: FiGrid },
+    {
+      to: '/admin/pools/create',
+      label: 'Pools',
+      icon: FiGrid,
+      children: [
+        { to: '/admin/pools/create', label: 'Create pool' },
+        { to: '/admin/pools/existing', label: 'Existing pools' },
+      ],
+    },
     ...(isSuperAdmin ? [{ to: '/admin/passkeys', label: 'Passkeys', icon: FiKey }] : []),
     { to: '/', label: 'Public site', icon: FiChevronRight },
   ]
 
   const activeTitle =
-    navItems.find((item) => location.pathname.startsWith(item.to))?.label || 'Workspace'
+    navItems.find((item) =>
+      item.children
+        ? item.children.some((child) => location.pathname.startsWith(child.to))
+        : location.pathname.startsWith(item.to),
+    )?.label || 'Workspace'
 
   const renderNav = (compact = false) => (
     <nav className={styles.nav}>
       {navItems.map((item) => {
         const Icon = item.icon
+        const isSectionActive = item.children
+          ? item.children.some((child) => location.pathname.startsWith(child.to))
+          : location.pathname.startsWith(item.to)
+
+        if (item.children) {
+          return (
+            <div className={styles.navSection} key={item.label}>
+              <NavLink
+                aria-label={item.label}
+                className={({ isActive }) =>
+                  isActive || isSectionActive
+                    ? `${styles.navLink} ${styles.navLinkActive}`
+                    : styles.navLink
+                }
+                onClick={() => setIsMobileNavOpen(false)}
+                to={item.to}
+              >
+                <span className={styles.navIcon}>
+                  <Icon />
+                </span>
+                {!compact && <span className={styles.navLabel}>{item.label}</span>}
+                {!compact && (
+                  <span className={styles.navCaret}>
+                    {isSectionActive ? <FiChevronUp /> : <FiChevronDown />}
+                  </span>
+                )}
+              </NavLink>
+
+              {!compact && (
+                <div className={styles.subNav}>
+                  {item.children.map((child) => (
+                    <NavLink
+                      className={subNavClassName}
+                      key={child.to}
+                      onClick={() => setIsMobileNavOpen(false)}
+                      to={child.to}
+                    >
+                      <span className={styles.subNavDot} />
+                      <span>{child.label}</span>
+                    </NavLink>
+                  ))}
+                </div>
+              )}
+            </div>
+          )
+        }
 
         return (
           <NavLink

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 30, 2026 at 01:03 PM
+-- Generation Time: Apr 30, 2026 at 04:33 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -129,6 +129,15 @@ CREATE TABLE `pools` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `pools`
+--
+
+INSERT INTO `pools` (`id`, `title`, `description`, `category_id`, `currency_id`, `min_stake`, `platform_fee_percent`, `start_time`, `lock_time`, `end_time`, `status`, `winning_option_id`, `created_by`, `created_at`, `updated_at`) VALUES
+(1, 'Arsenal vs Chelsea Winner', 'Test pool created without schedule so admin can set start, lock, and end later.', 1, 1, 5.00000000, 8.50, NULL, NULL, NULL, 'pending', NULL, 1, '2026-04-30 14:25:15', '2026-04-30 14:25:15'),
+(2, 'Presidential Debate Outcome', 'Test event pool with start, lock, and end already set.', 9, 2, 1000.00000000, 10.00, '2026-05-01 09:00:00', '2026-05-01 18:00:00', '2026-05-01 21:00:00', 'open', NULL, 1, '2026-04-30 14:25:15', '2026-04-30 14:25:15'),
+(3, 'Lakers vs Celtics Total Points', 'Test pool for status updates after lock.', 1, 1, 10.00000000, 7.50, '2026-05-02 12:00:00', '2026-05-02 15:00:00', '2026-05-02 17:00:00', 'awaiting_result', NULL, 1, '2026-04-30 14:25:15', '2026-04-30 14:25:15');
+
 -- --------------------------------------------------------
 
 --
@@ -163,6 +172,20 @@ CREATE TABLE `pool_options` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `pool_options`
+--
+
+INSERT INTO `pool_options` (`id`, `pool_id`, `option_label`, `option_key`, `sort_order`, `created_at`, `updated_at`) VALUES
+(1, 1, 'Arsenal', 'arsenal', 1, '2026-04-30 14:25:15', '2026-04-30 14:25:15'),
+(2, 1, 'Chelsea', 'chelsea', 2, '2026-04-30 14:25:15', '2026-04-30 14:25:15'),
+(3, 1, 'Draw', 'draw', 3, '2026-04-30 14:25:15', '2026-04-30 14:25:15'),
+(4, 2, 'Candidate A', 'candidate_a', 1, '2026-04-30 14:25:15', '2026-04-30 14:25:15'),
+(5, 2, 'Candidate B', 'candidate_b', 2, '2026-04-30 14:25:15', '2026-04-30 14:25:15'),
+(6, 2, 'No Clear Winner', 'no_clear_winner', 3, '2026-04-30 14:25:15', '2026-04-30 14:25:15'),
+(7, 3, 'Over 210.5', 'over_210_5', 1, '2026-04-30 14:25:15', '2026-04-30 14:25:15'),
+(8, 3, 'Under 210.5', 'under_210_5', 2, '2026-04-30 14:25:15', '2026-04-30 14:25:15');
 
 -- --------------------------------------------------------
 
@@ -269,10 +292,10 @@ ALTER TABLE `pools`
   ADD KEY `idx_pools_currency` (`currency_id`),
   ADD KEY `idx_pools_status` (`status`),
   ADD KEY `idx_pools_lock_time` (`lock_time`),
-  ADD KEY `idx_pools_end_time` (`end_time`),
   ADD KEY `idx_pools_created_by` (`created_by`),
   ADD KEY `idx_pools_winning_option` (`winning_option_id`),
-  ADD KEY `idx_pools_category` (`category_id`);
+  ADD KEY `idx_pools_category` (`category_id`),
+  ADD KEY `idx_pools_end_time` (`end_time`);
 
 --
 -- Indexes for table `pool_entries`
@@ -345,7 +368,7 @@ ALTER TABLE `currencies`
 -- AUTO_INCREMENT for table `pools`
 --
 ALTER TABLE `pools`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `pool_entries`
@@ -357,7 +380,7 @@ ALTER TABLE `pool_entries`
 -- AUTO_INCREMENT for table `pool_options`
 --
 ALTER TABLE `pool_options`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `users`
