@@ -1,6 +1,7 @@
 const express = require("express");
 const db = require("../config/db");
 const { authenticateToken } = require("../middleware/authMiddleware");
+const { ensureWalletsForUser } = require("../utils/userWallets");
 
 const router = express.Router();
 
@@ -10,6 +11,8 @@ router.get("/", (req, res) => {
 
 router.get("/profile", authenticateToken, async (req, res) => {
   try {
+    await ensureWalletsForUser(req.user.id);
+
     const [rows] = await db.execute(
       "SELECT id, name, email, role, email_verified, created_at FROM users WHERE id = ?",
       [req.user.id]
@@ -38,6 +41,8 @@ router.get("/profile", authenticateToken, async (req, res) => {
 
 router.patch("/profile", authenticateToken, async (req, res) => {
   try {
+    await ensureWalletsForUser(req.user.id);
+
     const name = typeof req.body.name === "string" ? req.body.name.trim() : "";
 
     if (!name || name.length < 2) {

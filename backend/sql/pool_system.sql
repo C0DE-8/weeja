@@ -91,6 +91,7 @@ CREATE TABLE `currencies` (
   `id` int(11) NOT NULL,
   `code` varchar(20) NOT NULL,
   `name` varchar(100) NOT NULL,
+  `decimal_places` tinyint(3) unsigned NOT NULL DEFAULT 2,
   `status` enum('active','inactive') NOT NULL DEFAULT 'active',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
@@ -100,10 +101,10 @@ CREATE TABLE `currencies` (
 -- Dumping data for table `currencies`
 --
 
-INSERT INTO `currencies` (`id`, `code`, `name`, `status`, `created_at`, `updated_at`) VALUES
-(1, 'USD', 'US Dollar', 'active', '2026-04-12 14:01:00', '2026-04-12 14:01:00'),
-(2, 'NGN', 'Nigerian Naira', 'active', '2026-04-12 14:01:00', '2026-04-12 14:01:00'),
-(3, 'CRYPTO', 'Cryptocurrency', 'active', '2026-04-12 14:01:00', '2026-04-12 14:01:00');
+INSERT INTO `currencies` (`id`, `code`, `name`, `decimal_places`, `status`, `created_at`, `updated_at`) VALUES
+(1, 'USD', 'US Dollar', 2, 'active', '2026-04-12 14:01:00', '2026-04-12 14:01:00'),
+(2, 'NGN', 'Nigerian Naira', 2, 'active', '2026-04-12 14:01:00', '2026-04-12 14:01:00'),
+(3, 'CRYPTO', 'Cryptocurrency', 8, 'active', '2026-04-12 14:01:00', '2026-04-12 14:01:00');
 
 -- --------------------------------------------------------
 

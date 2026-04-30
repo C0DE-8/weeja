@@ -1,11 +1,16 @@
 const express = require("express");
 const db = require("../config/db");
 const { authenticateToken } = require("../middleware/authMiddleware");
+const { ensureCurrencyDecimalPlacesSchema } = require("../utils/currencyUtils");
+const { ensureWalletsForUser } = require("../utils/userWallets");
 
 const router = express.Router();
 
 router.get("/", authenticateToken, async (req, res) => {
   try {
+    await ensureCurrencyDecimalPlacesSchema();
+    await ensureWalletsForUser(req.user.id);
+
     const [wallets] = await db.execute(
       `SELECT
           w.id,
@@ -15,6 +20,7 @@ router.get("/", authenticateToken, async (req, res) => {
           w.status,
           c.code AS currency_code,
           c.name AS currency_name,
+          c.decimal_places,
           w.created_at,
           w.updated_at
         FROM user_wallets w
@@ -33,6 +39,9 @@ router.get("/", authenticateToken, async (req, res) => {
 
 router.get("/transactions", authenticateToken, async (req, res) => {
   try {
+    await ensureCurrencyDecimalPlacesSchema();
+    await ensureWalletsForUser(req.user.id);
+
     const limit = Math.min(Math.max(Number(req.query.limit) || 20, 1), 100);
     const [transactions] = await db.execute(
       `SELECT
@@ -46,7 +55,8 @@ router.get("/transactions", authenticateToken, async (req, res) => {
           tx.description,
           tx.created_at,
           c.code AS currency_code,
-          c.name AS currency_name
+          c.name AS currency_name,
+          c.decimal_places
         FROM wallet_transactions tx
         INNER JOIN user_wallets w ON w.id = tx.wallet_id
         INNER JOIN currencies c ON c.id = w.currency_id

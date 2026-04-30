@@ -9,8 +9,11 @@ import DesktopSidebar from '../../components/desktopSidebar/DesktopSidebar'
 import CreatePoolPanel from '../../components/createPoolPanel/CreatePoolPanel'
 import PoolResultsPanel from '../../components/poolResultsPanel/PoolResultsPanel'
 import { fetchActiveCategories } from '../../api/categoryApi'
-import { fetchPublicPools } from '../../api/poolApi'
+import { fetchPublicPools, joinPool } from '../../api/poolApi'
+import { getStoredUser } from '../../api/session'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { formatCurrencyAmount } from '../../utils/currency'
 import styles from './Home.module.css'
 
 const TABS = ['OPEN', 'ALL', 'NEWEST', 'SPORT', 'EVENTS', 'LOCATION']
@@ -28,26 +31,47 @@ function formatPoolCard(pool) {
     location: pool.category_type === 'sport' ? 'Sports' : 'Events',
     status: pool.status?.charAt(0).toUpperCase() + pool.status?.slice(1),
     currency: pool.currency_code,
-    amount: String(pool.min_stake),
-    poolSize: `${pool.min_stake} ${pool.currency_code}`,
+    amount: formatCurrencyAmount(pool.min_stake, pool.currency_code, pool.currency_decimal_places),
+    poolSize: formatCurrencyAmount(pool.min_stake, pool.currency_code, pool.currency_decimal_places),
     weejians: String(pool.options?.length || 0),
     createdAt: createdDate?.toISOString() || new Date().toISOString(),
     poolEndTime: lockDate
       ? lockDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       : 'N/A',
     poolEndDate: lockDate ? lockDate.toLocaleDateString() : 'N/A',
-    options: (pool.options || []).map((option) => option.option_label),
-    activeOption: pool.options?.[0]?.option_label || null,
+    options: (pool.options || []).map((option) => ({
+      id: option.id,
+      label: option.option_label,
+    })),
+    activeOption: pool.options?.[0]?.id || null,
     featured: pool.status === 'open',
+    minStakeRaw: pool.min_stake,
+    currencyDecimalPlaces: pool.currency_decimal_places,
   }
 }
 
 export default function Home() {
+  const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('OPEN')
   const [selectedCategoryId, setSelectedCategoryId] = useState(null)
   const [pools, setPools] = useState([])
   const [categoriesByType, setCategoriesByType] = useState({ sport: [], event: [] })
   const listTopRef = useRef(null)
+
+  async function loadHomeData() {
+    const [categoriesRes, nextPools] = await Promise.all([
+      fetchActiveCategories(),
+      fetchPublicPools(),
+    ])
+
+    setCategoriesByType(categoriesRes.grouped || { sport: [], event: [] })
+    setPools(nextPools.map(formatPoolCard))
+
+    setSelectedCategoryId((current) => {
+      if (current) return current
+      return categoriesRes.grouped?.sport?.[0]?.id || categoriesRes.grouped?.event?.[0]?.id || null
+    })
+  }
 
   useEffect(() => {
     let active = true
@@ -79,6 +103,22 @@ export default function Home() {
       active = false
     }
   }, [])
+
+  const handleJoinPool = async ({ poolId, optionId, stakeAmount }) => {
+    const user = getStoredUser()
+
+    if (!user) {
+      navigate('/login', { state: { from: '/' } })
+      throw new Error('Please log in to join this pool.')
+    }
+
+    await joinPool(poolId, {
+      pool_option_id: optionId,
+      stake_amount: stakeAmount,
+    })
+
+    await loadHomeData()
+  }
 
   const featuredPools = useMemo(
     () => pools.filter((pool) => pool.featured).slice(0, 2),
@@ -134,9 +174,15 @@ export default function Home() {
                 <SectionHeader />
                 <div className={styles.main}>
                   <div className={styles.cardGrid}>
-                    {filteredPools.map((pool) => (
-                      <PoolCard key={pool.id} {...pool} />
-                    ))}
+                    {filteredPools.length > 0 ? (
+                      filteredPools.map((pool) => (
+                        <PoolCard key={pool.id} {...pool} onJoin={handleJoinPool} />
+                      ))
+                    ) : (
+                      <div className={styles.emptyState}>
+                        No pools match this view yet. Try another category or switch tabs.
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -151,18 +197,30 @@ export default function Home() {
                 />
 
                 <div className={styles.cardGridDesktop}>
-                  {featuredPools.map((pool) => (
-                    <PoolCard key={pool.id} {...pool} />
-                  ))}
+                  {featuredPools.length > 0 ? (
+                    featuredPools.map((pool) => (
+                      <PoolCard key={pool.id} {...pool} onJoin={handleJoinPool} />
+                    ))
+                  ) : (
+                    <div className={styles.emptyState}>
+                      No featured pools are available yet.
+                    </div>
+                  )}
                 </div>
 
                 <div ref={listTopRef} />
                 <PoolTabs activeTab={activeTab} onChange={setActiveTab} tabs={TABS} />
 
                 <div className={styles.cardGridDesktop}>
-                  {filteredPools.map((pool) => (
-                    <PoolCard key={pool.id} {...pool} />
-                  ))}
+                  {filteredPools.length > 0 ? (
+                    filteredPools.map((pool) => (
+                      <PoolCard key={pool.id} {...pool} onJoin={handleJoinPool} />
+                    ))
+                  ) : (
+                    <div className={styles.emptyState}>
+                      No pools match this view yet. Try another category or switch tabs.
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

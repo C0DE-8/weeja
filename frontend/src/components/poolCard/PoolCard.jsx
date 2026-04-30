@@ -3,6 +3,7 @@ import { FiShare2, FiChevronDown } from 'react-icons/fi'
 import styles from './PoolCard.module.css'
 
 export default function PoolCard({
+  id,
   question,
   poolEndTime,
   poolEndDate,
@@ -14,9 +15,15 @@ export default function PoolCard({
   activeOption,
   poolSize = '10,000 USDT',
   weejians = '200',
+  minStakeRaw = 0,
+  onJoin,
 }) {
-  const [selectedOption, setSelectedOption] = useState(activeOption ?? options?.[0] ?? null)
+  const [selectedOption, setSelectedOption] = useState(activeOption ?? options?.[0]?.id ?? null)
   const [isExpanded, setIsExpanded] = useState(false)
+  const [stakeAmount, setStakeAmount] = useState(String(minStakeRaw || ''))
+  const [feedback, setFeedback] = useState('')
+  const [submitError, setSubmitError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const hasMoreOptions = useMemo(() => {
     if (typeof showMore === 'boolean') return showMore
@@ -28,6 +35,38 @@ export default function PoolCard({
     if (isExpanded) return options
     return options.slice(0, 3)
   }, [isExpanded, options])
+
+  const selectedOptionLabel = useMemo(
+    () => options?.find((option) => option.id === selectedOption)?.label || '',
+    [options, selectedOption],
+  )
+
+  const canJoin = status === 'Open' && typeof onJoin === 'function'
+
+  const handleJoin = async () => {
+    if (!selectedOption) {
+      setSubmitError('Choose an option before entering the pool.')
+      setFeedback('')
+      return
+    }
+
+    setIsSubmitting(true)
+    setSubmitError('')
+    setFeedback('')
+
+    try {
+      await onJoin({
+        poolId: id,
+        optionId: selectedOption,
+        stakeAmount,
+      })
+      setFeedback(`Entry placed on ${selectedOptionLabel}.`)
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : 'Could not enter this pool.')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   return (
     <article className={styles.card}>
@@ -65,18 +104,52 @@ export default function PoolCard({
       </div>
       <div className={styles.optionsRow}>
         {visibleOptions.map((option) => {
-          const isActive = option === selectedOption
+          const isActive = option.id === selectedOption
           return (
             <button
-              key={option}
+              key={option.id}
               className={isActive ? styles.optionButtonActive : styles.optionButton}
               type="button"
-              onClick={() => setSelectedOption(option)}
+              onClick={() => setSelectedOption(option.id)}
             >
-              {option}
+              {option.label}
             </button>
           )
         })}
+      </div>
+
+      <div className={styles.entryPanel}>
+        <div className={styles.entryHeader}>
+          <strong>Enter this pool</strong>
+          <span>Min stake: {amount}</span>
+        </div>
+
+        <div className={styles.entryRow}>
+          <label className={styles.stakeField}>
+            <span>Stake amount</span>
+            <input
+              type="number"
+              min={Number(minStakeRaw) || 0}
+              step="0.01"
+              value={stakeAmount}
+              onChange={(event) => setStakeAmount(event.target.value)}
+              placeholder={`Minimum ${amount}`}
+            />
+          </label>
+
+          <button
+            className={styles.joinButton}
+            type="button"
+            onClick={handleJoin}
+            disabled={!canJoin || isSubmitting}
+          >
+            {isSubmitting ? 'Submitting...' : 'Pay entry'}
+          </button>
+        </div>
+
+        {status !== 'Open' ? <p className={styles.helperText}>This pool is not open for new entries.</p> : null}
+        {feedback ? <p className={styles.successText}>{feedback}</p> : null}
+        {submitError ? <p className={styles.errorText}>{submitError}</p> : null}
       </div>
 
       <div className={styles.desktopInfoRow}>

@@ -1,9 +1,10 @@
 .page {
   min-height: 100vh;
   background:
-    radial-gradient(circle at top left, rgba(230, 166, 72, 0.18), transparent 30%),
-    linear-gradient(180deg, #f7f2ea 0%, #f3efe7 100%);
-  color: #1e1a17;
+    radial-gradient(circle at top left, rgba(255, 139, 43, 0.16), transparent 28%),
+    radial-gradient(circle at top right, rgba(29, 77, 213, 0.1), transparent 30%),
+    linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  color: #0f172a;
 }
 
 .main {
@@ -16,30 +17,35 @@
   display: flex;
   justify-content: space-between;
   gap: 24px;
-  padding: 28px;
-  border-radius: 28px;
-  background: #241c18;
-  color: #fff7ee;
+  padding: 32px;
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 139, 43, 0.22), transparent 32%),
+    linear-gradient(135deg, #0f172a 0%, #172554 54%, #1d4dd5 100%);
+  color: #f8fafc;
   margin-bottom: 24px;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
 }
 
 .eyebrow {
   margin: 0 0 8px;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-size: 0.8rem;
-  color: #e7b56b;
+  letter-spacing: 0.16em;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #7dd3fc;
 }
 
 .hero h1 {
   margin: 0;
-  font-size: clamp(2rem, 4vw, 3rem);
+  max-width: 12ch;
+  color: #ffffff;
 }
 
 .heroText {
   margin: 16px 0 0;
   max-width: 720px;
-  color: rgba(255, 247, 238, 0.8);
+  color: rgba(226, 232, 240, 0.84);
 }
 
 .heroMeta {
@@ -49,6 +55,10 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 8px;
+  padding: 18px 20px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .errorBanner,
@@ -57,8 +67,9 @@
   padding: 16px 18px;
   border-radius: 18px;
   margin-bottom: 20px;
-  background: #fff;
-  border: 1px solid rgba(36, 28, 24, 0.08);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
 }
 
 .errorBanner {
@@ -86,10 +97,11 @@
 
 .card {
   background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(36, 28, 24, 0.08);
-  border-radius: 24px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 26px;
   padding: 24px;
-  box-shadow: 0 18px 45px rgba(36, 28, 24, 0.06);
+  box-shadow: 0 20px 48px rgba(15, 23, 42, 0.08);
+  backdrop-filter: blur(10px);
 }
 
 .cardHeader {
@@ -97,6 +109,7 @@
   justify-content: space-between;
   gap: 16px;
   margin-bottom: 18px;
+  align-items: flex-start;
 }
 
 .cardHeader h2 {
@@ -104,7 +117,8 @@
 }
 
 .cardHeader span {
-  color: #6f645d;
+  color: #64748b;
+  max-width: 34ch;
 }
 
 .form,
@@ -122,22 +136,35 @@
 }
 
 .field span {
-  font-weight: 600;
+  font-weight: 700;
+  color: #334155;
+  font-size: 0.92rem;
 }
 
 .field input,
 .field select,
 .field textarea {
   width: 100%;
-  border-radius: 14px;
-  border: 1px solid rgba(36, 28, 24, 0.12);
+  box-sizing: border-box;
+  border-radius: 16px;
+  border: 1px solid #cbd5e1;
   padding: 13px 14px;
   font: inherit;
-  background: #fffdf9;
+  background: #f8fafc;
+  color: #0f172a;
 }
 
 .field textarea {
   resize: vertical;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus,
+.optionRow input:focus {
+  outline: none;
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.16);
 }
 
 .twoColumn,
@@ -155,14 +182,15 @@
 }
 
 .feeCard {
-  border-radius: 18px;
-  padding: 16px;
-  background: linear-gradient(135deg, #f7d292, #ffe7c1);
-  color: #3b2816;
+  border-radius: 20px;
+  padding: 18px;
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  color: #172554;
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 8px;
+  border: 1px solid rgba(96, 165, 250, 0.18);
 }
 
 .walletGrid {
@@ -174,10 +202,10 @@
 
 .walletCard,
 .submissionCard {
-  border-radius: 18px;
-  border: 1px solid rgba(36, 28, 24, 0.08);
+  border-radius: 20px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
   padding: 16px;
-  background: #fffdf9;
+  background: #ffffff;
 }
 
 .walletCard h3,
@@ -197,7 +225,7 @@
 
 .transactionRow,
 .submissionCard {
-  border-bottom: 1px solid rgba(36, 28, 24, 0.08);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
 }
 
 .transactionRow:last-child {
@@ -212,7 +240,7 @@
 .submissionMeta span,
 .reviewNote,
 .inlineMessage {
-  color: #6f645d;
+  color: #64748b;
 }
 
 .transactionMeta,
@@ -233,13 +261,16 @@
 }
 
 .primaryButton {
-  background: #241c18;
+  background: linear-gradient(135deg, #1d4dd5, #2563eb);
   color: #fff;
+  font-weight: 700;
+  box-shadow: 0 14px 28px rgba(37, 99, 235, 0.2);
 }
 
 .secondaryButton {
-  background: #efe7dc;
-  color: #241c18;
+  background: #e2e8f0;
+  color: #0f172a;
+  font-weight: 700;
 }
 
 .optionSection,
@@ -260,17 +291,19 @@
 }
 
 .optionChip {
-  background: #f3ece2;
+  background: #eef4ff;
+  color: #1e3a8a;
 }
 
 .statusPill {
-  background: #f7d292;
-  color: #5b3d0d;
+  background: #dbeafe;
+  color: #1d4ed8;
+  font-weight: 700;
 }
 
 .statusPillMuted {
-  background: #efe7dc;
-  color: #5f524a;
+  background: #f1f5f9;
+  color: #475569;
 }
 
 .reviewNote {

@@ -1,4 +1,5 @@
 const db = require("../config/db");
+const { ensureCurrencyDecimalPlacesSchema } = require("./currencyUtils");
 
 let poolCreationSchemaReady = false;
 
@@ -89,6 +90,7 @@ async function ensurePoolCreationSchema() {
      WHERE settings.id IS NULL`
   );
 
+  await ensureCurrencyDecimalPlacesSchema();
   poolCreationSchemaReady = true;
 }
 
@@ -103,6 +105,7 @@ async function fetchCreationFeeSettings(connection = db) {
         settings.is_active,
         c.code AS currency_code,
         c.name AS currency_name,
+        c.decimal_places,
         c.status AS currency_status,
         settings.created_at,
         settings.updated_at
@@ -125,6 +128,7 @@ async function fetchCreationFeeSettingByCurrency(connection, currencyId) {
         settings.is_active,
         c.code AS currency_code,
         c.name AS currency_name,
+        c.decimal_places,
         c.status AS currency_status
       FROM pool_creation_fee_settings settings
       INNER JOIN currencies c ON c.id = settings.currency_id

@@ -9,6 +9,7 @@ import {
   updateAdminPool,
 } from '../../../api/adminPoolApi'
 import { fetchAdminCategories } from '../../../api/categoryApi'
+import { formatCurrencyAmount } from '../../../utils/currency'
 import styles from './AdminPools.module.css'
 
 const MONTH_NAMES = [
@@ -716,7 +717,14 @@ export default function AdminPools({ view = 'create' }) {
                   </p>
 
                   <div className={styles.metaGrid}>
-                    <span>Min stake: {pool.min_stake}</span>
+                    <span>
+                      Min stake:{' '}
+                      {formatCurrencyAmount(
+                        pool.min_stake,
+                        pool.currency_code,
+                        pool.currency_decimal_places,
+                      )}
+                    </span>
                     <span>Fee: {pool.platform_fee_percent}%</span>
                     <span>
                       Start: {pool.start_time ? new Date(pool.start_time).toLocaleString() : 'Not set'}

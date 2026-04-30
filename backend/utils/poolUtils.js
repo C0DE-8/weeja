@@ -1,4 +1,5 @@
 const db = require("../config/db");
+const { ensureCurrencyDecimalPlacesSchema } = require("./currencyUtils");
 const { ensurePoolCreationSchema } = require("./poolCreationUtils");
 
 const POOL_STATUSES = new Set([
@@ -119,6 +120,7 @@ async function fetchPoolOptions(connection, poolId) {
 async function fetchPoolWithOptions(connection, poolId) {
   await ensurePoolScheduleSchema();
   await ensurePoolCreationSchema();
+  await ensureCurrencyDecimalPlacesSchema();
 
   const [pools] = await connection.execute(
     `SELECT
@@ -132,6 +134,7 @@ async function fetchPoolWithOptions(connection, poolId) {
         p.currency_id,
         COALESCE(c.code, 'N/A') AS currency_code,
         COALESCE(c.name, 'Unknown currency') AS currency_name,
+        COALESCE(c.decimal_places, 2) AS currency_decimal_places,
         p.min_stake,
         p.platform_fee_percent,
         p.start_time,
@@ -364,6 +367,7 @@ function buildPoolUpdateFields(payload, existingPool) {
 async function fetchPoolsWithOptions(filters = {}) {
   await ensurePoolScheduleSchema();
   await ensurePoolCreationSchema();
+  await ensureCurrencyDecimalPlacesSchema();
 
   const { status, categoryId, type, currencyId, reviewStatus, createdByRole, createdByUserId } = filters;
   const where = [];
@@ -444,6 +448,7 @@ async function fetchPoolsWithOptions(filters = {}) {
       p.currency_id,
       COALESCE(c.code, 'N/A') AS currency_code,
       COALESCE(c.name, 'Unknown currency') AS currency_name,
+      COALESCE(c.decimal_places, 2) AS currency_decimal_places,
       p.min_stake,
       p.platform_fee_percent,
       p.start_time,

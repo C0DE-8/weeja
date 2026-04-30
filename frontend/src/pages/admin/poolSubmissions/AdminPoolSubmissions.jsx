@@ -6,6 +6,7 @@ import {
   rejectPoolSubmission,
   updateCreationFee,
 } from '../../../api/adminPoolReviewApi'
+import { formatCurrencyAmount } from '../../../utils/currency'
 import styles from './AdminPoolSubmissions.module.css'
 
 function splitDateTime(value) {
@@ -26,10 +27,6 @@ function formatStatus(value) {
     .filter(Boolean)
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(' ')
-}
-
-function formatMoney(value, code) {
-  return `${Number(value || 0).toFixed(2)} ${code || ''}`.trim()
 }
 
 export default function AdminPoolSubmissions() {
@@ -231,7 +228,14 @@ export default function AdminPoolSubmissions() {
                 <div className={styles.metaRow}>
                   <span>{pool.created_by_name}</span>
                   <span>{pool.category_name}</span>
-                  <span>{formatMoney(pool.creation_fee_amount, pool.currency_code)} held</span>
+                  <span>
+                    {formatCurrencyAmount(
+                      pool.creation_fee_amount,
+                      pool.currency_code,
+                      pool.currency_decimal_places,
+                    )}{' '}
+                    held
+                  </span>
                   <span>{pool.min_stake} min stake</span>
                 </div>
 

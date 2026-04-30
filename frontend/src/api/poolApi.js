@@ -9,3 +9,12 @@ export async function fetchPublicPools(params = {}) {
     throw new Error(getErrorMessage(error))
   }
 }
+
+export async function joinPool(poolId, payload) {
+  try {
+    const { data } = await api.post(`/pools/${poolId}/join`, payload)
+    return data
+  } catch (error) {
+    throw new Error(getErrorMessage(error))
+  }
+}

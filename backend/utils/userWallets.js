@@ -17,4 +17,18 @@ async function ensureWalletsForUser(userId) {
   }
 }
 
-module.exports = { ensureWalletsForUser };
+async function backfillWalletsForExistingUsers() {
+  const [users] = await db.execute(
+    `SELECT id
+     FROM users
+     WHERE email_verified = 1`
+  );
+
+  for (const user of users) {
+    await ensureWalletsForUser(user.id);
+  }
+
+  return users.length;
+}
+
+module.exports = { ensureWalletsForUser, backfillWalletsForExistingUsers };

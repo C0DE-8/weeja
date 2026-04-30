@@ -1,6 +1,7 @@
 const crypto = require("crypto");
 const express = require("express");
 const db = require("../config/db");
+const { ensureCurrencyDecimalPlacesSchema } = require("../utils/currencyUtils");
 const {
   createWalletTransaction,
   ensurePoolScheduleSchema,
@@ -22,9 +23,10 @@ const router = express.Router();
 router.get("/meta", async (req, res) => {
   try {
     await ensurePoolCreationSchema();
+    await ensureCurrencyDecimalPlacesSchema();
 
     const [currencies] = await db.execute(
-      `SELECT id, code, name, status
+      `SELECT id, code, name, decimal_places, status
        FROM currencies
        WHERE status = 'active'
        ORDER BY code ASC`

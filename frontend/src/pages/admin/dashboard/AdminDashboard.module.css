@@ -1,13 +1,13 @@
 .section {
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 24px;
 }
 
 .hero {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 320px;
-  gap: 18px;
+  gap: 20px;
   align-items: stretch;
 }
 
@@ -22,12 +22,12 @@
 .title {
   margin: 0;
   color: #0f172a;
-  font-size: 2.3rem;
+  font-size: clamp(2rem, 3vw, 2.8rem);
 }
 
 .subtitle {
-  margin-top: 10px;
-  max-width: 50ch;
+  margin-top: 12px;
+  max-width: 54ch;
   color: #475569;
 }
 
@@ -36,15 +36,18 @@
 .statCard {
   background: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(148, 163, 184, 0.2);
-  border-radius: 24px;
-  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.06);
+  border-radius: 28px;
+  box-shadow: 0 22px 44px rgba(15, 23, 42, 0.06);
 }
 
 .userCard {
-  padding: 24px;
+  padding: 26px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
+  background:
+    radial-gradient(circle at top right, rgba(59, 130, 246, 0.12), transparent 34%),
+    rgba(255, 255, 255, 0.96);
 }
 
 .userLabel {
@@ -64,11 +67,11 @@
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
+  gap: 18px;
 }
 
 .statCard {
-  padding: 22px;
+  padding: 24px;
 }
 
 .statCard span {
@@ -80,11 +83,11 @@
   display: block;
   margin-top: 10px;
   color: #0f172a;
-  font-size: 2rem;
+  font-size: 2.15rem;
 }
 
 .panel {
-  padding: 22px;
+  padding: 24px;
 }
 
 .panelHeader {
@@ -107,7 +110,7 @@
 
 .table th,
 .table td {
-  padding: 14px 12px;
+  padding: 16px 12px;
   text-align: left;
   border-bottom: 1px solid #e2e8f0;
 }
@@ -115,6 +118,9 @@
 .table th {
   color: #64748b;
   font-size: 0.88rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 .error {

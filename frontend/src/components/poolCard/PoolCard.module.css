@@ -109,6 +109,104 @@
   margin-top: 18px;
 }
 
+.entryPanel {
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 18px;
+  background: #f8fbff;
+  border: 1px solid #d9e6fb;
+}
+
+.entryHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.entryHeader strong {
+  color: #172554;
+  font-size: 0.95rem;
+}
+
+.entryHeader span {
+  color: #64748b;
+  font-size: 0.82rem;
+}
+
+.entryRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.stakeField {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stakeField span {
+  color: #475569;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.stakeField input {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 44px;
+  border-radius: 14px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
+  padding: 0 14px;
+}
+
+.stakeField input:focus {
+  outline: none;
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.14);
+}
+
+.joinButton {
+  min-height: 44px;
+  border: none;
+  border-radius: 999px;
+  padding: 0 16px;
+  background: linear-gradient(135deg, #1d4dd5, #2563eb);
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.joinButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.helperText,
+.successText,
+.errorText {
+  margin: 10px 0 0;
+  font-size: 0.82rem;
+}
+
+.helperText {
+  color: #64748b;
+}
+
+.successText {
+  color: #15803d;
+}
+
+.errorText {
+  color: #b91c1c;
+}
+
 .desktopInfoRow {
   display: none;
 }
@@ -226,6 +324,12 @@
     gap: 10px;
   }
 
+  .entryPanel {
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 16px;
+  }
+
   .optionButton,
   .optionButtonActive {
     min-width: 0;
@@ -324,6 +428,10 @@
     font-size: 1.2rem;
   }
 
+  .entryRow {
+    grid-template-columns: 1fr;
+  }
+  
   .optionsRow {
     grid-template-columns: repeat(
       auto-fit,

@@ -7,17 +7,20 @@
 .header,
 .queueCard,
 .feeCard {
-  border-radius: 24px;
-  border: 1px solid rgba(22, 22, 22, 0.08);
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 18px 40px rgba(22, 22, 22, 0.06);
+  border-radius: 28px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 20px 42px rgba(15, 23, 42, 0.06);
 }
 
 .header {
-  padding: 26px;
+  padding: 30px;
   display: flex;
   justify-content: space-between;
   gap: 18px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 139, 43, 0.14), transparent 34%),
+    rgba(255, 255, 255, 0.95);
 }
 
 .eyebrow {
@@ -38,7 +41,7 @@
 .sectionHeader span,
 .metaRow span,
 .reviewStamp {
-  color: #62584f;
+  color: #64748b;
 }
 
 .headerStat {
@@ -50,7 +53,7 @@
 }
 
 .headerStat strong {
-  font-size: 2rem;
+  font-size: 2.2rem;
 }
 
 .errorBanner,
@@ -58,7 +61,8 @@
 .loadingCard {
   padding: 14px 16px;
   border-radius: 18px;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(148, 163, 184, 0.16);
 }
 
 .errorBanner {
@@ -94,7 +98,7 @@
 
 .feeCard,
 .queueCard {
-  padding: 20px;
+  padding: 22px;
 }
 
 .feeCard {
@@ -107,11 +111,21 @@
 .field input,
 .field textarea {
   width: 100%;
-  border-radius: 14px;
-  border: 1px solid rgba(22, 22, 22, 0.12);
+  box-sizing: border-box;
+  border-radius: 16px;
+  border: 1px solid #cbd5e1;
   padding: 12px 14px;
   font: inherit;
-  background: #fffcf7;
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.feeCard input:focus,
+.field input:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.16);
 }
 
 .queueCard {
@@ -146,17 +160,19 @@
 }
 
 .statusPill {
-  background: #f8d48e;
-  color: #6f4b0f;
+  background: #dbeafe;
+  color: #1d4ed8;
+  font-weight: 700;
 }
 
 .statusMuted {
-  background: #eee4d7;
-  color: #62584f;
+  background: #f1f5f9;
+  color: #475569;
 }
 
 .optionChip {
-  background: #f7efe4;
+  background: #eff6ff;
+  color: #1e3a8a;
 }
 
 .reviewGrid {
@@ -172,7 +188,8 @@
 }
 
 .field span {
-  font-weight: 600;
+  font-weight: 700;
+  color: #334155;
 }
 
 .primaryButton,
@@ -185,13 +202,16 @@
 }
 
 .primaryButton {
-  background: #1d1a17;
+  background: linear-gradient(135deg, #1d4dd5, #2563eb);
   color: #fff;
+  font-weight: 700;
+  box-shadow: 0 14px 28px rgba(37, 99, 235, 0.18);
 }
 
 .dangerButton {
-  background: #fde7e3;
-  color: #b03a2e;
+  background: #fee2e2;
+  color: #b91c1c;
+  font-weight: 700;
 }
 
 @media (max-width: 1024px) {

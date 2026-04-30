@@ -6,6 +6,7 @@ import { fetchUserProfile, updateUserProfile } from '../../api/userApi'
 import { fetchWallets, fetchWalletTransactions } from '../../api/walletApi'
 import { createUserPool, fetchUserPoolMeta, fetchUserPools } from '../../api/userPoolApi'
 import { getStoredToken, setSession } from '../../api/session'
+import { formatCurrencyAmount } from '../../utils/currency'
 import styles from './AccountDashboard.module.css'
 
 const INITIAL_FORM = {
@@ -31,10 +32,6 @@ function joinDateTime(date, time) {
 function formatDateTime(value) {
   if (!value) return 'Not set'
   return new Date(value).toLocaleString()
-}
-
-function formatMoney(value, currencyCode) {
-  return `${Number(value || 0).toFixed(2)} ${currencyCode || ''}`.trim()
 }
 
 function formatStatus(value) {
@@ -253,7 +250,7 @@ export default function AccountDashboard() {
                 <article className={styles.walletCard} key={wallet.id}>
                   <strong>{wallet.currency_code}</strong>
                   <span>{wallet.currency_name}</span>
-                  <h3>{formatMoney(wallet.balance, wallet.currency_code)}</h3>
+                  <h3>{formatCurrencyAmount(wallet.balance, wallet.currency_code, wallet.decimal_places)}</h3>
                   <small>{formatStatus(wallet.status)}</small>
                 </article>
               ))}
@@ -267,7 +264,13 @@ export default function AccountDashboard() {
                     <span>{formatDateTime(transaction.created_at)}</span>
                   </div>
                   <div className={styles.transactionMeta}>
-                    <strong>{formatMoney(transaction.amount, transaction.currency_code)}</strong>
+                    <strong>
+                      {formatCurrencyAmount(
+                        transaction.amount,
+                        transaction.currency_code,
+                        transaction.decimal_places,
+                      )}
+                    </strong>
                     <span>{formatStatus(transaction.type)}</span>
                   </div>
                 </div>
@@ -283,7 +286,11 @@ export default function AccountDashboard() {
               <span>
                 Current creation fee:{' '}
                 {selectedFee
-                  ? formatMoney(selectedFee.amount, selectedFee.currency_code)
+                  ? formatCurrencyAmount(
+                      selectedFee.amount,
+                      selectedFee.currency_code,
+                      selectedFee.decimal_places,
+                    )
                   : 'Not configured'}
               </span>
             </div>
@@ -365,7 +372,11 @@ export default function AccountDashboard() {
                   <span>Creation fee</span>
                   <strong>
                     {selectedFee
-                      ? formatMoney(selectedFee.amount, selectedFee.currency_code)
+                      ? formatCurrencyAmount(
+                          selectedFee.amount,
+                          selectedFee.currency_code,
+                          selectedFee.decimal_places,
+                        )
                       : 'Unavailable'}
                   </strong>
                 </div>
@@ -514,7 +525,14 @@ export default function AccountDashboard() {
 
                   <div className={styles.submissionMeta}>
                     <span>{pool.category_name}</span>
-                    <span>{formatMoney(pool.creation_fee_amount, pool.currency_code)} fee</span>
+                    <span>
+                      {formatCurrencyAmount(
+                        pool.creation_fee_amount,
+                        pool.currency_code,
+                        pool.currency_decimal_places,
+                      )}{' '}
+                      fee
+                    </span>
                     <span>{pool.platform_fee_percent}% platform fee</span>
                     <span>Submitted {formatDateTime(pool.created_at)}</span>
                   </div>

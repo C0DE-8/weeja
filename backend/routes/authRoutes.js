@@ -377,6 +377,12 @@ router.post("/login", async (req, res) => {
       });
     }
 
+    try {
+      await ensureWalletsForUser(user.id);
+    } catch (walletErr) {
+      console.error(walletErr);
+    }
+
     const token = jwt.sign(
       { id: user.id, role: user.role },
       process.env.JWT_SECRET,
