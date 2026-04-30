@@ -20,7 +20,8 @@ router.get("/", async (req, res) => {
   try {
     const pools = await fetchPoolsWithOptions({
       status: req.query.status,
-      category: req.query.category,
+      categoryId: req.query.category_id,
+      type: req.query.type,
       currencyId: req.query.currency_id,
     });
 
@@ -38,7 +39,7 @@ router.post("/", async (req, res) => {
   try {
     const title = normalizeRequiredText(req.body.title, "title");
     const description = normalizeOptionalText(req.body.description);
-    const category = normalizeRequiredText(req.body.category, "category");
+    const categoryId = Number(req.body.category_id);
     const currencyId = Number(req.body.currency_id);
     const minStake = toDecimal(req.body.min_stake ?? 0, "min_stake");
     const feePercent = toDecimal(
@@ -49,6 +50,10 @@ router.post("/", async (req, res) => {
     const lockTime = normalizeDateTime(req.body.lock_time, "lock_time");
     const status = requireStatus(req.body.status ?? "pending", POOL_STATUSES);
     const optionsPayload = Array.isArray(req.body.options) ? req.body.options : [];
+
+    if (!Number.isInteger(categoryId) || categoryId <= 0) {
+      return res.status(400).json({ message: "category_id must be a positive integer" });
+    }
 
     if (!Number.isInteger(currencyId) || currencyId <= 0) {
       return res.status(400).json({ message: "currency_id must be a positive integer" });
@@ -75,6 +80,21 @@ router.post("/", async (req, res) => {
     await connection.beginTransaction();
     inTransaction = true;
 
+    const [categoryRows] = await connection.execute(
+      "SELECT id, is_active FROM categories WHERE id = ?",
+      [categoryId]
+    );
+
+    if (categoryRows.length === 0) {
+      await connection.rollback();
+      return res.status(400).json({ message: "category_id does not exist" });
+    }
+
+    if (Number(categoryRows[0].is_active) !== 1) {
+      await connection.rollback();
+      return res.status(400).json({ message: "category_id is not active" });
+    }
+
     const [currencyRows] = await connection.execute(
       "SELECT id FROM currencies WHERE id = ?",
       [currencyId]
@@ -87,12 +107,12 @@ router.post("/", async (req, res) => {
 
     const [result] = await connection.execute(
       `INSERT INTO pools
-        (title, description, category, currency_id, min_stake, platform_fee_percent, start_time, lock_time, status, winning_option_id, created_by)
+        (title, description, category_id, currency_id, min_stake, platform_fee_percent, start_time, lock_time, status, winning_option_id, created_by)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?)`,
       [
         title,
         description,
-        category,
+        categoryId,
         currencyId,
         minStake,
         feePercent,
@@ -161,6 +181,27 @@ router.patch("/:id", async (req, res) => {
 
     if (!existing) {
       return res.status(404).json({ message: "Pool not found" });
+    }
+
+    if (req.body.category_id !== undefined) {
+      const categoryId = Number(req.body.category_id);
+
+      if (!Number.isInteger(categoryId) || categoryId <= 0) {
+        return res.status(400).json({ message: "category_id must be a positive integer" });
+      }
+
+      const [categoryRows] = await connection.execute(
+        "SELECT id, is_active FROM categories WHERE id = ?",
+        [categoryId]
+      );
+
+      if (categoryRows.length === 0) {
+        return res.status(400).json({ message: "category_id does not exist" });
+      }
+
+      if (Number(categoryRows[0].is_active) !== 1) {
+        return res.status(400).json({ message: "category_id is not active" });
+      }
     }
 
     const { fields, values } = buildPoolUpdateFields(req.body, existing);

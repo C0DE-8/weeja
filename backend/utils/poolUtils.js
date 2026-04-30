@@ -78,7 +78,10 @@ async function fetchPoolWithOptions(connection, poolId) {
         p.id,
         p.title,
         p.description,
-        p.category,
+        p.category_id,
+        cat.name AS category_name,
+        cat.type AS category_type,
+        cat.is_active AS category_is_active,
         p.currency_id,
         c.code AS currency_code,
         c.name AS currency_name,
@@ -93,6 +96,7 @@ async function fetchPoolWithOptions(connection, poolId) {
         p.created_at,
         p.updated_at
       FROM pools p
+      INNER JOIN categories cat ON cat.id = p.category_id
       INNER JOIN currencies c ON c.id = p.currency_id
       INNER JOIN users creator ON creator.id = p.created_by
       WHERE p.id = ?`,
@@ -189,9 +193,15 @@ function buildPoolUpdateFields(payload, existingPool) {
     values.push(normalizeOptionalText(payload.description));
   }
 
-  if (payload.category !== undefined) {
-    fields.push("category = ?");
-    values.push(normalizeRequiredText(payload.category, "category"));
+  if (payload.category_id !== undefined) {
+    const categoryId = Number(payload.category_id);
+
+    if (!Number.isInteger(categoryId) || categoryId <= 0) {
+      throw new Error("category_id must be a positive integer");
+    }
+
+    fields.push("category_id = ?");
+    values.push(categoryId);
   }
 
   if (payload.currency_id !== undefined) {
@@ -258,7 +268,7 @@ function buildPoolUpdateFields(payload, existingPool) {
 }
 
 async function fetchPoolsWithOptions(filters = {}) {
-  const { status, category, currencyId } = filters;
+  const { status, categoryId, type, currencyId } = filters;
   const where = [];
   const params = [];
 
@@ -271,9 +281,22 @@ async function fetchPoolsWithOptions(filters = {}) {
     params.push(status);
   }
 
-  if (category) {
-    where.push("p.category = ?");
-    params.push(category);
+  if (categoryId !== undefined) {
+    if (!Number.isInteger(Number(categoryId)) || Number(categoryId) <= 0) {
+      throw new Error("Invalid category_id filter");
+    }
+
+    where.push("p.category_id = ?");
+    params.push(Number(categoryId));
+  }
+
+  if (type) {
+    if (!["sport", "event"].includes(type)) {
+      throw new Error("Invalid category type filter");
+    }
+
+    where.push("cat.type = ?");
+    params.push(type);
   }
 
   if (currencyId !== undefined) {
@@ -290,7 +313,10 @@ async function fetchPoolsWithOptions(filters = {}) {
       p.id,
       p.title,
       p.description,
-      p.category,
+      p.category_id,
+      cat.name AS category_name,
+      cat.type AS category_type,
+      cat.is_active AS category_is_active,
       p.currency_id,
       c.code AS currency_code,
       c.name AS currency_name,
@@ -305,6 +331,7 @@ async function fetchPoolsWithOptions(filters = {}) {
       p.created_at,
       p.updated_at
     FROM pools p
+    INNER JOIN categories cat ON cat.id = p.category_id
     INNER JOIN currencies c ON c.id = p.currency_id
     INNER JOIN users creator ON creator.id = p.created_by
     ${where.length ? `WHERE ${where.join(" AND ")}` : ""}

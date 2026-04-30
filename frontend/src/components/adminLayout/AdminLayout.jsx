@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { clearSession, getStoredUser } from '../../api/session'
+import { clearSession, getStoredUser, isSuperAdminUser } from '../../api/session'
 import styles from './AdminLayout.module.css'
 
 function navClassName({ isActive }) {
@@ -9,6 +9,7 @@ function navClassName({ isActive }) {
 export default function AdminLayout() {
   const navigate = useNavigate()
   const user = getStoredUser()
+  const isSuperAdmin = isSuperAdminUser(user)
 
   return (
     <div className={styles.page}>
@@ -30,6 +31,11 @@ export default function AdminLayout() {
           <NavLink className={navClassName} to="/admin/pools">
             Pool Management
           </NavLink>
+          {isSuperAdmin && (
+            <NavLink className={navClassName} to="/admin/passkeys">
+              Passkeys
+            </NavLink>
+          )}
           <NavLink className={navClassName} to="/">
             Public Site
           </NavLink>

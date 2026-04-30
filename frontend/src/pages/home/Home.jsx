@@ -8,26 +8,87 @@ import Footer from '../../components/footer/Footer'
 import DesktopSidebar from '../../components/desktopSidebar/DesktopSidebar'
 import CreatePoolPanel from '../../components/createPoolPanel/CreatePoolPanel'
 import PoolResultsPanel from '../../components/poolResultsPanel/PoolResultsPanel'
-import { homePools } from '../../data/homePools'
-import { useMemo, useRef, useState } from 'react'
+import { fetchActiveCategories } from '../../api/categoryApi'
+import { fetchPublicPools } from '../../api/poolApi'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import styles from './Home.module.css'
 
 const TABS = ['OPEN', 'ALL', 'NEWEST', 'SPORT', 'EVENTS', 'LOCATION']
 
+function formatPoolCard(pool) {
+  const lockDate = pool.lock_time ? new Date(pool.lock_time) : null
+  const createdDate = pool.created_at ? new Date(pool.created_at) : null
+
+  return {
+    id: pool.id,
+    question: pool.title,
+    categoryId: pool.category_id,
+    category: pool.category_name,
+    type: pool.category_type === 'sport' ? 'SPORT' : 'EVENTS',
+    location: pool.category_type === 'sport' ? 'Sports' : 'Events',
+    status: pool.status?.charAt(0).toUpperCase() + pool.status?.slice(1),
+    currency: pool.currency_code,
+    amount: String(pool.min_stake),
+    poolSize: `${pool.min_stake} ${pool.currency_code}`,
+    weejians: String(pool.options?.length || 0),
+    createdAt: createdDate?.toISOString() || new Date().toISOString(),
+    poolEndTime: lockDate
+      ? lockDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      : 'N/A',
+    poolEndDate: lockDate ? lockDate.toLocaleDateString() : 'N/A',
+    options: (pool.options || []).map((option) => option.option_label),
+    activeOption: pool.options?.[0]?.option_label || null,
+    featured: pool.status === 'open',
+  }
+}
+
 export default function Home() {
   const [activeTab, setActiveTab] = useState('OPEN')
-  const [selectedCategory, setSelectedCategory] = useState('Soccer')
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null)
+  const [pools, setPools] = useState([])
+  const [categoriesByType, setCategoriesByType] = useState({ sport: [], event: [] })
   const listTopRef = useRef(null)
 
+  useEffect(() => {
+    let active = true
+
+    async function load() {
+      try {
+        const [categoriesRes, nextPools] = await Promise.all([
+          fetchActiveCategories(),
+          fetchPublicPools(),
+        ])
+
+        if (!active) return
+
+        setCategoriesByType(categoriesRes.grouped || { sport: [], event: [] })
+        setPools(nextPools.map(formatPoolCard))
+
+        const firstCategory =
+          categoriesRes.grouped?.sport?.[0]?.id ||
+          categoriesRes.grouped?.event?.[0]?.id ||
+          null
+        setSelectedCategoryId(firstCategory)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    load()
+    return () => {
+      active = false
+    }
+  }, [])
+
   const featuredPools = useMemo(
-    () => homePools.filter((pool) => pool.featured).slice(0, 2),
-    [],
+    () => pools.filter((pool) => pool.featured).slice(0, 2),
+    [pools],
   )
 
   const filteredPools = useMemo(() => {
-    const byCategory = selectedCategory
-      ? homePools.filter((pool) => pool.category === selectedCategory)
-      : homePools
+    const byCategory = selectedCategoryId
+      ? pools.filter((pool) => pool.categoryId === selectedCategoryId)
+      : pools
 
     const byTab = (() => {
       if (activeTab === 'ALL') return byCategory
@@ -49,7 +110,7 @@ export default function Home() {
     })()
 
     return byTab
-  }, [activeTab, selectedCategory])
+  }, [activeTab, pools, selectedCategoryId])
 
   return (
     <div className={styles.page}>
@@ -58,9 +119,10 @@ export default function Home() {
         <div className={styles.desktopLayout}>
           <aside className={styles.sidebarColumn}>
             <DesktopSidebar
-              selectedCategory={selectedCategory}
+              categoriesByType={categoriesByType}
+              selectedCategoryId={selectedCategoryId}
               onCategoryChange={(next) => {
-                setSelectedCategory(next)
+                setSelectedCategoryId(next)
                 setActiveTab('OPEN')
               }}
             />
@@ -72,7 +134,7 @@ export default function Home() {
                 <SectionHeader />
                 <div className={styles.main}>
                   <div className={styles.cardGrid}>
-                    {homePools.map((pool) => (
+                    {filteredPools.map((pool) => (
                       <PoolCard key={pool.id} {...pool} />
                     ))}
                   </div>

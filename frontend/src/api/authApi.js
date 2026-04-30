@@ -18,6 +18,23 @@ export async function registerUser(data) {
 }
 
 /**
+ * @param {{ username: string; email: string; password: string; passkey: string }} data
+ */
+export async function registerAdmin(data) {
+  try {
+    const { data: res } = await api.post('/auth/register-admin', {
+      username: data.username,
+      email: data.email,
+      password: data.password,
+      passkey: data.passkey,
+    })
+    return res
+  } catch (error) {
+    throw new Error(getErrorMessage(error))
+  }
+}
+
+/**
  * @param {{ email: string; otp: string }} data
  */
 export async function verifyOtp(data) {

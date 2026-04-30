@@ -16,7 +16,8 @@ router.get("/", async (req, res) => {
   try {
     const pools = await fetchPoolsWithOptions({
       status: req.query.status,
-      category: req.query.category,
+      categoryId: req.query.category_id,
+      type: req.query.type,
       currencyId: req.query.currency_id,
     });
 

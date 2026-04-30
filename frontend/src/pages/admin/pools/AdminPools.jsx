@@ -7,19 +7,23 @@ import {
   setAdminPoolResult,
   settleAdminPool,
 } from '../../../api/adminPoolApi'
+import { fetchAdminCategories } from '../../../api/categoryApi'
 import styles from './AdminPools.module.css'
 
 const INITIAL_FORM = {
   title: '',
   description: '',
-  category: '',
+  category_id: '',
   currency_id: '1',
   min_stake: '0',
   platform_fee_percent: '0',
   start_time: '',
   lock_time: '',
   status: 'pending',
-  options: ['Option 1', 'Option 2'],
+  options: [
+    { id: 'option-1', value: 'Option 1' },
+    { id: 'option-2', value: 'Option 2' },
+  ],
 }
 
 const CURRENCIES = [
@@ -32,7 +36,7 @@ function toPayload(form) {
   return {
     title: form.title.trim(),
     description: form.description.trim(),
-    category: form.category.trim(),
+    category_id: Number(form.category_id),
     currency_id: Number(form.currency_id),
     min_stake: Number(form.min_stake),
     platform_fee_percent: Number(form.platform_fee_percent),
@@ -40,7 +44,7 @@ function toPayload(form) {
     lock_time: form.lock_time,
     status: form.status,
     options: form.options
-      .map((label) => label.trim())
+      .map((option) => option.value.trim())
       .filter(Boolean)
       .map((optionLabel, index) => ({
         option_label: optionLabel,
@@ -52,6 +56,7 @@ function toPayload(form) {
 
 export default function AdminPools() {
   const [pools, setPools] = useState([])
+  const [categories, setCategories] = useState([])
   const [form, setForm] = useState(INITIAL_FORM)
   const [winningOptionIds, setWinningOptionIds] = useState({})
   const [error, setError] = useState('')
@@ -71,8 +76,23 @@ export default function AdminPools() {
     }
   }
 
+  async function loadCategories() {
+    try {
+      const nextCategories = await fetchAdminCategories()
+      setCategories(nextCategories)
+      setForm((current) => ({
+        ...current,
+        category_id:
+          current.category_id || String(nextCategories.find((item) => item.is_active)?.id || ''),
+      }))
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not load categories.')
+    }
+  }
+
   useEffect(() => {
     loadPools()
+    loadCategories()
   }, [])
 
   const handleCreatePool = async (event) => {
@@ -147,11 +167,21 @@ export default function AdminPools() {
 
             <label className={styles.field}>
               <span>Category</span>
-              <input
-                value={form.category}
-                onChange={(event) => setForm({ ...form, category: event.target.value })}
-                placeholder="Football"
-              />
+              <select
+                value={form.category_id}
+                onChange={(event) => setForm({ ...form, category_id: event.target.value })}
+              >
+                <option value="" disabled>
+                  Select category
+                </option>
+                {categories
+                  .filter((category) => category.is_active)
+                  .map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name} ({category.type})
+                    </option>
+                  ))}
+              </select>
             </label>
 
             <label className={styles.field}>
@@ -242,7 +272,13 @@ export default function AdminPools() {
                 onClick={() =>
                   setForm((current) => ({
                     ...current,
-                    options: [...current.options, `Option ${current.options.length + 1}`],
+                    options: [
+                      ...current.options,
+                      {
+                        id: `option-${Date.now()}-${current.options.length + 1}`,
+                        value: `Option ${current.options.length + 1}`,
+                      },
+                    ],
                   }))
                 }
               >
@@ -252,12 +288,16 @@ export default function AdminPools() {
 
             <div className={styles.optionList}>
               {form.options.map((option, index) => (
-                <div className={styles.optionRow} key={`${option}-${index}`}>
+                <div className={styles.optionRow} key={option.id}>
+                  <span className={styles.optionIndex}>#{index + 1}</span>
                   <input
-                    value={option}
+                    value={option.value}
                     onChange={(event) => {
                       const nextOptions = [...form.options]
-                      nextOptions[index] = event.target.value
+                      nextOptions[index] = {
+                        ...nextOptions[index],
+                        value: event.target.value,
+                      }
                       setForm({ ...form, options: nextOptions })
                     }}
                     placeholder={`Option ${index + 1}`}
@@ -301,7 +341,7 @@ export default function AdminPools() {
                     <div>
                       <h4>{pool.title}</h4>
                       <p>
-                        {pool.category} · {pool.currency_code} · {pool.status}
+                        {pool.category_name} · {pool.category_type} · {pool.currency_code} · {pool.status}
                       </p>
                     </div>
                     <span className={styles.pill}>#{pool.id}</span>

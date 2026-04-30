@@ -7,6 +7,43 @@ const { authorizeRoles } = require("../middleware/roleMiddleware");
 
 const router = express.Router();
 
+let passkeyTableReady = false;
+
+async function ensureAdminPasskeysTable() {
+  if (passkeyTableReady) {
+    return;
+  }
+
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS admin_registration_passkeys (
+      id int(11) NOT NULL AUTO_INCREMENT,
+      passkey_hash varchar(255) NOT NULL,
+      passkey_value varchar(255) DEFAULT NULL,
+      label varchar(120) DEFAULT NULL,
+      created_by int(11) NOT NULL,
+      used_by int(11) DEFAULT NULL,
+      is_active tinyint(1) NOT NULL DEFAULT 1,
+      expires_at datetime DEFAULT NULL,
+      used_at datetime DEFAULT NULL,
+      created_at timestamp NOT NULL DEFAULT current_timestamp(),
+      updated_at timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+      PRIMARY KEY (id),
+      KEY idx_admin_passkeys_created_by (created_by),
+      KEY idx_admin_passkeys_used_by (used_by),
+      KEY idx_admin_passkeys_active (is_active),
+      CONSTRAINT fk_admin_passkeys_created_by FOREIGN KEY (created_by) REFERENCES users (id),
+      CONSTRAINT fk_admin_passkeys_used_by FOREIGN KEY (used_by) REFERENCES users (id) ON DELETE SET NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+  `);
+
+  await db.execute(`
+    ALTER TABLE admin_registration_passkeys
+    ADD COLUMN IF NOT EXISTS passkey_value varchar(255) DEFAULT NULL AFTER passkey_hash
+  `);
+
+  passkeyTableReady = true;
+}
+
 router.get("/", (req, res) => {
   res.json({ message: "Super admin route working" });
 });
@@ -16,8 +53,10 @@ router.use(authorizeRoles("super_admin"));
 
 router.get("/passkeys", async (req, res) => {
   try {
+    await ensureAdminPasskeysTable();
+
     const [rows] = await db.execute(
-      `SELECT id, label, is_active, created_by, used_by, expires_at, used_at, created_at, updated_at
+      `SELECT id, label, passkey_value, is_active, created_by, used_by, expires_at, used_at, created_at, updated_at
        FROM admin_registration_passkeys
        ORDER BY created_at DESC, id DESC`
     );
@@ -29,8 +68,38 @@ router.get("/passkeys", async (req, res) => {
   }
 });
 
+router.get("/passkeys/:id", async (req, res) => {
+  try {
+    await ensureAdminPasskeysTable();
+
+    const passkeyId = Number(req.params.id);
+
+    if (!Number.isInteger(passkeyId) || passkeyId <= 0) {
+      return res.status(400).json({ message: "Invalid passkey id" });
+    }
+
+    const [rows] = await db.execute(
+      `SELECT id, label, passkey_value, is_active, created_by, used_by, expires_at, used_at, created_at, updated_at
+       FROM admin_registration_passkeys
+       WHERE id = ?`,
+      [passkeyId]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "Passkey not found" });
+    }
+
+    res.json({ passkey: rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Could not load admin passkey" });
+  }
+});
+
 router.post("/passkeys", async (req, res) => {
   try {
+    await ensureAdminPasskeysTable();
+
     const plainPasskey = typeof req.body.passkey === "string" && req.body.passkey.trim()
       ? req.body.passkey.trim()
       : crypto.randomBytes(8).toString("hex");
@@ -57,9 +126,9 @@ router.post("/passkeys", async (req, res) => {
 
     const [result] = await db.execute(
       `INSERT INTO admin_registration_passkeys
-        (passkey_hash, label, created_by, expires_at)
-       VALUES (?, ?, ?, ?)`,
-      [passkeyHash, label, req.user.id, expiresAt]
+        (passkey_hash, passkey_value, label, created_by, expires_at)
+       VALUES (?, ?, ?, ?, ?)`,
+      [passkeyHash, plainPasskey, label, req.user.id, expiresAt]
     );
 
     res.status(201).json({
@@ -79,6 +148,8 @@ router.post("/passkeys", async (req, res) => {
 
 router.post("/passkeys/:id/deactivate", async (req, res) => {
   try {
+    await ensureAdminPasskeysTable();
+
     const passkeyId = Number(req.params.id);
 
     if (!Number.isInteger(passkeyId) || passkeyId <= 0) {
@@ -100,6 +171,32 @@ router.post("/passkeys/:id/deactivate", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Could not deactivate admin passkey" });
+  }
+});
+
+router.delete("/passkeys/:id", async (req, res) => {
+  try {
+    await ensureAdminPasskeysTable();
+
+    const passkeyId = Number(req.params.id);
+
+    if (!Number.isInteger(passkeyId) || passkeyId <= 0) {
+      return res.status(400).json({ message: "Invalid passkey id" });
+    }
+
+    const [result] = await db.execute(
+      "DELETE FROM admin_registration_passkeys WHERE id = ?",
+      [passkeyId]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Passkey not found" });
+    }
+
+    res.json({ message: "Passkey deleted" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Could not delete admin passkey" });
   }
 });
 

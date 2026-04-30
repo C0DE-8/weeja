@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 30, 2026 at 11:30 AM
+-- Generation Time: Apr 30, 2026 at 01:03 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -20,6 +20,66 @@ SET time_zone = "+00:00";
 --
 -- Database: `pool_system`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `admin_registration_passkeys`
+--
+
+CREATE TABLE `admin_registration_passkeys` (
+  `id` int(11) NOT NULL,
+  `passkey_hash` varchar(255) NOT NULL,
+  `passkey_value` varchar(255) DEFAULT NULL,
+  `label` varchar(120) DEFAULT NULL,
+  `created_by` int(11) NOT NULL,
+  `used_by` int(11) DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `expires_at` datetime DEFAULT NULL,
+  `used_at` datetime DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `admin_registration_passkeys`
+--
+
+INSERT INTO `admin_registration_passkeys` (`id`, `passkey_hash`, `passkey_value`, `label`, `created_by`, `used_by`, `is_active`, `expires_at`, `used_at`, `created_at`, `updated_at`) VALUES
+(2, '$2b$10$U2D5adFbwEeZEDlC2OMTne/ED32V42PHFYI2O4QWbQWxkKuqI7l/y', '123456', 'admin upboarding', 1, NULL, 1, NULL, NULL, '2026-04-30 10:40:30', '2026-04-30 10:40:30');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `categories`
+--
+
+CREATE TABLE `categories` (
+  `id` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `type` enum('sport','event') NOT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `categories`
+--
+
+INSERT INTO `categories` (`id`, `name`, `type`, `is_active`, `created_at`, `updated_at`) VALUES
+(1, 'Soccer', 'sport', 1, '2026-04-30 11:02:25', '2026-04-30 11:02:25'),
+(2, 'Basketball', 'sport', 1, '2026-04-30 11:02:25', '2026-04-30 11:02:25'),
+(3, 'Volleyball', 'sport', 1, '2026-04-30 11:02:25', '2026-04-30 11:02:25'),
+(4, 'Baseball', 'sport', 1, '2026-04-30 11:02:25', '2026-04-30 11:02:25'),
+(5, 'Boxing', 'sport', 1, '2026-04-30 11:02:25', '2026-04-30 11:02:25'),
+(6, 'Hockey', 'sport', 1, '2026-04-30 11:02:25', '2026-04-30 11:02:25'),
+(7, 'Tennis', 'sport', 1, '2026-04-30 11:02:25', '2026-04-30 11:02:25'),
+(8, 'Competitions', 'event', 1, '2026-04-30 11:02:25', '2026-04-30 11:02:25'),
+(9, 'Politics', 'event', 1, '2026-04-30 11:02:25', '2026-04-30 11:02:25'),
+(10, 'Reality Show', 'event', 1, '2026-04-30 11:02:25', '2026-04-30 11:02:25'),
+(11, 'Cryptocurrency', 'event', 1, '2026-04-30 11:02:25', '2026-04-30 11:02:25'),
+(12, 'Sports', 'event', 1, '2026-04-30 11:02:25', '2026-04-30 11:02:25');
 
 -- --------------------------------------------------------
 
@@ -55,7 +115,7 @@ CREATE TABLE `pools` (
   `id` int(11) NOT NULL,
   `title` varchar(255) NOT NULL,
   `description` text DEFAULT NULL,
-  `category` varchar(100) NOT NULL,
+  `category_id` int(11) NOT NULL,
   `currency_id` int(11) NOT NULL,
   `min_stake` decimal(24,8) NOT NULL DEFAULT 0.00000000,
   `platform_fee_percent` decimal(5,2) NOT NULL DEFAULT 0.00,
@@ -106,25 +166,6 @@ CREATE TABLE `pool_options` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `admin_registration_passkeys`
---
-
-CREATE TABLE `admin_registration_passkeys` (
-  `id` int(11) NOT NULL,
-  `passkey_hash` varchar(255) NOT NULL,
-  `label` varchar(120) DEFAULT NULL,
-  `created_by` int(11) NOT NULL,
-  `used_by` int(11) DEFAULT NULL,
-  `is_active` tinyint(1) NOT NULL DEFAULT 1,
-  `expires_at` datetime DEFAULT NULL,
-  `used_at` datetime DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `users`
 --
 
@@ -139,6 +180,14 @@ CREATE TABLE `users` (
   `role` enum('user','admin','super_admin') DEFAULT 'user',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `name`, `email`, `password`, `email_verified`, `otp_hash`, `otp_expires_at`, `role`, `created_at`) VALUES
+(1, 'Super Admin', 'admin@weeja.com', '$2b$10$57OmnYGe3az9DfP5VECwqORuv0BtxpdUQq10FWE8ntOCj0xOg8.1S', 1, NULL, NULL, 'super_admin', '2026-04-30 10:04:09'),
+(2, 'Samuel Oghenchovwe', '8amlight@gmail.com', '$2b$10$57OmnYGe3az9DfP5VECwqORuv0BtxpdUQq10FWE8ntOCj0xOg8.1S', 1, NULL, NULL, 'user', '2026-04-30 10:10:19');
 
 -- --------------------------------------------------------
 
@@ -155,6 +204,15 @@ CREATE TABLE `user_wallets` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `user_wallets`
+--
+
+INSERT INTO `user_wallets` (`id`, `user_id`, `currency_id`, `balance`, `status`, `created_at`, `updated_at`) VALUES
+(1, 2, 1, 0.00000000, 'active', '2026-04-30 10:11:18', '2026-04-30 10:11:18'),
+(2, 2, 2, 0.00000000, 'active', '2026-04-30 10:11:18', '2026-04-30 10:11:18'),
+(3, 2, 3, 0.00000000, 'active', '2026-04-30 10:11:18', '2026-04-30 10:11:18');
 
 -- --------------------------------------------------------
 
@@ -179,6 +237,23 @@ CREATE TABLE `wallet_transactions` (
 --
 
 --
+-- Indexes for table `admin_registration_passkeys`
+--
+ALTER TABLE `admin_registration_passkeys`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_admin_passkeys_created_by` (`created_by`),
+  ADD KEY `idx_admin_passkeys_used_by` (`used_by`),
+  ADD KEY `idx_admin_passkeys_active` (`is_active`);
+
+--
+-- Indexes for table `categories`
+--
+ALTER TABLE `categories`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_categories_name` (`name`),
+  ADD KEY `idx_categories_type_active` (`type`,`is_active`);
+
+--
 -- Indexes for table `currencies`
 --
 ALTER TABLE `currencies`
@@ -194,7 +269,8 @@ ALTER TABLE `pools`
   ADD KEY `idx_pools_status` (`status`),
   ADD KEY `idx_pools_lock_time` (`lock_time`),
   ADD KEY `idx_pools_created_by` (`created_by`),
-  ADD KEY `idx_pools_winning_option` (`winning_option_id`);
+  ADD KEY `idx_pools_winning_option` (`winning_option_id`),
+  ADD KEY `idx_pools_category` (`category_id`);
 
 --
 -- Indexes for table `pool_entries`
@@ -215,15 +291,6 @@ ALTER TABLE `pool_options`
   ADD UNIQUE KEY `uniq_pool_option_key` (`pool_id`,`option_key`),
   ADD KEY `idx_pool_options_pool` (`pool_id`),
   ADD KEY `idx_pool_options_sort` (`pool_id`,`sort_order`);
-
---
--- Indexes for table `admin_registration_passkeys`
---
-ALTER TABLE `admin_registration_passkeys`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_admin_passkeys_created_by` (`created_by`),
-  ADD KEY `idx_admin_passkeys_used_by` (`used_by`),
-  ADD KEY `idx_admin_passkeys_active` (`is_active`);
 
 --
 -- Indexes for table `users`
@@ -255,6 +322,18 @@ ALTER TABLE `wallet_transactions`
 --
 
 --
+-- AUTO_INCREMENT for table `admin_registration_passkeys`
+--
+ALTER TABLE `admin_registration_passkeys`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `categories`
+--
+ALTER TABLE `categories`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
 -- AUTO_INCREMENT for table `currencies`
 --
 ALTER TABLE `currencies`
@@ -279,22 +358,16 @@ ALTER TABLE `pool_options`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `admin_registration_passkeys`
---
-ALTER TABLE `admin_registration_passkeys`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `user_wallets`
 --
 ALTER TABLE `user_wallets`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `wallet_transactions`
@@ -307,9 +380,17 @@ ALTER TABLE `wallet_transactions`
 --
 
 --
+-- Constraints for table `admin_registration_passkeys`
+--
+ALTER TABLE `admin_registration_passkeys`
+  ADD CONSTRAINT `fk_admin_passkeys_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `fk_admin_passkeys_used_by` FOREIGN KEY (`used_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
 -- Constraints for table `pools`
 --
 ALTER TABLE `pools`
+  ADD CONSTRAINT `fk_pools_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`),
   ADD CONSTRAINT `fk_pools_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`),
   ADD CONSTRAINT `fk_pools_currency` FOREIGN KEY (`currency_id`) REFERENCES `currencies` (`id`),
   ADD CONSTRAINT `fk_pools_winning_option` FOREIGN KEY (`winning_option_id`) REFERENCES `pool_options` (`id`) ON DELETE SET NULL;
@@ -328,13 +409,6 @@ ALTER TABLE `pool_entries`
 --
 ALTER TABLE `pool_options`
   ADD CONSTRAINT `fk_pool_options_pool` FOREIGN KEY (`pool_id`) REFERENCES `pools` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `admin_registration_passkeys`
---
-ALTER TABLE `admin_registration_passkeys`
-  ADD CONSTRAINT `fk_admin_passkeys_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`),
-  ADD CONSTRAINT `fk_admin_passkeys_used_by` FOREIGN KEY (`used_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `user_wallets`

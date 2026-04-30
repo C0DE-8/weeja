@@ -116,7 +116,7 @@ export default function AdminDashboard() {
                   <tr key={pool.id}>
                     <td>{pool.title}</td>
                     <td>{pool.status}</td>
-                    <td>{pool.category}</td>
+                    <td>{pool.category_name}</td>
                     <td>{pool.currency_code}</td>
                   </tr>
                 ))

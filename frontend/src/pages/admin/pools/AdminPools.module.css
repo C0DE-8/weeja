@@ -123,8 +123,19 @@
 
 .optionRow {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 96px;
+  grid-template-columns: 56px minmax(0, 1fr) 96px;
   gap: 10px;
+}
+
+.optionIndex {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  border-radius: 14px;
+  background: #e2e8f0;
+  color: #334155;
+  font-weight: 700;
 }
 
 .primaryButton,

@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FiChevronDown, FiChevronRight, FiPlus } from 'react-icons/fi'
+import { fetchActiveCategories } from '../../api/categoryApi'
 import styles from './CreatePoolPanel.module.css'
 
-const categoryOptions = ['Sport Pool', 'Event Pool']
 const tagOptions = [
   { value: 'who_will', label: 'Who will...' },
   { value: 'will_it', label: 'Will it...' },
@@ -10,6 +10,7 @@ const tagOptions = [
 
 export default function CreatePoolPanel() {
   const [isOpen, setIsOpen] = useState(true)
+  const [categories, setCategories] = useState([])
   const [category, setCategory] = useState('')
   const [location, setLocation] = useState('')
   const [tag, setTag] = useState('')
@@ -23,6 +24,25 @@ export default function CreatePoolPanel() {
   const [endMeridiem, setEndMeridiem] = useState('')
   const [poolOptions, setPoolOptions] = useState(['Chelsea', 'Draw', 'Arsenal'])
   const [submitState, setSubmitState] = useState('idle')
+
+  useEffect(() => {
+    let active = true
+
+    async function loadCategories() {
+      try {
+        const res = await fetchActiveCategories()
+        if (!active) return
+        setCategories(res.categories || [])
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    loadCategories()
+    return () => {
+      active = false
+    }
+  }, [])
 
   return (
     <section className={styles.panel} aria-label="Create pool panel">
@@ -55,9 +75,9 @@ export default function CreatePoolPanel() {
               <option value="" disabled>
                 Select
               </option>
-              {categoryOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
+              {categories.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.name} ({option.type})
                 </option>
               ))}
             </select>

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { loginUser } from '../../../api/authApi'
 import { clearSession, isAdminUser, setSession } from '../../../api/session'
 import styles from './AdminLogin.module.css'
@@ -56,6 +56,9 @@ export default function AdminLogin() {
         <div className={styles.copy}>
           <p className={styles.eyebrow}>Weeja Admin</p>
           <h1 className={styles.title}>Sign in to manage pools</h1>
+          <p className={styles.subtitle}>
+            Super admins can create admin passkeys. New admins can register with username, passkey, and password.
+          </p>
         </div>
 
         <form className={styles.form} onSubmit={handleSubmit} noValidate>
@@ -92,6 +95,13 @@ export default function AdminLogin() {
           <button className={styles.submitButton} type="submit" disabled={loading}>
             {loading ? 'Signing in...' : 'Admin Login'}
           </button>
+
+          <p className={styles.footerText}>
+            Need a new admin account?{' '}
+            <Link className={styles.linkText} to="/admin/register">
+              Register here
+            </Link>
+          </p>
         </form>
       </section>
     </div>
