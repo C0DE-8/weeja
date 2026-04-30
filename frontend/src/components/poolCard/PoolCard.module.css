@@ -28,6 +28,8 @@
   color: #141b33;
   margin: 0;
   flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .shareButton {
@@ -128,11 +130,13 @@
 .entryHeader strong {
   color: #172554;
   font-size: 0.95rem;
+  min-width: 0;
 }
 
 .entryHeader span {
   color: #64748b;
   font-size: 0.82rem;
+  text-align: right;
 }
 
 .entryRow {
@@ -431,6 +435,11 @@
   .entryRow {
     grid-template-columns: 1fr;
   }
+
+  .entryHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
   
   .optionsRow {
     grid-template-columns: repeat(
@@ -458,4 +467,18 @@
     gap: 8px;
   }
 
+  .infoRow,
+  .entryHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .entryHeader span {
+    text-align: left;
+  }
+
+  .shareButton {
+    width: 36px;
+    height: 36px;
+  }
 }

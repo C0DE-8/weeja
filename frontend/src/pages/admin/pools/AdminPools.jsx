@@ -718,6 +718,15 @@ export default function AdminPools({ view = 'create' }) {
 
                   <div className={styles.metaGrid}>
                     <span>
+                      Total pool:{' '}
+                      {formatCurrencyAmount(
+                        pool.total_pool_amount,
+                        pool.currency_code,
+                        pool.currency_decimal_places,
+                      )}
+                    </span>
+                    <span>Entries: {pool.total_pool_entries || 0}</span>
+                    <span>
                       Min stake:{' '}
                       {formatCurrencyAmount(
                         pool.min_stake,

@@ -32,6 +32,15 @@
   padding: 10px 10px;
 }
 
+.feedbackCard {
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  color: #475569;
+  font-size: 0.9rem;
+}
+
 .question {
   margin: 0;
   font-size: 0.85rem;

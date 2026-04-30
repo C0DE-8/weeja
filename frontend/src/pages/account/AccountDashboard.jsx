@@ -533,6 +533,15 @@ export default function AccountDashboard() {
                       )}{' '}
                       fee
                     </span>
+                    <span>
+                      Total pool:{' '}
+                      {formatCurrencyAmount(
+                        pool.total_pool_amount,
+                        pool.currency_code,
+                        pool.currency_decimal_places,
+                      )}
+                    </span>
+                    <span>Entries: {pool.total_pool_entries || 0}</span>
                     <span>{pool.platform_fee_percent}% platform fee</span>
                     <span>Submitted {formatDateTime(pool.created_at)}</span>
                   </div>

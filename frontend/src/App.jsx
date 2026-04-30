@@ -13,12 +13,14 @@ import AdminRegister from './pages/admin/register/AdminRegister'
 import AdminPasskeys from './pages/admin/passkeys/AdminPasskeys'
 import AdminPoolSubmissions from './pages/admin/poolSubmissions/AdminPoolSubmissions'
 import AccountDashboard from './pages/account/AccountDashboard'
+import PoolResultsPage from './pages/results/PoolResultsPage'
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/results" element={<PoolResultsPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route element={<RequireAuthRoute />}>

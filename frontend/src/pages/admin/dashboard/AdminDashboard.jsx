@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { fetchAdminPools } from '../../../api/adminPoolApi'
 import { fetchUserProfile } from '../../../api/userApi'
 import { setSession, getStoredUser } from '../../../api/session'
+import { formatCurrencyAmount } from '../../../utils/currency'
 import styles from './AdminDashboard.module.css'
 
 function buildStats(pools) {
@@ -104,12 +105,13 @@ export default function AdminDashboard() {
                 <th>Status</th>
                 <th>Category</th>
                 <th>Currency</th>
+                <th>Total pool</th>
               </tr>
             </thead>
             <tbody>
               {recentPools.length === 0 ? (
                 <tr>
-                  <td colSpan="4">No pools available yet.</td>
+                  <td colSpan="5">No pools available yet.</td>
                 </tr>
               ) : (
                 recentPools.map((pool) => (
@@ -118,6 +120,13 @@ export default function AdminDashboard() {
                     <td>{pool.status}</td>
                     <td>{pool.category_name}</td>
                     <td>{pool.currency_code}</td>
+                    <td>
+                      {formatCurrencyAmount(
+                        pool.total_pool_amount,
+                        pool.currency_code,
+                        pool.currency_decimal_places,
+                      )}
+                    </td>
                   </tr>
                 ))
               )}

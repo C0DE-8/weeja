@@ -1,10 +1,19 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { HiOutlineMenuAlt3 } from 'react-icons/hi'
-import { FiSearch, FiChevronDown, FiChevronRight } from 'react-icons/fi'
+import { FiChevronDown, FiChevronRight } from 'react-icons/fi'
 import { IoClose } from 'react-icons/io5'
 import { clearSession, getStoredUser, isAdminUser } from '../../api/session'
 import styles from './Header.module.css'
+
+const poolLinks = [
+  { label: 'Popular', to: '/' },
+  { label: 'Opened', to: '/?tab=OPEN' },
+  { label: 'Newest', to: '/?tab=NEWEST' },
+  { label: 'Sport Pool', to: '/?tab=SPORT' },
+  { label: 'Event Pool', to: '/?tab=EVENTS' },
+  { label: 'Pool Results', to: '/results' },
+]
 
 export default function Header() {
   const navigate = useNavigate()
@@ -30,24 +39,31 @@ export default function Header() {
               type="button"
               onClick={() => navigate(user ? '/account' : '/login')}
             >
-              Create Event
+              Create Pool
             </button>
           </div>
 
           <div className={styles.desktopBar}>
-            <div className={styles.logo}>
-              Wee<span className={styles.logoAccent}>ja</span>
-            </div>
+            <button className={styles.logoButton} type="button" onClick={() => navigate('/')}>
+              <div className={styles.logo}>
+                Wee<span className={styles.logoAccent}>ja</span>
+              </div>
+            </button>
 
-            <div className={styles.searchWrapper}>
-              <FiSearch className={styles.searchIcon} />
-              <input
-                className={styles.searchInput}
-                type="text"
-                placeholder="Search pool, event"
-                aria-label="Search pool or event"
-              />
-            </div>
+            <nav className={styles.navLinks} aria-label="Primary navigation">
+              <NavLink className={styles.navLink} to="/">
+                Home
+              </NavLink>
+              <NavLink className={styles.navLink} to="/?tab=SPORT">
+                Sport
+              </NavLink>
+              <NavLink className={styles.navLink} to="/?tab=EVENTS">
+                Events
+              </NavLink>
+              <NavLink className={styles.navLink} to="/results">
+                Results
+              </NavLink>
+            </nav>
 
             <div className={styles.authButtons}>
               {user ? (
@@ -133,41 +149,60 @@ export default function Header() {
               type="button"
               onClick={() => setIsAllPoolOpen((open) => !open)}
             >
-              <span>All Pool</span>
+              <span>All Pools</span>
               {isAllPoolOpen ? <FiChevronDown /> : <FiChevronRight />}
             </button>
 
             <div className={styles.menuContent}>
               {isAllPoolOpen && (
                 <div className={styles.submenu}>
-                  <button className={styles.submenuRow} type="button">
-                    Popular
-                  </button>
-                  <button className={styles.submenuRow} type="button">
-                    Opened
-                  </button>
-                  <button className={styles.submenuRow} type="button">
-                    Newest
-                  </button>
-                  <button className={styles.submenuRow} type="button">
-                    Pool Size
-                  </button>
-                  <button className={styles.submenuRow} type="button">
-                    Location
-                  </button>
+                  {poolLinks.map((item) => (
+                    <button
+                      key={item.to}
+                      className={styles.submenuRow}
+                      type="button"
+                      onClick={() => {
+                        setIsMenuOpen(false)
+                        navigate(item.to)
+                      }}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
                 </div>
               )}
 
-                <div className={styles.mainMenuSection}>
-                <button className={styles.mainMenuRow} type="button">
+              <div className={styles.mainMenuSection}>
+                <button
+                  className={styles.mainMenuRow}
+                  type="button"
+                  onClick={() => {
+                    setIsMenuOpen(false)
+                    navigate('/?tab=SPORT')
+                  }}
+                >
                   <span>Sport Pool</span>
                   <FiChevronRight />
                 </button>
-                <button className={styles.mainMenuRow} type="button">
+                <button
+                  className={styles.mainMenuRow}
+                  type="button"
+                  onClick={() => {
+                    setIsMenuOpen(false)
+                    navigate('/?tab=EVENTS')
+                  }}
+                >
                   <span>Event Pool</span>
                   <FiChevronRight />
                 </button>
-                <button className={styles.mainMenuRow} type="button">
+                <button
+                  className={styles.mainMenuRow}
+                  type="button"
+                  onClick={() => {
+                    setIsMenuOpen(false)
+                    navigate('/results')
+                  }}
+                >
                   <span>Pool Results</span>
                   <FiChevronRight />
                 </button>

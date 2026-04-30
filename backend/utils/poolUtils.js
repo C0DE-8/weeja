@@ -135,6 +135,8 @@ async function fetchPoolWithOptions(connection, poolId) {
         COALESCE(c.code, 'N/A') AS currency_code,
         COALESCE(c.name, 'Unknown currency') AS currency_name,
         COALESCE(c.decimal_places, 2) AS currency_decimal_places,
+        COALESCE(entry_summary.total_entries, 0) AS total_pool_entries,
+        COALESCE(entry_summary.total_staked, 0) AS total_pool_amount,
         p.min_stake,
         p.platform_fee_percent,
         p.start_time,
@@ -159,6 +161,14 @@ async function fetchPoolWithOptions(connection, poolId) {
       FROM pools p
       LEFT JOIN categories cat ON cat.id = p.category_id
       LEFT JOIN currencies c ON c.id = p.currency_id
+      LEFT JOIN (
+        SELECT
+          pool_id,
+          COUNT(*) AS total_entries,
+          COALESCE(SUM(stake_amount), 0) AS total_staked
+        FROM pool_entries
+        GROUP BY pool_id
+      ) entry_summary ON entry_summary.pool_id = p.id
       LEFT JOIN users creator ON creator.id = p.created_by
       LEFT JOIN users reviewer ON reviewer.id = p.reviewed_by
       WHERE p.id = ?`,
@@ -449,6 +459,8 @@ async function fetchPoolsWithOptions(filters = {}) {
       COALESCE(c.code, 'N/A') AS currency_code,
       COALESCE(c.name, 'Unknown currency') AS currency_name,
       COALESCE(c.decimal_places, 2) AS currency_decimal_places,
+      COALESCE(entry_summary.total_entries, 0) AS total_pool_entries,
+      COALESCE(entry_summary.total_staked, 0) AS total_pool_amount,
       p.min_stake,
       p.platform_fee_percent,
       p.start_time,
@@ -473,6 +485,14 @@ async function fetchPoolsWithOptions(filters = {}) {
     FROM pools p
     LEFT JOIN categories cat ON cat.id = p.category_id
     LEFT JOIN currencies c ON c.id = p.currency_id
+    LEFT JOIN (
+      SELECT
+        pool_id,
+        COUNT(*) AS total_entries,
+        COALESCE(SUM(stake_amount), 0) AS total_staked
+      FROM pool_entries
+      GROUP BY pool_id
+    ) entry_summary ON entry_summary.pool_id = p.id
     LEFT JOIN users creator ON creator.id = p.created_by
     LEFT JOIN users reviewer ON reviewer.id = p.reviewed_by
     ${where.length ? `WHERE ${where.join(" AND ")}` : ""}

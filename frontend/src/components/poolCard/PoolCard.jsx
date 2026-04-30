@@ -17,6 +17,7 @@ export default function PoolCard({
   weejians = '200',
   minStakeRaw = 0,
   onJoin,
+  totalPoolEntries = 0,
 }) {
   const [selectedOption, setSelectedOption] = useState(activeOption ?? options?.[0]?.id ?? null)
   const [isExpanded, setIsExpanded] = useState(false)
@@ -121,7 +122,7 @@ export default function PoolCard({
       <div className={styles.entryPanel}>
         <div className={styles.entryHeader}>
           <strong>Enter this pool</strong>
-          <span>Min stake: {amount}</span>
+          <span>{totalPoolEntries} entries</span>
         </div>
 
         <div className={styles.entryRow}>
@@ -158,7 +159,7 @@ export default function PoolCard({
             <span className={styles.desktopInfoLabel}>Pool Size:</span> {poolSize}
           </span>
           <span className={styles.desktopInfoItem}>
-            <span className={styles.desktopInfoLabel}>Weejians:</span> {weejians}
+            <span className={styles.desktopInfoLabel}>Entries:</span> {weejians}
           </span>
         </div>
         <div className={styles.desktopInfoRight}>

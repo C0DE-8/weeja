@@ -236,6 +236,15 @@ export default function AdminPoolSubmissions() {
                     )}{' '}
                     held
                   </span>
+                  <span>
+                    Total pool:{' '}
+                    {formatCurrencyAmount(
+                      pool.total_pool_amount,
+                      pool.currency_code,
+                      pool.currency_decimal_places,
+                    )}
+                  </span>
+                  <span>Entries: {pool.total_pool_entries || 0}</span>
                   <span>{pool.min_stake} min stake</span>
                 </div>
 
