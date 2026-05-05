@@ -8,14 +8,17 @@
 }
 
 .main {
-  width: min(100%, 480px);
-  padding: 90px 16px 24px;
+  width: 100%;
+  flex: 1;
+  padding: 90px 16px 40px;
   display: flex;
+  align-items: center;
   justify-content: center;
 }
 
 @media (max-width: 480px) {
   .main {
     padding-top: 100px;
+    padding-bottom: 28px;
   }
 }
