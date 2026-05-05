@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connected Wallet Modal</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .wallet-modal {
+      width: 100%;
+      max-width: 560px;
+      background: #fff;
+      border-radius: 22px 22px 0 0;
+      overflow: hidden;
+      box-shadow: 0 8px 28px rgba(255, 255, 255, 0.14);
+    }
+
+    .modal-header {
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 42px;
+    }
+
+    .cancel-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: none;
+      border: none;
+      color: #555;
+      font-size: 24px;
+      font-weight: 400;
+      cursor: pointer;
+    }
+
+    .x-icon {
+      width: 28px;
+      height: 28px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .x-icon::before,
+    .x-icon::after {
+      content: "";
+      position: absolute;
+      left: 12px;
+      top: -2px;
+      width: 4px;
+      height: 34px;
+      background: #555;
+      border-radius: 10px;
+    }
+
+    .x-icon::before {
+      transform: rotate(45deg);
+    }
+
+    .x-icon::after {
+      transform: rotate(-45deg);
+    }
+
+    .wallet-address-area {
+      min-height: 240px;
+      display: flex;
+      align-items: center;
+      padding: 55px 46px 35px;
+    }
+
+    .wallet-address {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      width: 100%;
+      color: #222;
+      overflow: hidden;
+    }
+
+    .chain-icon {
+      width: 42px;
+      height: 42px;
+      flex-shrink: 0;
+      position: relative;
+      transform: rotate(-35deg);
+    }
+
+    .chain-icon::before,
+    .chain-icon::after {
+      content: "";
+      position: absolute;
+      width: 30px;
+      height: 18px;
+      border: 4px solid #222;
+      border-radius: 16px;
+    }
+
+    .chain-icon::before {
+      left: 0;
+      top: 12px;
+    }
+
+    .chain-icon::after {
+      right: 0;
+      top: 12px;
+    }
+
+    .address-text {
+      font-size: 24px;
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #222;
+    }
+
+    .disconnect-btn {
+      width: 100%;
+      height: 92px;
+      border: none;
+      border-top: 2px solid #eeeeee;
+      background: #f7f7f7;
+      color: #333;
+      font-size: 26px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .disconnect-btn:hover {
+      background: #efefef;
+    }
+
+    .disconnect-btn:active {
+      background: #e7e7e7;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 0;
+        align-items: flex-start;
+      }
+
+      .wallet-modal {
+        max-width: 100%;
+        border-radius: 20px 20px 0 0;
+      }
+
+      .modal-header {
+        height: 64px;
+        padding: 0 28px;
+      }
+
+      .cancel-btn {
+        font-size: 22px;
+      }
+
+      .wallet-address-area {
+        min-height: 225px;
+        padding: 50px 34px 30px;
+      }
+
+      .chain-icon {
+        width: 38px;
+        height: 38px;
+      }
+
+      .chain-icon::before,
+      .chain-icon::after {
+        width: 28px;
+        height: 17px;
+        border-width: 3.5px;
+      }
+
+      .address-text {
+        font-size: 21px;
+      }
+
+      .disconnect-btn {
+        height: 88px;
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wallet-modal">
+    <div class="modal-header">
+      <button class="cancel-btn">
+        <span class="x-icon"></span>
+        Cancel
+      </button>
+    </div>
+
+    <div class="wallet-address-area">
+      <div class="wallet-address">
+        <span class="chain-icon"></span>
+        <span class="address-text">
+          terrakb5bvyjjkp8152ldmdlhmlgfjsa...
+        </span>
+      </div>
+    </div>
+
+    <button class="disconnect-btn">
+      Disconnect Wallet
+    </button>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verify Email Modal</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 430px;
+      min-height: 560px;
+      background: #fff;
+      border-radius: 8px;
+      padding: 95px 28px 55px;
+      text-align: center;
+      box-shadow: 0 8px 25px rgba(255, 255, 255, 0.18);
+    }
+
+    .mail-icon {
+      width: 82px;
+      height: 56px;
+      background: #f000d4;
+      border-radius: 8px;
+      margin: 0 auto 58px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mail-icon::before,
+    .mail-icon::after {
+      content: "";
+      position: absolute;
+      top: 10px;
+      width: 54px;
+      height: 8px;
+      background: #fff;
+      border-radius: 20px;
+      transform-origin: center;
+    }
+
+    .mail-icon::before {
+      left: -4px;
+      transform: rotate(38deg);
+    }
+
+    .mail-icon::after {
+      right: -4px;
+      transform: rotate(-38deg);
+    }
+
+    .modal h1 {
+      font-size: 27px;
+      font-weight: 800;
+      color: #111;
+      margin-bottom: 70px;
+      letter-spacing: 0.3px;
+    }
+
+    .modal p {
+      font-size: 20px;
+      line-height: 1.45;
+      color: #555;
+      max-width: 350px;
+      margin: 0 auto 90px;
+    }
+
+    .home-btn {
+      width: 100%;
+      border: none;
+      outline: none;
+      background: #ff9800;
+      color: #fff;
+      font-size: 22px;
+      font-weight: 700;
+      padding: 22px 20px;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: 0.25s ease;
+    }
+
+    .home-btn:hover {
+      background: #f28c00;
+      transform: translateY(-2px);
+    }
+
+    .home-btn:active {
+      transform: scale(0.98);
+    }
+
+    @media (max-width: 480px) {
+      .modal {
+        max-width: 100%;
+        min-height: 540px;
+        padding: 85px 22px 45px;
+      }
+
+      .modal h1 {
+        font-size: 25px;
+      }
+
+      .modal p {
+        font-size: 19px;
+      }
+
+      .home-btn {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="modal">
+    <div class="mail-icon"></div>
+
+    <h1>Verify Email Address</h1>
+
+    <p>
+      A link has been sent to your mail, please follow the link to verify your email address
+    </p>
+
+    <button class="home-btn">
+      Return to Homepage
+    </button>
+  </div>
+
+</body>
+</html>

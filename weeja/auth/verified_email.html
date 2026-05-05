@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Email Verified Modal</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 430px;
+      min-height: 560px;
+      background: #fff;
+      border-radius: 8px;
+      padding: 150px 28px 55px;
+      text-align: center;
+      box-shadow: 0 8px 25px rgba(255, 255, 255, 0.18);
+    }
+
+    .success-icon {
+      width: 82px;
+      height: 82px;
+      margin: 0 auto 72px;
+      position: relative;
+    }
+
+    .success-icon::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border: 8px solid #10c735;
+      border-right-color: transparent;
+      border-radius: 50%;
+      transform: rotate(-25deg);
+    }
+
+    .success-icon::after {
+      content: "";
+      position: absolute;
+      width: 48px;
+      height: 25px;
+      border-left: 9px solid #10c735;
+      border-bottom: 9px solid #10c735;
+      border-radius: 4px;
+      left: 25px;
+      top: 18px;
+      transform: rotate(-45deg);
+    }
+
+    .modal h1 {
+      font-size: 26px;
+      line-height: 1.35;
+      font-weight: 800;
+      color: #111;
+      margin-bottom: 88px;
+      letter-spacing: 0.2px;
+    }
+
+    .home-btn {
+      width: 100%;
+      border: none;
+      outline: none;
+      background: #ff9800;
+      color: #fff;
+      font-size: 22px;
+      font-weight: 700;
+      padding: 22px 20px;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: 0.25s ease;
+    }
+
+    .home-btn:hover {
+      background: #f28c00;
+      transform: translateY(-2px);
+    }
+
+    .home-btn:active {
+      transform: scale(0.98);
+    }
+
+    @media (max-width: 480px) {
+      .modal {
+        max-width: 100%;
+        min-height: 540px;
+        padding: 140px 22px 45px;
+      }
+
+      .success-icon {
+        width: 76px;
+        height: 76px;
+        margin-bottom: 65px;
+      }
+
+      .success-icon::before {
+        border-width: 7px;
+      }
+
+      .success-icon::after {
+        width: 44px;
+        height: 23px;
+        border-left-width: 8px;
+        border-bottom-width: 8px;
+        left: 23px;
+        top: 17px;
+      }
+
+      .modal h1 {
+        font-size: 24px;
+        margin-bottom: 82px;
+      }
+
+      .home-btn {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="modal">
+    <div class="success-icon"></div>
+
+    <h1>
+      Email Address Verified<br />
+      Successfully!
+    </h1>
+
+    <button class="home-btn">
+      Return to Homepage
+    </button>
+  </div>
+
+</body>
+</html>

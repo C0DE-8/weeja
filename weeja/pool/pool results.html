@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pool Results</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #f5f5f5;
+      color: #111;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 520px;
+      min-height: 100vh;
+      margin: 0 auto;
+      background: #fff;
+    }
+
+    .top-bar {
+      height: 78px;
+      background: #f6f6f6;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      border-bottom: 1px solid #e8e8e8;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .filter-btn {
+      border: none;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 23px;
+      font-weight: 800;
+      color: #222;
+      cursor: pointer;
+    }
+
+    .filter-icon {
+      width: 31px;
+      height: 31px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .filter-icon span {
+      position: absolute;
+      top: 0;
+      width: 4px;
+      height: 31px;
+      background: #222;
+      border-radius: 10px;
+    }
+
+    .filter-icon span:nth-child(1) {
+      left: 3px;
+    }
+
+    .filter-icon span:nth-child(2) {
+      left: 13px;
+    }
+
+    .filter-icon span:nth-child(3) {
+      left: 23px;
+    }
+
+    .filter-icon span::before {
+      content: "";
+      position: absolute;
+      left: -5px;
+      width: 14px;
+      height: 4px;
+      background: #222;
+      border-radius: 10px;
+    }
+
+    .filter-icon span:nth-child(1)::before {
+      top: 8px;
+    }
+
+    .filter-icon span:nth-child(2)::before {
+      top: 18px;
+    }
+
+    .filter-icon span:nth-child(3)::before {
+      top: 4px;
+    }
+
+    .chevron {
+      width: 16px;
+      height: 16px;
+      border-right: 4px solid #222;
+      border-bottom: 4px solid #222;
+      transform: rotate(45deg);
+      margin-top: -8px;
+      transition: 0.25s ease;
+      flex-shrink: 0;
+    }
+
+    .chevron.right {
+      transform: rotate(-45deg);
+      margin-top: 0;
+    }
+
+    .filter-btn.active .chevron {
+      transform: rotate(-135deg);
+      margin-top: 6px;
+    }
+
+    .filter-panel {
+      display: none;
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+    }
+
+    .filter-panel.show {
+      display: block;
+    }
+
+    .filter-section-header {
+      width: 100%;
+      min-height: 76px;
+      border: none;
+      border-bottom: 1px solid #e7e7e7;
+      background: #fff;
+      padding: 0 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .filter-section-header span:first-child {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .filter-options {
+      display: none;
+      padding: 26px 28px 32px;
+      background: #fff;
+    }
+
+    .filter-options.open {
+      display: block;
+    }
+
+    .filter-option {
+      border: none;
+      background: transparent;
+      display: block;
+      width: 100%;
+      text-align: left;
+      color: #555;
+      font-size: 20px;
+      padding: 17px 0;
+      cursor: pointer;
+    }
+
+    .filter-option.active {
+      color: #ffb238;
+    }
+
+    .results-list {
+      background: #f5f5f5;
+    }
+
+    .result-card {
+      background: #fff;
+      padding: 28px 26px 26px;
+      border-bottom: 12px solid #f5f5f5;
+    }
+
+    .result-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .result-title {
+      font-size: 22px;
+      line-height: 1.25;
+      font-weight: 800;
+      color: #111;
+      max-width: 310px;
+    }
+
+    .amount {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: #ff1226;
+      font-size: 22px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .coin {
+      width: 27px;
+      height: 27px;
+      background: #ff2b3d;
+      color: #fff;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .option-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 16px;
+      margin-bottom: 18px;
+    }
+
+    .option-pill {
+      min-height: 46px;
+      border: none;
+      border-radius: 40px;
+      font-size: 20px;
+      font-weight: 800;
+      padding: 0 16px;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .option-pill.blue {
+      background: #1555a8;
+    }
+
+    .option-pill.orange {
+      background: #f9b23b;
+    }
+
+    .option-pill.green {
+      background: #baffc1;
+      color: #111;
+      border: 3px solid #12c83b;
+    }
+
+    .date {
+      color: #888;
+      font-size: 19px;
+    }
+
+    .empty-space {
+      min-height: 280px;
+      background: #fff;
+    }
+
+    @media (max-width: 480px) {
+      .page {
+        max-width: 100%;
+      }
+
+      .top-bar {
+        height: 72px;
+        padding: 0 22px;
+      }
+
+      .page-title {
+        font-size: 21px;
+      }
+
+      .filter-btn {
+        font-size: 21px;
+      }
+
+      .filter-icon {
+        width: 29px;
+        height: 29px;
+      }
+
+      .result-card {
+        padding: 26px 20px 24px;
+      }
+
+      .result-title {
+        font-size: 20px;
+        max-width: 250px;
+      }
+
+      .amount {
+        font-size: 20px;
+      }
+
+      .coin {
+        width: 25px;
+        height: 25px;
+        font-size: 17px;
+      }
+
+      .option-pill {
+        min-height: 43px;
+        font-size: 18px;
+      }
+
+      .filter-section-header {
+        padding: 0 24px;
+      }
+
+      .filter-options {
+        padding: 24px 24px 30px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .result-head {
+        gap: 10px;
+      }
+
+      .result-title {
+        font-size: 18px;
+        max-width: 220px;
+      }
+
+      .amount {
+        font-size: 18px;
+      }
+
+      .option-grid {
+        gap: 10px;
+      }
+
+      .option-pill {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <main class="page">
+    <header class="top-bar">
+      <h1 class="page-title" id="pageTitle">POOL RESULTS</h1>
+
+      <button class="filter-btn" id="filterToggle" type="button">
+        <span class="filter-icon">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
+
+        <span>Filter</span>
+        <span class="chevron"></span>
+      </button>
+    </header>
+
+    <section class="filter-panel" id="filterPanel">
+      <button class="filter-section-header" data-target="countryOptions" type="button">
+        <span>Country/Region</span>
+        <span class="chevron right"></span>
+      </button>
+
+      <div class="filter-options" id="countryOptions">
+        <button class="filter-option">Nigeria</button>
+        <button class="filter-option">Ghana</button>
+        <button class="filter-option">New York City</button>
+        <button class="filter-option">Forida</button>
+        <button class="filter-option">Rwanda</button>
+        <button class="filter-option">Germany</button>
+        <button class="filter-option">Thai</button>
+        <button class="filter-option">Eyght</button>
+      </div>
+
+      <button class="filter-section-header" data-target="dateOptions" type="button">
+        <span>Date Posted</span>
+        <span class="chevron right"></span>
+      </button>
+
+      <div class="filter-options open" id="dateOptions">
+        <button class="filter-option active">24 Hours ago</button>
+        <button class="filter-option">3 Days ago</button>
+        <button class="filter-option">7 Days ago</button>
+        <button class="filter-option">14 Days ago</button>
+      </div>
+    </section>
+
+    <section class="results-list">
+      <article class="result-card">
+        <div class="result-head">
+          <h2 class="result-title">Will Elon Musk buy Twitter?</h2>
+
+          <div class="amount">
+            <span class="coin">T</span>
+            <span>15 USDT</span>
+          </div>
+        </div>
+
+        <div class="option-grid">
+          <button class="option-pill blue">Yes</button>
+          <button class="option-pill green">No</button>
+        </div>
+
+        <p class="date">4 April, 2022</p>
+      </article>
+
+      <article class="result-card">
+        <div class="result-head">
+          <h2 class="result-title">Will Elon Musk buy Twitter?</h2>
+
+          <div class="amount">
+            <span class="coin">T</span>
+            <span>15 USDT</span>
+          </div>
+        </div>
+
+        <div class="option-grid">
+          <button class="option-pill blue">Yes</button>
+          <button class="option-pill green">No</button>
+        </div>
+
+        <p class="date">4 April, 2022</p>
+      </article>
+
+      <article class="result-card">
+        <div class="result-head">
+          <h2 class="result-title">Chelsea VS Arsenal</h2>
+
+          <div class="amount">
+            <span class="coin">T</span>
+            <span>15 USDT</span>
+          </div>
+        </div>
+
+        <div class="option-grid">
+          <button class="option-pill green">Chelsea</button>
+          <button class="option-pill orange">Draw</button>
+          <button class="option-pill blue">Arsenal</button>
+        </div>
+
+        <p class="date">4 April, 2022</p>
+      </article>
+
+      <article class="result-card">
+        <div class="result-head">
+          <h2 class="result-title">West Ham VS Spurs</h2>
+
+          <div class="amount">
+            <span class="coin">T</span>
+            <span>15 USDT</span>
+          </div>
+        </div>
+
+        <div class="option-grid">
+          <button class="option-pill green">West Ham</button>
+          <button class="option-pill orange">Draw</button>
+          <button class="option-pill blue">Spurs</button>
+        </div>
+
+        <p class="date">4 April, 2022</p>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    const filterToggle = document.getElementById("filterToggle");
+    const filterPanel = document.getElementById("filterPanel");
+    const sectionHeaders = document.querySelectorAll(".filter-section-header");
+    const filterOptions = document.querySelectorAll(".filter-option");
+
+    filterToggle.addEventListener("click", () => {
+      filterPanel.classList.toggle("show");
+      filterToggle.classList.toggle("active");
+    });
+
+    sectionHeaders.forEach((header) => {
+      header.addEventListener("click", () => {
+        const targetId = header.dataset.target;
+        const target = document.getElementById(targetId);
+
+        target.classList.toggle("open");
+
+        const chevron = header.querySelector(".chevron");
+        chevron.style.transform = target.classList.contains("open")
+          ? "rotate(45deg)"
+          : "rotate(-45deg)";
+      });
+    });
+
+    filterOptions.forEach((option) => {
+      option.addEventListener("click", () => {
+        const parent = option.parentElement;
+
+        parent.querySelectorAll(".filter-option").forEach((item) => {
+          item.classList.remove("active");
+        });
+
+        option.classList.add("active");
+      });
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wallet Modal</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .wallet-modal {
+      width: 100%;
+      max-width: 430px;
+      background: #fff;
+      border-radius: 18px 18px 0 0;
+      overflow: hidden;
+      box-shadow: 0 8px 28px rgba(255, 255, 255, 0.15);
+    }
+
+    .modal-header {
+      height: 62px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 26px;
+      border-bottom: 1px solid #f1f1f1;
+    }
+
+    .cancel-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: none;
+      border: none;
+      color: #555;
+      font-size: 21px;
+      cursor: pointer;
+    }
+
+    .x-icon {
+      width: 24px;
+      height: 24px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .x-icon::before,
+    .x-icon::after {
+      content: "";
+      position: absolute;
+      left: 11px;
+      top: 0;
+      width: 4px;
+      height: 28px;
+      background: #555;
+      border-radius: 10px;
+    }
+
+    .x-icon::before {
+      transform: rotate(45deg);
+    }
+
+    .x-icon::after {
+      transform: rotate(-45deg);
+    }
+
+    .wallet-list {
+      list-style: none;
+    }
+
+    .wallet-item {
+      width: 100%;
+      height: 63px;
+      border: none;
+      border-bottom: 2px solid #eeeeee;
+      background: #fff;
+      color: #222;
+      font-size: 22px;
+      font-weight: 700;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .wallet-item:first-child {
+      background: #f7f7f7;
+      color: #555;
+      font-weight: 500;
+    }
+
+    .wallet-item:hover {
+      background: #f8f8f8;
+    }
+
+    .wallet-item:active {
+      background: #ededed;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 0;
+        align-items: flex-start;
+      }
+
+      .wallet-modal {
+        max-width: 100%;
+        border-radius: 16px 16px 0 0;
+      }
+
+      .modal-header {
+        height: 64px;
+        padding: 0 24px;
+      }
+
+      .cancel-btn {
+        font-size: 20px;
+      }
+
+      .wallet-item {
+        height: 64px;
+        font-size: 21px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wallet-modal">
+    <div class="modal-header">
+      <button class="cancel-btn">
+        <span class="x-icon"></span>
+        Cancel
+      </button>
+    </div>
+
+    <ul class="wallet-list">
+      <li><button class="wallet-item">Metamask</button></li>
+      <li><button class="wallet-item">Trustwallet</button></li>
+      <li><button class="wallet-item">MyEtherWallet</button></li>
+      <li><button class="wallet-item">WalletConnect</button></li>
+      <li><button class="wallet-item">Huobi Wallet</button></li>
+      <li><button class="wallet-item">Phantom Wallet</button></li>
+    </ul>
+  </div>
+
+</body>
+</html>

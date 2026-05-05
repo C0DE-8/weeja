@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Approve Event Modal</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #f5f5f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 14px;
+    }
+
+    .modal-card {
+      width: 100%;
+      max-width: 430px;
+      min-height: 620px;
+      background: #fff;
+      border-radius: 6px;
+      padding: 44px 20px 55px;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      border: none;
+      background: transparent;
+      color: #555;
+      font-size: 18px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-bottom: 48px;
+    }
+
+    .arrow {
+      font-size: 31px;
+      line-height: 1;
+      font-weight: 300;
+    }
+
+    .title {
+      text-align: center;
+      font-size: 22px;
+      font-weight: 800;
+      color: #111;
+      margin-bottom: 42px;
+    }
+
+    .notice {
+      max-width: 330px;
+      margin: 0 auto 34px;
+      text-align: center;
+      font-size: 18px;
+      line-height: 1.35;
+      color: #222;
+    }
+
+    .amount {
+      color: #ff1d2e;
+      font-weight: 500;
+    }
+
+    .question {
+      font-size: 19px;
+      line-height: 1.35;
+      color: #777;
+      margin-bottom: 20px;
+    }
+
+    .answer-label {
+      font-size: 16px;
+      font-weight: 800;
+      color: #666;
+      margin-bottom: 14px;
+    }
+
+    .answer {
+      font-size: 21px;
+      font-weight: 800;
+      color: #555;
+      margin-bottom: 36px;
+    }
+
+    .start-btn,
+    .cancel-btn {
+      width: 100%;
+      height: 48px;
+      border-radius: 50px;
+      font-size: 19px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.25s ease;
+    }
+
+    .start-btn {
+      border: none;
+      background: #ff9800;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+
+    .cancel-btn {
+      border: 1.5px solid #ff1d2e;
+      background: #fff;
+      color: #ff0015;
+    }
+
+    .start-btn:hover {
+      background: #f28c00;
+      transform: translateY(-2px);
+    }
+
+    .cancel-btn:hover {
+      background: #fff3f4;
+      transform: translateY(-2px);
+    }
+
+    .start-btn:active,
+    .cancel-btn:active,
+    .back-btn:active {
+      transform: scale(0.98);
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 18px 12px;
+        background: #f5f5f5;
+      }
+
+      .modal-card {
+        max-width: 100%;
+        min-height: 610px;
+        padding: 42px 18px 50px;
+      }
+
+      .back-btn {
+        font-size: 17px;
+        margin-bottom: 46px;
+      }
+
+      .title {
+        font-size: 21px;
+        margin-bottom: 40px;
+      }
+
+      .notice {
+        font-size: 17px;
+      }
+
+      .question {
+        font-size: 18px;
+      }
+
+      .start-btn,
+      .cancel-btn {
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="modal-card">
+    <button class="back-btn">
+      <span class="arrow">←</span>
+      <span>Back</span>
+    </button>
+
+    <h1 class="title">Approve this Event</h1>
+
+    <p class="notice">
+      You have placed a wager of <span class="amount">50 USDT</span> on this event,
+      Please click Start to confirm transaction
+    </p>
+
+    <p class="question">
+      Who will win the match between Chelsea and Arsenal?
+    </p>
+
+    <p class="answer-label">My Answer</p>
+    <p class="answer">Chelsea</p>
+
+    <button class="start-btn">Start Pool</button>
+    <button class="cancel-btn">Cancel Pool</button>
+  </div>
+
+</body>
+</html>

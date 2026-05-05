@@ -4,47 +4,60 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const db = require("../config/db");
 const { sendMail } = require("../utils/email");
-const { verificationOtpTemplate } = require("../templates/mail/verificationOtp");
+const { verificationLinkTemplate } = require("../templates/mail/verificationLink");
 const { ensureWalletsForUser } = require("../utils/userWallets");
 const { authenticateToken } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-const OTP_TTL_MS = 15 * 60 * 1000;
+const VERIFICATION_LINK_TTL_MS = 15 * 60 * 1000;
 
 function isValidEmail(email) {
   return typeof email === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
-}
-
-function generateOtp() {
-  return crypto.randomInt(100000, 1000000).toString();
 }
 
 function isStrongEnoughPassword(password) {
   return typeof password === "string" && password.length >= 6;
 }
 
-async function issueOtpForUser(userId, email, plainOtp) {
-  const otpHash = await bcrypt.hash(plainOtp, 10);
-  const expiresAt = new Date(Date.now() + OTP_TTL_MS);
+function createVerificationUrl(token) {
+  const baseUrl =
+    process.env.FRONTEND_URL || process.env.APP_URL || "http://localhost:5173";
+  const normalizedBaseUrl = baseUrl.replace(/\/+$/, "");
+  return `${normalizedBaseUrl}/verify-email?token=${encodeURIComponent(token)}`;
+}
+
+function createVerificationToken() {
+  return crypto.randomBytes(32).toString("hex");
+}
+
+function hashVerificationToken(token) {
+  return crypto.createHash("sha256").update(token).digest("hex");
+}
+
+async function issueVerificationLinkForUser(userId, email) {
+  const token = createVerificationToken();
+  const tokenHash = hashVerificationToken(token);
+  const expiresAt = new Date(Date.now() + VERIFICATION_LINK_TTL_MS);
   await db.execute(
-    "UPDATE users SET otp_hash = ?, otp_expires_at = ? WHERE id = ?",
-    [otpHash, expiresAt, userId]
+    "UPDATE users SET verification_token_hash = ?, verification_expires_at = ? WHERE id = ?",
+    [tokenHash, expiresAt, userId]
   );
-  const expiresMinutes = OTP_TTL_MS / 60000;
-  const { subject, text, html } = verificationOtpTemplate({
-    otp: plainOtp,
+  const expiresMinutes = VERIFICATION_LINK_TTL_MS / 60000;
+  const { subject, text, html } = verificationLinkTemplate({
+    verificationUrl: createVerificationUrl(token),
     expiresMinutes,
   });
   await sendMail({ to: email, subject, text, html });
 }
 
+// test route
 router.get("/", (req, res) => {
   res.json({ message: "Auth route working" });
 });
 
 /**
- * REGISTER — creates or refreshes a pending account; sends OTP email
+ * REGISTER — creates or refreshes a pending account; sends verification email
  */
 router.post("/register", async (req, res) => {
   try {
@@ -70,7 +83,6 @@ router.post("/register", async (req, res) => {
     );
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const plainOtp = generateOtp();
 
     if (existing.length > 0) {
       const row = existing[0];
@@ -78,17 +90,20 @@ router.post("/register", async (req, res) => {
         return res.status(400).json({ message: "Email already exists" });
       }
       await db.execute(
-        "UPDATE users SET name = ?, password = ?, email_verified = 0 WHERE id = ?",
+        `UPDATE users
+         SET name = ?, password = ?, email_verified = 0,
+             verification_token_hash = NULL, verification_expires_at = NULL
+         WHERE id = ?`,
         [name.trim(), hashedPassword, row.id]
       );
       try {
-        await issueOtpForUser(row.id, trimmedEmail, plainOtp);
+        await issueVerificationLinkForUser(row.id, trimmedEmail);
       } catch (mailErr) {
         console.error(mailErr);
         return res.status(500).json({ message: "Could not send verification email" });
       }
       return res.status(201).json({
-        message: "Verification code sent to your email",
+        message: "Verification link sent to your email",
         userId: row.id,
       });
     }
@@ -100,7 +115,7 @@ router.post("/register", async (req, res) => {
     const userId = result.insertId;
 
     try {
-      await issueOtpForUser(userId, trimmedEmail, plainOtp);
+      await issueVerificationLinkForUser(userId, trimmedEmail);
     } catch (mailErr) {
       console.error(mailErr);
       await db.execute("DELETE FROM users WHERE id = ?", [userId]);
@@ -108,7 +123,7 @@ router.post("/register", async (req, res) => {
     }
 
     res.status(201).json({
-      message: "Verification code sent to your email",
+      message: "Verification link sent to your email",
       userId,
     });
   } catch (err) {
@@ -237,49 +252,45 @@ router.post("/register-admin", async (req, res) => {
 });
 
 /**
- * VERIFY OTP — activates account and creates wallet rows per currency
+ * VERIFY EMAIL — activates account and creates wallet rows per currency
  */
-router.post("/verify-otp", async (req, res) => {
+router.post("/verify-email", async (req, res) => {
   try {
-    const { email, otp } = req.body;
-    const trimmedEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
+    const token = typeof req.body.token === "string" ? req.body.token.trim() : "";
 
-    if (!trimmedEmail || !otp) {
-      return res.status(400).json({ message: "Email and OTP are required" });
-    }
-    if (typeof otp !== "string" || !/^\d{6}$/.test(otp)) {
-      return res.status(400).json({ message: "Invalid OTP format" });
+    if (!token) {
+      return res.status(400).json({ message: "Verification token is required" });
     }
 
+    const tokenHash = hashVerificationToken(token);
     const [users] = await db.execute(
-      "SELECT id, otp_hash, otp_expires_at, email_verified FROM users WHERE email = ?",
-      [trimmedEmail]
+      `SELECT id, verification_token_hash, verification_expires_at, email_verified
+       FROM users
+       WHERE verification_token_hash = ?`,
+      [tokenHash]
     );
 
     if (users.length === 0) {
-      return res.status(400).json({ message: "Invalid or expired verification code" });
+      return res.status(400).json({ message: "Invalid or expired verification link" });
     }
 
     const user = users[0];
     if (Number(user.email_verified) === 1) {
       return res.status(400).json({ message: "Email is already verified" });
     }
-    if (!user.otp_hash || !user.otp_expires_at) {
-      return res.status(400).json({ message: "Invalid or expired verification code" });
+    if (!user.verification_token_hash || !user.verification_expires_at) {
+      return res.status(400).json({ message: "Invalid or expired verification link" });
     }
 
-    const expires = new Date(user.otp_expires_at).getTime();
+    const expires = new Date(user.verification_expires_at).getTime();
     if (Number.isNaN(expires) || Date.now() > expires) {
-      return res.status(400).json({ message: "Verification code has expired" });
-    }
-
-    const match = await bcrypt.compare(otp, user.otp_hash);
-    if (!match) {
-      return res.status(400).json({ message: "Invalid or expired verification code" });
+      return res.status(400).json({ message: "Verification link has expired" });
     }
 
     await db.execute(
-      "UPDATE users SET email_verified = 1, otp_hash = NULL, otp_expires_at = NULL WHERE id = ?",
+      `UPDATE users
+       SET email_verified = 1, verification_token_hash = NULL, verification_expires_at = NULL
+       WHERE id = ?`,
       [user.id]
     );
 
@@ -297,9 +308,9 @@ router.post("/verify-otp", async (req, res) => {
 });
 
 /**
- * RESEND OTP — same response whether or not the email is pending (avoid email enumeration)
+ * RESEND VERIFICATION LINK — same response whether or not the email is pending (avoid email enumeration)
  */
-router.post("/resend-otp", async (req, res) => {
+router.post("/resend-verification-link", async (req, res) => {
   try {
     const { email } = req.body;
     const trimmedEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
@@ -315,20 +326,19 @@ router.post("/resend-otp", async (req, res) => {
 
     if (users.length === 0 || Number(users[0].email_verified) === 1) {
       return res.json({
-        message: "If an account needs verification, a new code has been sent",
+        message: "If an account needs verification, a new link has been sent",
       });
     }
 
-    const plainOtp = generateOtp();
     try {
-      await issueOtpForUser(users[0].id, trimmedEmail, plainOtp);
+      await issueVerificationLinkForUser(users[0].id, trimmedEmail);
     } catch (mailErr) {
       console.error(mailErr);
       return res.status(500).json({ message: "Could not send verification email" });
     }
 
     res.json({
-      message: "If an account needs verification, a new code has been sent",
+      message: "If an account needs verification, a new link has been sent",
     });
   } catch (err) {
     console.error(err);

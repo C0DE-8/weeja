@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile Page</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #fff;
+      color: #111;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 520px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: #fff;
+      overflow-x: hidden;
+    }
+
+    .profile-header {
+      padding: 28px 30px 26px;
+      background: #fff;
+    }
+
+    .user-row {
+      display: grid;
+      grid-template-columns: 112px 1fr;
+      gap: 22px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .avatar-wrap {
+      width: 106px;
+      height: 106px;
+      border: 2px solid #e4efff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+    }
+
+    .diamond {
+      width: 58px;
+      height: 58px;
+      transform: rotate(35deg) skew(-8deg);
+      border: 4px solid #4e5e5d;
+      background:
+        linear-gradient(135deg, transparent 0 30%, rgba(255,255,255,.65) 31% 45%, transparent 46%),
+        linear-gradient(45deg, rgba(255,255,255,.7), rgba(140,170,170,.35)),
+        #dbeeee;
+      box-shadow: inset 0 0 18px rgba(0,0,0,.18);
+      position: relative;
+    }
+
+    .diamond::before,
+    .diamond::after {
+      content: "";
+      position: absolute;
+      background: rgba(90, 110, 110, 0.55);
+      transform-origin: center;
+    }
+
+    .diamond::before {
+      width: 4px;
+      height: 58px;
+      left: 26px;
+      top: -2px;
+      transform: rotate(18deg);
+    }
+
+    .diamond::after {
+      width: 58px;
+      height: 4px;
+      left: -2px;
+      top: 26px;
+      transform: rotate(-25deg);
+    }
+
+    .user-name {
+      font-size: 28px;
+      font-weight: 800;
+      color: #222;
+      margin-bottom: 16px;
+    }
+
+    .user-id {
+      font-size: 24px;
+      color: #555;
+    }
+
+    .change-picture {
+      display: inline-block;
+      margin-top: 4px;
+      color: #ff9800;
+      font-size: 20px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .earning-card {
+      margin-top: 36px;
+      width: 100%;
+      min-height: 150px;
+      border-radius: 16px;
+      background: #cfe3ff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px 18px;
+    }
+
+    .earning-amount {
+      font-size: 42px;
+      font-weight: 900;
+      margin-bottom: 26px;
+    }
+
+    .earning-text {
+      font-size: 20px;
+      font-weight: 800;
+      color: #111;
+    }
+
+    .divider {
+      height: 12px;
+      background: #f5f5f5;
+    }
+
+    .tabs {
+      height: 76px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      background: #fff;
+      border-bottom: 2px solid #f1f1f1;
+    }
+
+    .tab-btn {
+      height: 76px;
+      border: none;
+      background: #fff;
+      color: #222;
+      font-size: 21px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      white-space: nowrap;
+    }
+
+    .tab-btn.active {
+      color: #ff9800;
+    }
+
+    .chevron {
+      width: 13px;
+      height: 13px;
+      border-right: 4px solid currentColor;
+      border-bottom: 4px solid currentColor;
+      transform: rotate(45deg);
+      margin-top: -8px;
+      transition: 0.25s ease;
+    }
+
+    .tab-btn.dropdown-open .chevron {
+      transform: rotate(-135deg);
+      margin-top: 5px;
+    }
+
+    .history-menu {
+      display: none;
+      background: #fff;
+      min-height: 210px;
+      border-bottom: 2px solid #efefef;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.04);
+      padding: 54px 20px 48px;
+      text-align: center;
+    }
+
+    .history-menu.show {
+      display: block;
+    }
+
+    .history-filter {
+      display: block;
+      width: 100%;
+      border: none;
+      background: transparent;
+      font-size: 20px;
+      font-weight: 800;
+      color: #111;
+      cursor: pointer;
+      margin-bottom: 60px;
+      text-transform: uppercase;
+    }
+
+    .history-filter:last-child {
+      margin-bottom: 0;
+    }
+
+    .history-filter.active {
+      color: #ff9800;
+    }
+
+    .panel {
+      display: none;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    .history-list {
+      background: #fff;
+    }
+
+    .history-card {
+      background: #fff;
+      padding: 34px 30px 38px;
+      border-bottom: 12px solid #f6f6f6;
+    }
+
+    .history-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .pool-title {
+      font-size: 23px;
+      line-height: 1.25;
+      font-weight: 900;
+      color: #111;
+      max-width: 320px;
+    }
+
+    .amount {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: #ff1226;
+      font-size: 22px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .coin {
+      width: 28px;
+      height: 28px;
+      background: #ff2b3d;
+      color: #fff;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .option-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 16px;
+      margin-bottom: 18px;
+    }
+
+    .option-pill {
+      height: 44px;
+      border-radius: 40px;
+      border: none;
+      font-size: 19px;
+      font-weight: 900;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .option-pill.blue {
+      background: #1555a8;
+    }
+
+    .option-pill.green {
+      background: #baffc1;
+      color: #111;
+      border: 3px solid #12c83b;
+    }
+
+    .option-pill.orange {
+      background: #f9b23b;
+    }
+
+    .stake-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .stake {
+      font-size: 20px;
+      font-weight: 900;
+      color: #222;
+      margin-bottom: 8px;
+    }
+
+    .status {
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .status.win {
+      color: #12c83b;
+    }
+
+    .status.lost {
+      color: #ff1226;
+    }
+
+    .date {
+      color: #888;
+      font-size: 18px;
+      white-space: nowrap;
+      padding-top: 4px;
+    }
+
+    .settings-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f3f3f3;
+      padding: 22px 30px;
+    }
+
+    .settings-top h2,
+    .logout-btn {
+      font-size: 20px;
+      font-weight: 900;
+      color: #222;
+      border: none;
+      background: transparent;
+      text-transform: none;
+    }
+
+    .logout-btn {
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .settings-body {
+      padding: 28px 30px 40px;
+      background: #fff;
+    }
+
+    .id-line {
+      font-size: 23px;
+      color: #555;
+      margin-bottom: 34px;
+    }
+
+    .id-line span {
+      color: #c9c9c9;
+      margin-left: 10px;
+    }
+
+    .setting-row {
+      display: grid;
+      grid-template-columns: 34px 1fr auto;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+      color: #555;
+    }
+
+    .setting-icon {
+      width: 26px;
+      height: 26px;
+      position: relative;
+      color: #444;
+      flex-shrink: 0;
+    }
+
+    .setting-title {
+      font-size: 20px;
+      color: #555;
+      line-height: 1.25;
+    }
+
+    .setting-action {
+      border: none;
+      background: transparent;
+      color: #ff9800;
+      font-size: 17px;
+      font-weight: 900;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .setting-action.green {
+      color: #12c83b;
+    }
+
+    .wallet-line {
+      margin-top: 8px;
+      color: #2a64b7;
+      font-size: 18px;
+      font-weight: 800;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 230px;
+    }
+
+    .section-label {
+      margin: 34px -30px 26px;
+      padding: 18px 30px;
+      background: #f3f3f3;
+      font-size: 20px;
+      font-weight: 900;
+      color: #222;
+    }
+
+    .security-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 34px;
+    }
+
+    .security-row span {
+      color: #555;
+      font-size: 20px;
+    }
+
+    .security-row button {
+      border: none;
+      background: transparent;
+      color: #ff9800;
+      font-size: 18px;
+      font-weight: 900;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .icon-user {
+      border: 3px solid #444;
+      border-radius: 50%;
+    }
+
+    .icon-user::before {
+      content: "";
+      position: absolute;
+      left: 7px;
+      top: 5px;
+      width: 7px;
+      height: 7px;
+      border: 3px solid #444;
+      border-radius: 50%;
+    }
+
+    .icon-user::after {
+      content: "";
+      position: absolute;
+      left: 5px;
+      top: 16px;
+      width: 12px;
+      height: 7px;
+      border: 3px solid #444;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+      border-bottom: 0;
+    }
+
+    .icon-mail {
+      border: 3px solid #444;
+      border-radius: 2px;
+    }
+
+    .icon-mail::before {
+      content: "";
+      position: absolute;
+      left: 2px;
+      top: 5px;
+      width: 18px;
+      height: 14px;
+      border-left: 3px solid #444;
+      border-bottom: 3px solid #444;
+      transform: rotate(-45deg);
+    }
+
+    .icon-phone::before {
+      content: "☎";
+      position: absolute;
+      left: -3px;
+      top: -7px;
+      font-size: 34px;
+      color: #444;
+    }
+
+    .icon-link {
+      transform: rotate(-35deg);
+    }
+
+    .icon-link::before,
+    .icon-link::after {
+      content: "";
+      position: absolute;
+      width: 20px;
+      height: 12px;
+      border: 3px solid #444;
+      border-radius: 14px;
+      top: 7px;
+    }
+
+    .icon-link::before {
+      left: -1px;
+    }
+
+    .icon-link::after {
+      right: -1px;
+    }
+
+    @media (max-width: 480px) {
+      .page {
+        max-width: 100%;
+      }
+
+      .profile-header {
+        padding: 24px 24px 24px;
+      }
+
+      .user-row {
+        grid-template-columns: 96px 1fr;
+        gap: 18px;
+      }
+
+      .avatar-wrap {
+        width: 92px;
+        height: 92px;
+      }
+
+      .diamond {
+        width: 50px;
+        height: 50px;
+      }
+
+      .user-name {
+        font-size: 25px;
+      }
+
+      .user-id {
+        font-size: 22px;
+      }
+
+      .change-picture {
+        font-size: 18px;
+      }
+
+      .earning-card {
+        min-height: 140px;
+      }
+
+      .earning-amount {
+        font-size: 38px;
+      }
+
+      .earning-text {
+        font-size: 18px;
+      }
+
+      .tab-btn {
+        font-size: 18px;
+        gap: 10px;
+      }
+
+      .history-card {
+        padding: 30px 24px 34px;
+      }
+
+      .pool-title {
+        font-size: 20px;
+        max-width: 260px;
+      }
+
+      .amount {
+        font-size: 20px;
+      }
+
+      .option-pill {
+        font-size: 17px;
+      }
+
+      .stake {
+        font-size: 18px;
+      }
+
+      .status {
+        font-size: 18px;
+      }
+
+      .date {
+        font-size: 17px;
+      }
+
+      .settings-top,
+      .settings-body {
+        padding-left: 24px;
+        padding-right: 24px;
+      }
+
+      .section-label {
+        margin-left: -24px;
+        margin-right: -24px;
+        padding-left: 24px;
+        padding-right: 24px;
+      }
+
+      .setting-title,
+      .security-row span {
+        font-size: 18px;
+      }
+
+      .setting-action,
+      .security-row button {
+        font-size: 16px;
+      }
+    }
+
+    @media (max-width: 390px) {
+      .profile-header {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .tabs {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+
+      .tab-btn {
+        height: 62px;
+      }
+
+      .history-head {
+        flex-direction: column;
+      }
+
+      .amount {
+        align-self: flex-end;
+      }
+
+      .stake-row {
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .date {
+        align-self: flex-end;
+      }
+
+      .setting-row {
+        grid-template-columns: 30px 1fr;
+      }
+
+      .setting-action {
+        grid-column: 2;
+        justify-self: start;
+      }
+
+      .wallet-line {
+        max-width: 100%;
+      }
+
+      .security-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <main class="page">
+    <section class="profile-header">
+      <div class="user-row">
+        <div>
+          <div class="avatar-wrap">
+            <div class="diamond"></div>
+          </div>
+        </div>
+
+        <div>
+          <h1 class="user-name">Fishbowl</h1>
+          <p class="user-id">ID218421</p>
+        </div>
+      </div>
+
+      <a href="#" class="change-picture">Change picture</a>
+
+      <div class="earning-card">
+        <h2 class="earning-amount">0 USDT</h2>
+        <p class="earning-text">Total Earnings in the past 14days</p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <nav class="tabs">
+      <button class="tab-btn active" id="poolTab" type="button">
+        Pool History
+        <span class="chevron"></span>
+      </button>
+
+      <button class="tab-btn" id="settingsTab" type="button">
+        Account Setting
+      </button>
+    </nav>
+
+    <section class="history-menu" id="historyMenu">
+      <button class="history-filter active" data-filter="win" type="button">Win</button>
+      <button class="history-filter" data-filter="lost" type="button">Lost</button>
+    </section>
+
+    <section class="panel active" id="historyPanel">
+      <div class="history-list">
+        <article class="history-card" data-status="win">
+          <div class="history-head">
+            <h2 class="pool-title">Will Elon Musk buy Twitter?</h2>
+
+            <div class="amount">
+              <span class="coin">T</span>
+              <span>15 USDT</span>
+            </div>
+          </div>
+
+          <div class="option-grid">
+            <button class="option-pill blue">Yes</button>
+            <button class="option-pill green">No</button>
+          </div>
+
+          <div class="stake-row">
+            <div>
+              <p class="stake">My Stake: No</p>
+              <p class="status win">Win</p>
+            </div>
+
+            <p class="date">4 April, 2022</p>
+          </div>
+        </article>
+
+        <article class="history-card" data-status="win">
+          <div class="history-head">
+            <h2 class="pool-title">Will Elon Musk buy Twitter?</h2>
+
+            <div class="amount">
+              <span class="coin">T</span>
+              <span>15 USDT</span>
+            </div>
+          </div>
+
+          <div class="option-grid">
+            <button class="option-pill blue">Yes</button>
+            <button class="option-pill green">No</button>
+          </div>
+
+          <div class="stake-row">
+            <div>
+              <p class="stake">My Stake: No</p>
+              <p class="status win">Win</p>
+            </div>
+
+            <p class="date">4 April, 2022</p>
+          </div>
+        </article>
+
+        <article class="history-card" data-status="lost">
+          <div class="history-head">
+            <h2 class="pool-title">Will Elon Musk buy Twitter?</h2>
+
+            <div class="amount">
+              <span class="coin">T</span>
+              <span>15 USDT</span>
+            </div>
+          </div>
+
+          <div class="option-grid">
+            <button class="option-pill blue">Yes</button>
+            <button class="option-pill green">No</button>
+          </div>
+
+          <div class="stake-row">
+            <div>
+              <p class="stake">My Stake: Yes</p>
+              <p class="status lost">Lost</p>
+            </div>
+
+            <p class="date">4 April, 2022</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel" id="settingsPanel">
+      <div class="settings-top">
+        <h2>Account Settings</h2>
+        <button class="logout-btn" type="button">LOGOUT</button>
+      </div>
+
+      <div class="settings-body">
+        <p class="id-line">ID <span>ID218421</span></p>
+
+        <div class="setting-row">
+          <span class="setting-icon icon-user"></span>
+          <p class="setting-title">Fishbowl</p>
+          <button class="setting-action" type="button">Change</button>
+        </div>
+
+        <div class="setting-row">
+          <span class="setting-icon icon-mail"></span>
+          <p class="setting-title">Fishbowl@gmail.com</p>
+          <button class="setting-action green" type="button">Verified</button>
+        </div>
+
+        <div class="setting-row">
+          <span class="setting-icon icon-phone"></span>
+          <p class="setting-title">+234 810 0000 000</p>
+          <button class="setting-action" type="button">Verify</button>
+        </div>
+
+        <div class="setting-row">
+          <span class="setting-icon icon-link"></span>
+          <div>
+            <p class="setting-title">Connected Wallet Address</p>
+            <p class="wallet-line">terrakb5bvyjjkp8152ldz...</p>
+          </div>
+          <button class="setting-action" type="button">Disconnect Wallet</button>
+        </div>
+
+        <h3 class="section-label">Security Settings</h3>
+
+        <div class="security-row">
+          <span>Account Password</span>
+          <button type="button">Change Password</button>
+        </div>
+
+        <div class="security-row">
+          <span>Account Email</span>
+          <button type="button">Change Email Address</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const poolTab = document.getElementById("poolTab");
+    const settingsTab = document.getElementById("settingsTab");
+    const historyMenu = document.getElementById("historyMenu");
+    const historyPanel = document.getElementById("historyPanel");
+    const settingsPanel = document.getElementById("settingsPanel");
+    const filterButtons = document.querySelectorAll(".history-filter");
+    const historyCards = document.querySelectorAll(".history-card");
+
+    poolTab.addEventListener("click", () => {
+      poolTab.classList.add("active");
+      settingsTab.classList.remove("active");
+
+      historyPanel.classList.add("active");
+      settingsPanel.classList.remove("active");
+
+      historyMenu.classList.toggle("show");
+      poolTab.classList.toggle("dropdown-open");
+    });
+
+    settingsTab.addEventListener("click", () => {
+      settingsTab.classList.add("active");
+      poolTab.classList.remove("active");
+      poolTab.classList.remove("dropdown-open");
+
+      settingsPanel.classList.add("active");
+      historyPanel.classList.remove("active");
+      historyMenu.classList.remove("show");
+    });
+
+    filterButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const filter = button.dataset.filter;
+
+        filterButtons.forEach((item) => item.classList.remove("active"));
+        button.classList.add("active");
+
+        historyCards.forEach((card) => {
+          card.style.display = card.dataset.status === filter ? "block" : "none";
+        });
+
+        historyMenu.classList.remove("show");
+        poolTab.classList.remove("dropdown-open");
+      });
+    });
+  </script>
+
+</body>
+</html>

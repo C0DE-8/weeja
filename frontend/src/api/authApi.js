@@ -35,13 +35,12 @@ export async function registerAdmin(data) {
 }
 
 /**
- * @param {{ email: string; otp: string }} data
+ * @param {{ token: string }} data
  */
-export async function verifyOtp(data) {
+export async function verifyEmailLink(data) {
   try {
-    const { data: res } = await api.post('/auth/verify-otp', {
-      email: data.email,
-      otp: data.otp,
+    const { data: res } = await api.post('/auth/verify-email', {
+      token: data.token,
     })
     return res
   } catch (error) {
@@ -52,9 +51,9 @@ export async function verifyOtp(data) {
 /**
  * @param {{ email: string }} data
  */
-export async function resendOtp(data) {
+export async function resendVerificationLink(data) {
   try {
-    const { data: res } = await api.post('/auth/resend-otp', {
+    const { data: res } = await api.post('/auth/resend-verification-link', {
       email: data.email,
     })
     return res

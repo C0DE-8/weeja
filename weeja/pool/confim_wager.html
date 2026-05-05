@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Confirm Wager</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .wager-card {
+      width: 100%;
+      max-width: 430px;
+      min-height: 690px;
+      background: #fff;
+      border-radius: 6px;
+      padding: 52px 24px 42px;
+      box-shadow: 0 8px 25px rgba(255, 255, 255, 0.18);
+    }
+
+    .question {
+      font-size: 25px;
+      line-height: 1.35;
+      font-weight: 800;
+      color: #111;
+      margin-bottom: 28px;
+    }
+
+    .section-title {
+      font-size: 23px;
+      font-weight: 800;
+      color: #111;
+      margin-bottom: 18px;
+    }
+
+    .answer-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px 16px;
+      margin-bottom: 26px;
+    }
+
+    .answer-btn {
+      height: 42px;
+      border: 1.5px solid #e4e4e4;
+      border-radius: 6px;
+      background: #fff;
+      color: #111;
+      font-size: 20px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .answer-btn.active {
+      background: #b8ffc4;
+      border-color: #b8ffc4;
+    }
+
+    .answer-btn:hover {
+      background: #f5f5f5;
+    }
+
+    .answer-btn.active:hover {
+      background: #a8f7b6;
+    }
+
+    .my-answer {
+      width: 100%;
+      background: #f5f5f5;
+      border-radius: 6px;
+      padding: 18px 20px;
+      margin-bottom: 24px;
+    }
+
+    .my-answer-title {
+      font-size: 21px;
+      font-weight: 800;
+      color: #777;
+      margin-bottom: 18px;
+    }
+
+    .my-answer-value {
+      font-size: 23px;
+      font-weight: 800;
+      color: #111;
+    }
+
+    .wager-label {
+      font-size: 22px;
+      font-weight: 800;
+      color: #111;
+      margin-bottom: 14px;
+    }
+
+    .amount-box {
+      width: 100%;
+      height: 54px;
+      border: 1.5px solid #e4e4e4;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      margin-bottom: 10px;
+    }
+
+    .amount {
+      color: #10c735;
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .max {
+      color: #1555a8;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .balance {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #888;
+      font-size: 16px;
+      margin: 0 0 30px 2px;
+    }
+
+    .coin {
+      width: 18px;
+      height: 18px;
+      background: #1555a8;
+      color: #fff;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .confirm-btn,
+    .cancel-btn {
+      width: 100%;
+      height: 54px;
+      border-radius: 40px;
+      font-size: 22px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.25s ease;
+    }
+
+    .confirm-btn {
+      border: none;
+      background: #ff9800;
+      color: #fff;
+      margin-bottom: 14px;
+    }
+
+    .cancel-btn {
+      background: #fff;
+      color: #ff1025;
+      border: 1.5px solid #ff1025;
+    }
+
+    .confirm-btn:hover {
+      background: #f28c00;
+      transform: translateY(-2px);
+    }
+
+    .cancel-btn:hover {
+      background: #fff1f2;
+      transform: translateY(-2px);
+    }
+
+    .confirm-btn:active,
+    .cancel-btn:active {
+      transform: scale(0.98);
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 0;
+        background: #fff;
+        align-items: flex-start;
+      }
+
+      .wager-card {
+        max-width: 100%;
+        min-height: 100vh;
+        border-radius: 0;
+        padding: 48px 22px 38px;
+        box-shadow: none;
+      }
+
+      .question {
+        font-size: 23px;
+      }
+
+      .section-title {
+        font-size: 21px;
+      }
+
+      .answer-btn {
+        font-size: 19px;
+      }
+
+      .my-answer-title {
+        font-size: 20px;
+      }
+
+      .my-answer-value {
+        font-size: 22px;
+      }
+
+      .wager-label {
+        font-size: 21px;
+      }
+
+      .confirm-btn,
+      .cancel-btn {
+        font-size: 21px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wager-card">
+    <h1 class="question">
+      Who will win the match between Chelsea and Arsenal?
+    </h1>
+
+    <h2 class="section-title">Select answer</h2>
+
+    <div class="answer-grid">
+      <button class="answer-btn active">Chelsea</button>
+      <button class="answer-btn">Arsenal</button>
+      <button class="answer-btn">Draw</button>
+    </div>
+
+    <div class="my-answer">
+      <div class="my-answer-title">My Answer</div>
+      <div class="my-answer-value">Chelsea</div>
+    </div>
+
+    <div class="wager-label">Enter Wager Amount</div>
+
+    <div class="amount-box">
+      <span class="amount">50.00</span>
+      <span class="max">MAX</span>
+    </div>
+
+    <div class="balance">
+      <span>Available Balance:</span>
+      <span class="coin">T</span>
+      <span>50 USDT</span>
+    </div>
+
+    <button class="confirm-btn">Confirm Wager</button>
+
+    <button class="cancel-btn">Cancel Pool</button>
+  </div>
+
+</body>
+</html>

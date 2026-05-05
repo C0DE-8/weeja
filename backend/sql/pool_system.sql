@@ -247,8 +247,8 @@ CREATE TABLE `users` (
   `email` varchar(100) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
   `email_verified` tinyint(1) NOT NULL DEFAULT 0,
-  `otp_hash` varchar(255) DEFAULT NULL,
-  `otp_expires_at` datetime DEFAULT NULL,
+  `verification_token_hash` varchar(64) DEFAULT NULL,
+  `verification_expires_at` datetime DEFAULT NULL,
   `role` enum('user','admin','super_admin') DEFAULT 'user',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -257,14 +257,14 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `password`, `email_verified`, `otp_hash`, `otp_expires_at`, `role`, `created_at`) VALUES
+INSERT INTO `users` (`id`, `name`, `email`, `password`, `email_verified`, `verification_token_hash`, `verification_expires_at`, `role`, `created_at`) VALUES
 (1, 'Super Admin', 'admin@weeja.com', '$2b$10$57OmnYGe3az9DfP5VECwqORuv0BtxpdUQq10FWE8ntOCj0xOg8.1S', 1, NULL, NULL, 'super_admin', '2026-04-30 10:04:09'),
 (2, 'Samuel Oghenchovwe', '8amlight@gmail.com', '$2b$10$57OmnYGe3az9DfP5VECwqORuv0BtxpdUQq10FWE8ntOCj0xOg8.1S', 1, NULL, NULL, 'user', '2026-04-30 10:10:19'),
-(8, 'one', 'one@gmail.com', '$2b$10$BkGtoHJKLoGPZ/Ed/iG/.uUByz4iPYJN9q.gjtWO1tWyDjhT2z20y', 1, '$2b$10$Vm61HyL2q5ZU0eI3lj9bDu.c8e4PDerC0hYTZS2Y9D3IS5Taw8zSS', '2026-04-30 14:38:48', 'user', '2026-04-30 21:23:48'),
-(9, 'two', 'two@gmail.com', '$2b$10$xlHx3vCf8sFkZWwD2qsJSu9FkeBUJBCfp9D6N/UmOxK3wWPG/EpJ.', 1, '$2b$10$tpL1jFb0JGsznm5M4X.VKOy/05LZYHF0zMd9R7/JgSsEq0SLBdQ1O', '2026-04-30 14:40:47', 'user', '2026-04-30 21:25:47'),
-(10, 'three', 'three@gmail.com', '$2b$10$683.uVN/iVnOYL0Li760TukZI7Y5ZgFEXgX6EqdwHRlLW3DPt.MwW', 1, '$2b$10$xsfGpu.pkxHKUP8xrftyFuuKApTGr8jj3KGIyf4AW4PfcZF.NATE.', '2026-04-30 14:41:18', 'user', '2026-04-30 21:26:18'),
-(11, 'four', 'four@gmail.com', '$2b$10$W2Lbg.HD1GGQamKxWxCkZ.NikESJOOq2/HVRhC6kis0dlPVduva7W', 1, '$2b$10$HdT5fjPlAYHg0RaKB1HoGuiB3x9.HEd1x5VWn5uN0ZYzNE2KLT6..', '2026-04-30 14:41:53', 'user', '2026-04-30 21:26:52'),
-(12, 'five', 'five@gmail.com', '$2b$10$Z7tDgf8k0.UDadp2GC5fP.gyQ/Ph3ddzqfHhRA4yqZkTMInt1Sw4e', 1, '$2b$10$LKpxPacvxqwXG4P0pz9GnuslhaJSGjA9all467RFcqFnE2SQyKl.K', '2026-04-30 14:42:20', 'user', '2026-04-30 21:27:19');
+(8, 'one', 'one@gmail.com', '$2b$10$BkGtoHJKLoGPZ/Ed/iG/.uUByz4iPYJN9q.gjtWO1tWyDjhT2z20y', 1, NULL, NULL, 'user', '2026-04-30 21:23:48'),
+(9, 'two', 'two@gmail.com', '$2b$10$xlHx3vCf8sFkZWwD2qsJSu9FkeBUJBCfp9D6N/UmOxK3wWPG/EpJ.', 1, NULL, NULL, 'user', '2026-04-30 21:25:47'),
+(10, 'three', 'three@gmail.com', '$2b$10$683.uVN/iVnOYL0Li760TukZI7Y5ZgFEXgX6EqdwHRlLW3DPt.MwW', 1, NULL, NULL, 'user', '2026-04-30 21:26:18'),
+(11, 'four', 'four@gmail.com', '$2b$10$W2Lbg.HD1GGQamKxWxCkZ.NikESJOOq2/HVRhC6kis0dlPVduva7W', 1, NULL, NULL, 'user', '2026-04-30 21:26:52'),
+(12, 'five', 'five@gmail.com', '$2b$10$Z7tDgf8k0.UDadp2GC5fP.gyQ/Ph3ddzqfHhRA4yqZkTMInt1Sw4e', 1, NULL, NULL, 'user', '2026-04-30 21:27:19');
 
 -- --------------------------------------------------------
 

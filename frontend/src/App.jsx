@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Routes, Route } from 'react-router-dom'
 import Home from './pages/home/Home'
 import Login from './pages/auth/login/Login'
 import Signup from './pages/auth/signup/Signup'
+import VerifyEmail from './pages/auth/verifyEmail/VerifyEmail'
 import AdminLogin from './pages/admin/login/AdminLogin'
 import RequireAuthRoute from './components/auth/RequireAuthRoute'
 import RequireAdminRoute from './components/auth/RequireAdminRoute'
@@ -25,6 +26,7 @@ function App() {
         <Route path="/results" element={<PoolResultsPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
         <Route element={<RequireAuthRoute />}>
           <Route path="/account" element={<AccountDashboard />} />
           <Route path="/wallet" element={<AccountWallets />} />
