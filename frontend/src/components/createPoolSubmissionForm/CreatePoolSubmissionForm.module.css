@@ -1,0 +1,329 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.mobileIntro {
+  display: none;
+}
+
+.mobileTitle {
+  margin: 0;
+  text-align: center;
+  font-size: 1.35rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: #222222;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label,
+.labelWithIcon {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.labelWithIcon {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.infoIcon {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: #64748b;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+}
+
+.control,
+.tagInput,
+.textareaBox textarea,
+.optionInput {
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 16px;
+  border: 1px solid #cbd5e1;
+  padding: 13px 14px;
+  font: inherit;
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.textareaBox {
+  position: relative;
+}
+
+.textareaBox textarea {
+  min-height: 96px;
+  resize: vertical;
+  padding-bottom: 28px;
+}
+
+.counter {
+  position: absolute;
+  right: 14px;
+  bottom: 10px;
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+.control:focus,
+.tagInput:focus,
+.textareaBox textarea:focus,
+.optionInput:focus {
+  outline: none;
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.16);
+}
+
+.tagRow,
+.optionComposer {
+  display: flex;
+  gap: 10px;
+}
+
+.tagInput,
+.optionInput {
+  flex: 1;
+}
+
+.tagType,
+.addButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 16px;
+  padding: 0 18px;
+  font: inherit;
+  font-weight: 700;
+}
+
+.tagType {
+  min-width: 96px;
+  background: #475569;
+  color: #ffffff;
+}
+
+.addButton {
+  min-width: 80px;
+  background: #1555a8;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.desktopGrid,
+.scheduleGrid {
+  display: grid;
+  gap: 14px;
+}
+
+.desktopGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.scheduleGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.feeCard {
+  border-radius: 20px;
+  padding: 18px;
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  color: #172554;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid rgba(96, 165, 250, 0.18);
+}
+
+.summaryTriple {
+  display: none;
+}
+
+.hiddenInputs {
+  display: contents;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.chip {
+  border: 0;
+  border-radius: 999px;
+  background: #eef4ff;
+  color: #1e3a8a;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.chip span {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.submitButton {
+  width: 100%;
+  min-height: 52px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #1d4dd5, #2563eb);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 14px 28px rgba(37, 99, 235, 0.2);
+}
+
+.submitButton:disabled,
+.addButton:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+@media (max-width: 1024px) {
+  .desktopGrid,
+  .scheduleGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .form {
+    gap: 16px;
+  }
+
+  .mobileIntro {
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .label,
+  .labelWithIcon {
+    font-size: 1.05rem;
+    color: #444444;
+    font-weight: 400;
+  }
+
+  .control,
+  .tagInput,
+  .textareaBox textarea,
+  .optionInput {
+    min-height: 52px;
+    border-radius: 6px;
+    border-color: #e2e2e2;
+    background: #ffffff;
+    padding: 0 18px;
+  }
+
+  .textareaBox textarea {
+    min-height: 78px;
+    padding-top: 14px;
+    padding-bottom: 24px;
+  }
+
+  .tagRow,
+  .optionComposer {
+    gap: 0;
+    border: 1px solid #e2e2e2;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .tagInput,
+  .optionInput {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .tagType,
+  .addButton {
+    border-radius: 0;
+    min-width: 88px;
+  }
+
+  .addButton {
+    font-size: 0.9rem;
+    font-weight: 800;
+  }
+
+  .infoIcon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .summaryTriple {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .summaryTriple span {
+    min-height: 52px;
+    border: 1px solid #e2e2e2;
+    border-radius: 6px;
+    background: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #666666;
+  }
+
+  .hiddenInputs {
+    display: grid;
+    gap: 10px;
+  }
+
+  .hiddenInputs input {
+    min-height: 48px;
+  }
+
+  .chips {
+    gap: 14px;
+    margin-top: 4px;
+  }
+
+  .chip {
+    min-height: 39px;
+    border-radius: 30px;
+    border: 1.5px solid #1250a5;
+    background: #d7e8ff;
+    color: #5a86bd;
+    padding: 0 18px;
+  }
+
+  .chip span {
+    color: #1250a5;
+    font-size: 1.45rem;
+    font-weight: 700;
+  }
+
+  .submitButton {
+    min-height: 58px;
+    background: #1555a8;
+    font-size: 1.15rem;
+    box-shadow: none;
+  }
+}

@@ -1,6 +1,8 @@
 import Header from '../../components/header/Header'
 import Footer from '../../components/footer/Footer'
 import AccountWorkspaceNav from '../../components/accountWorkspaceNav/AccountWorkspaceNav'
+import CreatePoolSubmissionForm from '../../components/createPoolSubmissionForm/CreatePoolSubmissionForm'
+import CreatePoolSuccessModal from '../../components/createPoolSuccessModal/CreatePoolSuccessModal'
 import { formatCurrencyAmount } from '../../utils/currency'
 import styles from './AccountDashboard.module.css'
 import { useAccountWorkspace } from './useAccountWorkspace'
@@ -32,6 +34,7 @@ export default function AccountCreate() {
     success,
     selectedFee,
     handleCreatePool,
+    clearCreatePoolSuccess,
   } = useAccountWorkspace()
 
   if (loading) {
@@ -49,6 +52,12 @@ export default function AccountCreate() {
   return (
     <div className={styles.page}>
       <Header />
+      {success ? (
+        <CreatePoolSuccessModal
+          message={success}
+          onClose={clearCreatePoolSuccess}
+        />
+      ) : null}
       <main className={styles.main}>
         <AccountWorkspaceNav />
         <section className={styles.hero}>
@@ -67,10 +76,9 @@ export default function AccountCreate() {
         </section>
 
         {error ? <p className={styles.errorBanner}>{error}</p> : null}
-        {success ? <p className={styles.successBanner}>{success}</p> : null}
 
         <div className={styles.gridWide}>
-          <section className={styles.card}>
+          <section className={`${styles.card} ${styles.createCard}`}>
             <div className={styles.cardHeader}>
               <h2>Create a pool submission</h2>
               <span>
@@ -85,212 +93,15 @@ export default function AccountCreate() {
               </span>
             </div>
 
-            <form className={styles.form} onSubmit={handleCreatePool}>
-              <div className={styles.twoColumn}>
-                <label className={styles.field}>
-                  <span>Title</span>
-                  <input
-                    value={form.title}
-                    onChange={(event) => setForm((current) => ({ ...current, title: event.target.value }))}
-                    placeholder="Who will win the final?"
-                    type="text"
-                  />
-                </label>
-
-                <label className={styles.field}>
-                  <span>Category</span>
-                  <select
-                    value={form.category_id}
-                    onChange={(event) =>
-                      setForm((current) => ({ ...current, category_id: event.target.value }))
-                    }
-                  >
-                    <option value="">Select category</option>
-                    {categories.map((category) => (
-                      <option key={category.id} value={category.id}>
-                        {category.name} ({category.type})
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-
-              <label className={styles.field}>
-                <span>Description</span>
-                <textarea
-                  rows={4}
-                  value={form.description}
-                  onChange={(event) =>
-                    setForm((current) => ({ ...current, description: event.target.value }))
-                  }
-                  placeholder="Describe the event and what the pool is deciding."
-                />
-              </label>
-
-              <div className={styles.threeColumn}>
-                <label className={styles.field}>
-                  <span>Wallet currency</span>
-                  <select
-                    value={form.currency_id}
-                    onChange={(event) =>
-                      setForm((current) => ({ ...current, currency_id: event.target.value }))
-                    }
-                  >
-                    <option value="">Select currency</option>
-                    {currencies.map((currency) => (
-                      <option key={currency.id} value={currency.id}>
-                        {currency.code} - {currency.name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-
-                <label className={styles.field}>
-                  <span>Minimum stake</span>
-                  <input
-                    min="0"
-                    step="0.01"
-                    type="number"
-                    value={form.min_stake}
-                    onChange={(event) =>
-                      setForm((current) => ({ ...current, min_stake: event.target.value }))
-                    }
-                  />
-                </label>
-
-                <div className={styles.feeCard}>
-                  <span>Creation fee</span>
-                  <strong>
-                    {selectedFee
-                      ? formatCurrencyAmount(
-                          selectedFee.amount,
-                          selectedFee.currency_code,
-                          selectedFee.decimal_places,
-                        )
-                      : 'Unavailable'}
-                  </strong>
-                </div>
-              </div>
-
-              <div className={styles.threeColumn}>
-                <label className={styles.field}>
-                  <span>Start date</span>
-                  <input
-                    type="date"
-                    value={form.start_date}
-                    onChange={(event) =>
-                      setForm((current) => ({ ...current, start_date: event.target.value }))
-                    }
-                  />
-                </label>
-                <label className={styles.field}>
-                  <span>Lock date</span>
-                  <input
-                    type="date"
-                    value={form.lock_date}
-                    onChange={(event) =>
-                      setForm((current) => ({ ...current, lock_date: event.target.value }))
-                    }
-                  />
-                </label>
-                <label className={styles.field}>
-                  <span>End date</span>
-                  <input
-                    type="date"
-                    value={form.end_date}
-                    onChange={(event) =>
-                      setForm((current) => ({ ...current, end_date: event.target.value }))
-                    }
-                  />
-                </label>
-              </div>
-
-              <div className={styles.threeColumn}>
-                <label className={styles.field}>
-                  <span>Start time</span>
-                  <input
-                    type="time"
-                    value={form.start_time}
-                    onChange={(event) =>
-                      setForm((current) => ({ ...current, start_time: event.target.value }))
-                    }
-                  />
-                </label>
-                <label className={styles.field}>
-                  <span>Lock time</span>
-                  <input
-                    type="time"
-                    value={form.lock_time}
-                    onChange={(event) =>
-                      setForm((current) => ({ ...current, lock_time: event.target.value }))
-                    }
-                  />
-                </label>
-                <label className={styles.field}>
-                  <span>End time</span>
-                  <input
-                    type="time"
-                    value={form.end_time}
-                    onChange={(event) =>
-                      setForm((current) => ({ ...current, end_time: event.target.value }))
-                    }
-                  />
-                </label>
-              </div>
-
-              <div className={styles.optionSection}>
-                <div className={styles.optionHeader}>
-                  <strong>Pool options</strong>
-                  <button
-                    className={styles.secondaryButton}
-                    onClick={() =>
-                      setForm((current) => ({
-                        ...current,
-                        options: [...current.options, ''],
-                      }))
-                    }
-                    type="button"
-                  >
-                    Add option
-                  </button>
-                </div>
-
-                {form.options.map((option, index) => (
-                  <div className={styles.optionRow} key={`option-${index + 1}`}>
-                    <input
-                      type="text"
-                      value={option}
-                      onChange={(event) =>
-                        setForm((current) => ({
-                          ...current,
-                          options: current.options.map((item, optionIndex) =>
-                            optionIndex === index ? event.target.value : item,
-                          ),
-                        }))
-                      }
-                      placeholder={`Option ${index + 1}`}
-                    />
-                    <button
-                      className={styles.secondaryButton}
-                      disabled={form.options.length <= 2}
-                      onClick={() =>
-                        setForm((current) => ({
-                          ...current,
-                          options: current.options.filter((_, optionIndex) => optionIndex !== index),
-                        }))
-                      }
-                      type="button"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))}
-              </div>
-
-              <button className={styles.primaryButton} disabled={submitLoading} type="submit">
-                {submitLoading ? 'Submitting...' : 'Submit for review'}
-              </button>
-            </form>
+            <CreatePoolSubmissionForm
+              categories={categories}
+              currencies={currencies}
+              form={form}
+              setForm={setForm}
+              selectedFee={selectedFee}
+              submitLoading={submitLoading}
+              onSubmit={handleCreatePool}
+            />
           </section>
 
           <section className={styles.card}>

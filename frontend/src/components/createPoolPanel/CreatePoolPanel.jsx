@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { FiChevronDown, FiChevronRight } from 'react-icons/fi'
 import { getStoredToken } from '../../api/session'
+import { useCreatePoolModal } from '../createPoolModal/CreatePoolModalContext'
 import styles from './CreatePoolPanel.module.css'
 
 export default function CreatePoolPanel() {
-  const navigate = useNavigate()
+  const { openCreatePoolModal } = useCreatePoolModal()
   const [isOpen, setIsOpen] = useState(true)
   const isAuthenticated = Boolean(getStoredToken())
 
@@ -66,9 +66,9 @@ export default function CreatePoolPanel() {
             <button
               className={styles.primaryButton}
               type="button"
-              onClick={() => navigate(isAuthenticated ? '/create' : '/login')}
+              onClick={openCreatePoolModal}
             >
-              {isAuthenticated ? 'Open creator workspace' : 'Login to create a pool'}
+              {isAuthenticated ? 'Open create modal' : 'Login to create a pool'}
             </button>
           </div>
         </div>

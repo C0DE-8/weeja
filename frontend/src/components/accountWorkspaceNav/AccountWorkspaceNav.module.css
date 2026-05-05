@@ -18,6 +18,20 @@
   font-weight: 700;
 }
 
+.linkButton {
+  display: inline-flex;
+  align-items: center;
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 999px;
+  color: #1e3a8a;
+  background: rgba(219, 234, 254, 0.75);
+  border: 1px solid rgba(96, 165, 250, 0.2);
+  font-weight: 700;
+  font: inherit;
+  cursor: pointer;
+}
+
 .linkActive {
   background: linear-gradient(135deg, #1d4dd5, #2563eb);
   color: #ffffff;

@@ -153,6 +153,10 @@ export function useAccountWorkspace() {
     }
   }
 
+  const clearCreatePoolSuccess = () => {
+    setSuccess('')
+  }
+
   return {
     profile,
     profileName,
@@ -174,5 +178,6 @@ export function useAccountWorkspace() {
     selectedFee,
     handleProfileSave,
     handleCreatePool,
+    clearCreatePoolSuccess,
   }
 }

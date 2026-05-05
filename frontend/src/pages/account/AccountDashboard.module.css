@@ -109,6 +109,10 @@
   backdrop-filter: blur(10px);
 }
 
+.createCard {
+  overflow: hidden;
+}
+
 .cardHeader {
   display: flex;
   justify-content: space-between;
@@ -341,5 +345,16 @@
   .transactionMeta,
   .statusStack {
     align-items: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .createCard {
+    padding: 22px 18px;
+    border-radius: 18px;
+  }
+
+  .createCard .cardHeader {
+    margin-bottom: 22px;
   }
 }

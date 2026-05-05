@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom'
+import { useCreatePoolModal } from '../createPoolModal/CreatePoolModalContext'
 import styles from './AccountWorkspaceNav.module.css'
 
 function linkClassName({ isActive }) {
@@ -6,6 +7,8 @@ function linkClassName({ isActive }) {
 }
 
 export default function AccountWorkspaceNav() {
+  const { openCreatePoolModal } = useCreatePoolModal()
+
   return (
     <nav className={styles.nav} aria-label="Account workspace navigation">
       <NavLink className={linkClassName} to="/account" end>
@@ -14,9 +17,9 @@ export default function AccountWorkspaceNav() {
       <NavLink className={linkClassName} to="/wallet">
         Wallet
       </NavLink>
-      <NavLink className={linkClassName} to="/create">
+      <button className={styles.linkButton} type="button" onClick={openCreatePoolModal}>
         Create
-      </NavLink>
+      </button>
     </nav>
   )
 }

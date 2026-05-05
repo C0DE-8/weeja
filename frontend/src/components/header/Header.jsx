@@ -5,6 +5,7 @@ import { FiChevronDown, FiChevronRight } from 'react-icons/fi'
 import { IoClose } from 'react-icons/io5'
 import { fetchActiveCategories } from '../../api/categoryApi'
 import { clearSession, getStoredUser, isAdminUser } from '../../api/session'
+import { useCreatePoolModal } from '../createPoolModal/CreatePoolModalContext'
 import styles from './Header.module.css'
 
 const poolLinks = [
@@ -18,6 +19,7 @@ const poolLinks = [
 
 export default function Header() {
   const navigate = useNavigate()
+  const { openCreatePoolModal } = useCreatePoolModal()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isAllPoolOpen, setIsAllPoolOpen] = useState(true)
   const [categoriesByType, setCategoriesByType] = useState({ sport: [], event: [] })
@@ -66,7 +68,7 @@ export default function Header() {
             <button
               className={styles.mobileCreateButton}
               type="button"
-              onClick={() => navigate(user ? '/create' : '/login')}
+              onClick={openCreatePoolModal}
             >
               Create Pool
             </button>
@@ -294,7 +296,7 @@ export default function Header() {
                       type="button"
                       onClick={() => {
                         setIsMenuOpen(false)
-                        navigate('/create')
+                        openCreatePoolModal()
                       }}
                     >
                       <span>Create</span>

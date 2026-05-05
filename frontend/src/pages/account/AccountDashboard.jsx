@@ -52,7 +52,7 @@ export default function AccountDashboard() {
             <h1>Manage your profile and workspace access</h1>
             <p className={styles.heroText}>
               Keep your profile current, move to your wallet page for balances, and use the create
-              page for new pool submissions and review tracking.
+              modal for new pool submissions and review tracking.
             </p>
           </div>
           <div className={styles.heroMeta}>
