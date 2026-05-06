@@ -1,5 +1,6 @@
 .page {
   min-height: 100vh;
+  overflow-x: hidden;
   background:
     radial-gradient(circle at top left, rgba(255, 139, 43, 0.16), transparent 28%),
     radial-gradient(circle at top right, rgba(29, 77, 213, 0.1), transparent 30%),
@@ -11,6 +12,8 @@
   max-width: 1280px;
   margin: 0 auto;
   padding: 40px 20px 80px;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .hero {
@@ -25,6 +28,7 @@
   color: #f8fafc;
   margin-bottom: 24px;
   box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
+  min-width: 0;
 }
 
 .eyebrow {
@@ -40,6 +44,7 @@
   margin: 0;
   max-width: 12ch;
   color: #ffffff;
+  overflow-wrap: anywhere;
 }
 
 .heroText {
@@ -78,6 +83,524 @@
 
 .successBanner {
   color: #1b7f47;
+}
+
+.profileShell {
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  background: #fff;
+  color: #111;
+  overflow: hidden;
+  box-shadow: 0 18px 48px rgba(15, 23, 42, 0.08);
+}
+
+.profileHeader {
+  padding: 28px 30px 26px;
+  background: #fff;
+}
+
+.userRow {
+  display: grid;
+  grid-template-columns: 112px 1fr;
+  gap: 22px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.avatarWrap {
+  width: 106px;
+  height: 106px;
+  border: 2px solid #e4efff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+}
+
+.avatarMark {
+  width: 58px;
+  height: 58px;
+  transform: rotate(35deg) skew(-8deg);
+  border: 4px solid #4e5e5d;
+  background:
+    linear-gradient(135deg, transparent 0 30%, rgba(255, 255, 255, 0.65) 31% 45%, transparent 46%),
+    linear-gradient(45deg, rgba(255, 255, 255, 0.7), rgba(140, 170, 170, 0.35)),
+    #dbeeee;
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.18);
+  position: relative;
+}
+
+.avatarMark::before,
+.avatarMark::after {
+  content: "";
+  position: absolute;
+  background: rgba(90, 110, 110, 0.55);
+  transform-origin: center;
+}
+
+.avatarMark::before {
+  width: 4px;
+  height: 58px;
+  left: 26px;
+  top: -2px;
+  transform: rotate(18deg);
+}
+
+.avatarMark::after {
+  width: 58px;
+  height: 4px;
+  left: -2px;
+  top: 26px;
+  transform: rotate(-25deg);
+}
+
+.userName {
+  font-size: 28px;
+  font-weight: 800;
+  color: #222;
+  margin: 0 0 16px;
+  line-height: 1.1;
+}
+
+.userId {
+  font-size: 24px;
+  color: #555;
+  margin: 0;
+}
+
+.changePictureButton {
+  display: inline-block;
+  margin-top: 4px;
+  color: #ff9800;
+  font-size: 20px;
+  font-weight: 800;
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.earningCard {
+  margin-top: 32px;
+  width: 100%;
+  min-height: 150px;
+  border-radius: 16px;
+  background: #cfe3ff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px 18px;
+}
+
+.earningCard h2 {
+  font-size: 42px;
+  font-weight: 900;
+  margin: 0 0 24px;
+  line-height: 1;
+  color: #111;
+}
+
+.earningCard p {
+  font-size: 20px;
+  font-weight: 800;
+  color: #111;
+  margin: 0;
+}
+
+.walletSwitcher {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.walletSwitchButton {
+  min-width: 0;
+  border: 2px solid #eeeeee;
+  border-radius: 8px;
+  background: #fff;
+  color: #333;
+  padding: 10px 8px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.walletSwitchButton span,
+.walletSwitchButton strong {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.walletSwitchButton span {
+  font-size: 13px;
+  font-weight: 900;
+  color: #ff9800;
+}
+
+.walletSwitchButton strong {
+  margin-top: 4px;
+  font-size: 14px;
+  color: #111;
+}
+
+.walletSwitchButtonActive {
+  border-color: #ff9800;
+  background: #fff8ec;
+}
+
+.profileDivider {
+  height: 12px;
+  background: #f5f5f5;
+}
+
+.profileTabs {
+  min-height: 76px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  background: #fff;
+  border-bottom: 2px solid #f1f1f1;
+}
+
+.profileTabButton {
+  height: 76px;
+  border: none;
+  background: #fff;
+  color: #222;
+  font-size: 20px;
+  font-weight: 900;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.profileTabButtonActive {
+  color: #ff9800;
+}
+
+.profilePanel {
+  background: #fff;
+}
+
+.historyCard {
+  background: #fff;
+  padding: 34px 30px 38px;
+  border-bottom: 12px solid #f6f6f6;
+}
+
+.historyHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.historyHead h2 {
+  font-size: 23px;
+  line-height: 1.25;
+  font-weight: 900;
+  color: #111;
+  max-width: 320px;
+  margin: 0;
+}
+
+.historyAmount {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #ff1226;
+  font-size: 22px;
+  font-weight: 900;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.historyAmount span {
+  width: 28px;
+  height: 28px;
+  background: #ff2b3d;
+  color: #fff;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 19px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.historyAmountPositive {
+  color: #12a83a;
+}
+
+.historyAmountPositive span {
+  background: #12c83b;
+}
+
+.transactionDetails {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 18px;
+  padding: 13px 14px;
+  border-radius: 8px;
+  background: #f7f7f7;
+}
+
+.transactionDetails p {
+  margin: 0;
+  color: #555;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.transactionDetails strong {
+  color: #222;
+  font-size: 18px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.stakeRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.stakeLabel {
+  font-size: 20px;
+  font-weight: 900;
+  color: #222;
+  margin: 0 0 8px;
+}
+
+.historyStatus {
+  font-size: 20px;
+  font-weight: 900;
+  color: #ff9800;
+  margin: 0;
+}
+
+.historyStatusWin {
+  color: #12c83b;
+}
+
+.historyDate {
+  color: #888;
+  font-size: 18px;
+  white-space: nowrap;
+  padding-top: 4px;
+  margin: 0;
+}
+
+.emptyProfilePanel {
+  padding: 42px 30px;
+  color: #555;
+  font-size: 18px;
+  font-weight: 800;
+  text-align: center;
+  border-bottom: 12px solid #f6f6f6;
+}
+
+.settingsTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f3f3f3;
+  padding: 22px 30px;
+}
+
+.settingsTop h2,
+.settingsTop button {
+  font-size: 20px;
+  font-weight: 900;
+  color: #222;
+  border: none;
+  background: transparent;
+  margin: 0;
+}
+
+.settingsTop button {
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.settingsBody {
+  padding: 28px 30px 40px;
+  background: #fff;
+}
+
+.idLine {
+  font-size: 23px;
+  color: #555;
+  margin: 0 0 34px;
+}
+
+.idLine span {
+  color: #c9c9c9;
+  margin-left: 10px;
+}
+
+.settingRow {
+  display: grid;
+  grid-template-columns: 34px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 28px;
+  color: #555;
+}
+
+.settingRow p {
+  margin: 0;
+  color: #555;
+  font-size: 20px;
+  line-height: 1.25;
+  min-width: 0;
+}
+
+.settingIcon {
+  width: 26px;
+  height: 26px;
+  position: relative;
+  color: #444;
+  flex-shrink: 0;
+}
+
+.settingAction,
+.settingActionGreen {
+  color: #ff9800;
+  font-size: 17px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.settingActionGreen {
+  color: #12c83b;
+}
+
+.walletLine {
+  margin-top: 8px;
+  color: #2a64b7 !important;
+  font-size: 18px !important;
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 230px;
+}
+
+.sectionLabel {
+  margin: 34px -30px 26px;
+  padding: 18px 30px;
+  background: #f3f3f3;
+  font-size: 20px;
+  font-weight: 900;
+  color: #222;
+}
+
+.securityRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 34px;
+}
+
+.securityRow span {
+  color: #555;
+  font-size: 20px;
+}
+
+.securityRow button {
+  border: none;
+  background: transparent;
+  color: #ff9800;
+  font-size: 18px;
+  font-weight: 900;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.iconUser {
+  border: 3px solid #444;
+  border-radius: 50%;
+}
+
+.iconUser::before {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 5px;
+  width: 7px;
+  height: 7px;
+  border: 3px solid #444;
+  border-radius: 50%;
+}
+
+.iconUser::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 16px;
+  width: 12px;
+  height: 7px;
+  border: 3px solid #444;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  border-bottom: 0;
+}
+
+.iconMail {
+  border: 3px solid #444;
+  border-radius: 2px;
+}
+
+.iconMail::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 5px;
+  width: 18px;
+  height: 14px;
+  border-left: 3px solid #444;
+  border-bottom: 3px solid #444;
+  transform: rotate(-45deg);
+}
+
+.iconLink {
+  transform: rotate(-35deg);
+}
+
+.iconLink::before,
+.iconLink::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 12px;
+  border: 3px solid #444;
+  border-radius: 14px;
+  top: 7px;
+}
+
+.iconLink::before {
+  left: -1px;
+}
+
+.iconLink::after {
+  right: -1px;
 }
 
 .grid,
@@ -356,5 +879,182 @@
 
   .createCard .cardHeader {
     margin-bottom: 22px;
+  }
+
+  .main {
+    padding: 24px 0 64px;
+  }
+
+  .profileShell {
+    max-width: 100%;
+    box-shadow: none;
+  }
+
+  .profileHeader {
+    padding: 24px;
+  }
+
+  .userRow {
+    grid-template-columns: 96px 1fr;
+    gap: 18px;
+  }
+
+  .avatarWrap {
+    width: 92px;
+    height: 92px;
+  }
+
+  .avatarMark {
+    width: 50px;
+    height: 50px;
+  }
+
+  .userName {
+    font-size: 25px;
+  }
+
+  .userId {
+    font-size: 22px;
+  }
+
+  .changePictureButton {
+    font-size: 18px;
+  }
+
+  .earningCard {
+    min-height: 140px;
+  }
+
+  .earningCard h2 {
+    font-size: 30px;
+    overflow-wrap: anywhere;
+  }
+
+  .earningCard p {
+    font-size: 18px;
+  }
+
+  .profileTabButton {
+    font-size: 15px;
+    padding: 0 8px;
+  }
+
+  .historyCard {
+    padding: 30px 24px 34px;
+  }
+
+  .historyHead h2 {
+    font-size: 20px;
+    max-width: 260px;
+  }
+
+  .historyAmount,
+  .stakeLabel,
+  .historyStatus {
+    font-size: 16px;
+  }
+
+  .transactionDetails {
+    grid-template-columns: 1fr;
+  }
+
+  .historyDate {
+    font-size: 17px;
+  }
+
+  .settingsTop,
+  .settingsBody {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .sectionLabel {
+    margin-left: -24px;
+    margin-right: -24px;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .settingRow p,
+  .securityRow span {
+    font-size: 16px;
+  }
+
+  .settingAction,
+  .settingActionGreen,
+  .securityRow button {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 430px) {
+  .profileHeader {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .userRow {
+    grid-template-columns: 78px 1fr;
+    gap: 14px;
+  }
+
+  .avatarWrap {
+    width: 76px;
+    height: 76px;
+  }
+
+  .avatarMark {
+    width: 42px;
+    height: 42px;
+  }
+
+  .userName {
+    font-size: 22px;
+  }
+
+  .userId {
+    font-size: 18px;
+  }
+
+  .walletSwitcher {
+    grid-template-columns: 1fr;
+  }
+
+  .profileTabs {
+    grid-template-columns: 1fr;
+  }
+
+  .profileTabButton {
+    height: 62px;
+  }
+
+  .historyHead,
+  .stakeRow {
+    flex-direction: column;
+  }
+
+  .historyAmount,
+  .historyDate {
+    align-self: flex-end;
+  }
+
+  .settingRow {
+    grid-template-columns: 30px 1fr;
+  }
+
+  .settingAction,
+  .settingActionGreen {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .walletLine {
+    max-width: 100%;
+  }
+
+  .securityRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
   }
 }

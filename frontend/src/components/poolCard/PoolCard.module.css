@@ -19,6 +19,7 @@
   justify-content: space-between;
   gap: 14px;
   align-items: flex-start;
+  min-width: 0;
 }
 
 .question {
@@ -44,6 +45,7 @@
   color: #4f5c7a;
   font-size: 1rem;
   cursor: pointer;
+  flex: 0 0 auto;
 }
 
 .desktopAmount {
@@ -56,6 +58,7 @@
   gap: 16px;
   align-items: center;
   margin-top: 14px;
+  min-width: 0;
 }
 
 .details {
@@ -93,6 +96,7 @@
   flex-direction: column;
   align-items: flex-end;
   gap: 6px;
+  min-width: 0;
 }
 
 .currencyToken {
@@ -103,6 +107,7 @@
 .amountValue {
   color: #141b33;
   font-size: 1.35rem;
+  overflow-wrap: anywhere;
 }
 
 .optionsRow {
@@ -117,6 +122,7 @@
   border-radius: 18px;
   background: #f8fbff;
   border: 1px solid #d9e6fb;
+  min-width: 0;
 }
 
 .entryHeader {
@@ -125,6 +131,7 @@
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 12px;
+  min-width: 0;
 }
 
 .entryHeader strong {
@@ -137,6 +144,8 @@
   color: #64748b;
   font-size: 0.82rem;
   text-align: right;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .entryRow {
@@ -224,6 +233,8 @@
   font-weight: 600;
   transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
   cursor: pointer;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .optionButton {
@@ -480,5 +491,29 @@
   .shareButton {
     width: 36px;
     height: 36px;
+  }
+
+  .card {
+    padding: 14px;
+    border-radius: 18px;
+  }
+
+  .question {
+    font-size: 0.92rem;
+  }
+
+  .amountValue {
+    font-size: 1.08rem;
+  }
+
+  .entryRow {
+    grid-template-columns: 1fr;
+  }
+
+  .optionButton,
+  .optionButtonActive,
+  .moreButton,
+  .joinButton {
+    font-size: 0.86rem;
   }
 }

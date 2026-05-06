@@ -22,12 +22,12 @@
   background: #ffffff;
   border-radius: 24px;
   box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
-  padding: 32px 24px;
+  padding: 26px 22px;
 }
 
 .title {
-  margin: 0 0 24px;
-  font-size: 1.55rem;
+  margin: 0 0 18px;
+  font-size: 1.42rem;
   color: #111827;
   text-align: center;
 }
@@ -35,24 +35,24 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 9px;
 }
 
 .label {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: #334155;
-  margin-bottom: 8px;
+  margin-bottom: 0;
 }
 
 .input {
-  width: 94%;
-  min-height: 48px;
-  padding: 12px 14px;
+  width: 100%;
+  min-height: 44px;
+  padding: 9px 12px;
   border: 1px solid #d6d6d9;
   border-radius: 14px;
   background: #f8f8fb;
   color: #0f172a;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
 }
 
 .input:focus {
@@ -61,40 +61,46 @@
 }
 
 .phoneGroup {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 8px;
+  width: 100%;
 }
 
 .countryCode {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 14px;
-  min-width: 120px;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 10px;
+  min-width: 0;
+  min-height: 44px;
   border-radius: 14px;
   background: #ffffff;
   border: 1px solid #d6d6d9;
+  white-space: nowrap;
 }
 
 .flag {
-  font-size: 1.2rem;
+  font-size: 1rem;
 }
 
 .countryText {
   font-weight: 700;
   color: #0f172a;
+  font-size: 0.92rem;
 }
 
 .phoneInput {
-  flex: 1;
-  min-height: 48px;
-  padding: 12px 14px;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 9px 12px;
   border: 1px solid #d6d6d9;
   border-radius: 14px;
   background: #f8f8fb;
   color: #0f172a;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
 }
 
 .passwordGroup {
@@ -115,7 +121,7 @@
 
 .submitButton {
   width: 100%;
-  min-height: 50px;
+  min-height: 46px;
   border: none;
   border-radius: 999px;
   background: #f39c12;
@@ -123,7 +129,7 @@
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
 .submitButton:hover {
@@ -170,10 +176,27 @@
 
   .card {
     border-radius: 22px;
-    padding: 28px 18px;
+    padding: 22px 14px;
   }
 
   .phoneGroup {
-    flex-direction: column;
+    grid-template-columns: 82px minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .countryCode {
+    gap: 4px;
+    padding: 0 8px;
+    border-radius: 12px;
+  }
+
+  .countryText {
+    font-size: 0.86rem;
+  }
+
+  .phoneInput {
+    border-radius: 12px;
+    padding-left: 12px;
+    padding-right: 12px;
   }
 }

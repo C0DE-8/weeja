@@ -1,5 +1,6 @@
 .page {
   min-height: 100vh;
+  overflow-x: hidden;
   background:
     radial-gradient(circle at top, rgba(29, 77, 213, 0.08), transparent 24%),
     linear-gradient(180deg, #f7f9fc 0%, #eef3f8 100%);
@@ -9,6 +10,8 @@
   max-width: 1240px;
   margin: 0 auto;
   padding: calc(var(--weeja-header-height) + 28px) 20px 72px;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .hero {
@@ -19,6 +22,7 @@
     radial-gradient(circle at top right, rgba(255, 139, 43, 0.18), transparent 32%),
     linear-gradient(135deg, #0f172a 0%, #183b8f 100%);
   color: #f8fafc;
+  min-width: 0;
 }
 
 .eyebrow {
@@ -33,6 +37,7 @@
 .title {
   margin: 0;
   color: #ffffff;
+  overflow-wrap: anywhere;
 }
 
 .subtitle {
@@ -54,6 +59,7 @@
   background: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(148, 163, 184, 0.16);
   box-shadow: 0 20px 38px rgba(15, 23, 42, 0.06);
+  min-width: 0;
 }
 
 .cardTop {
@@ -66,6 +72,7 @@
 .cardTitle {
   margin: 0;
   color: #0f172a;
+  overflow-wrap: anywhere;
 }
 
 .meta {
@@ -101,5 +108,35 @@
   .infoGrid {
     grid-template-columns: 1fr;
     display: grid;
+  }
+}
+
+@media (max-width: 640px) {
+  .main {
+    padding: calc(var(--weeja-header-height) + 18px) 12px 56px;
+  }
+
+  .hero {
+    padding: 20px 16px;
+    border-radius: 18px;
+  }
+
+  .subtitle,
+  .meta {
+    font-size: 0.92rem;
+  }
+
+  .card,
+  .messageCard,
+  .errorCard {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .resultPill {
+    width: fit-content;
+    min-height: 32px;
+    padding: 0 12px;
+    font-size: 0.86rem;
   }
 }

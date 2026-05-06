@@ -3,7 +3,15 @@
   padding: 0;
   background: #eef2f7;
   width: 100%;
+  min-height: var(--weeja-footer-height);
+  box-sizing: border-box;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 900;
   align-self: stretch;
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .topLine {

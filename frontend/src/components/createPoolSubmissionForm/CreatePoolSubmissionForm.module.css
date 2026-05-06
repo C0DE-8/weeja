@@ -2,26 +2,29 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
+  min-width: 0;
 }
 
 .mobileIntro {
-  display: none;
+  display: block;
 }
 
 .mobileTitle {
   margin: 0;
   text-align: center;
-  font-size: 1.35rem;
+  font-size: 1.3rem;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.4px;
   color: #222222;
+  margin-bottom: 16px;
 }
 
 .field {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  min-width: 0;
 }
 
 .label,
@@ -94,11 +97,13 @@
 .optionComposer {
   display: flex;
   gap: 10px;
+  min-width: 0;
 }
 
 .tagInput,
 .optionInput {
   flex: 1;
+  min-width: 0;
 }
 
 .tagType,
@@ -127,7 +132,7 @@
 }
 
 .desktopGrid,
-.scheduleGrid {
+.desktopSchedule {
   display: grid;
   gap: 14px;
 }
@@ -136,7 +141,7 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.scheduleGrid {
+.desktopSchedule {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
@@ -150,14 +155,6 @@
   justify-content: center;
   gap: 8px;
   border: 1px solid rgba(96, 165, 250, 0.18);
-}
-
-.summaryTriple {
-  display: none;
-}
-
-.hiddenInputs {
-  display: contents;
 }
 
 .chips {
@@ -176,6 +173,9 @@
   gap: 12px;
   padding: 8px 14px;
   cursor: pointer;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 .chip span {
@@ -204,24 +204,24 @@
 
 @media (max-width: 1024px) {
   .desktopGrid,
-  .scheduleGrid {
+  .desktopSchedule {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 640px) {
   .form {
-    gap: 16px;
+    gap: 12px;
   }
 
-  .mobileIntro {
-    display: block;
-    margin-bottom: 4px;
+  .mobileTitle {
+    font-size: 1.15rem;
+    margin-bottom: 8px;
   }
 
   .label,
   .labelWithIcon {
-    font-size: 1.05rem;
+    font-size: 0.96rem;
     color: #444444;
     font-weight: 400;
   }
@@ -230,17 +230,17 @@
   .tagInput,
   .textareaBox textarea,
   .optionInput {
-    min-height: 52px;
+    min-height: 46px;
     border-radius: 6px;
     border-color: #e2e2e2;
     background: #ffffff;
-    padding: 0 18px;
+    padding: 0 14px;
   }
 
   .textareaBox textarea {
-    min-height: 78px;
-    padding-top: 14px;
-    padding-bottom: 24px;
+    min-height: 68px;
+    padding-top: 10px;
+    padding-bottom: 20px;
   }
 
   .tagRow,
@@ -261,11 +261,12 @@
   .tagType,
   .addButton {
     border-radius: 0;
-    min-width: 88px;
+    min-width: 76px;
+    flex: 0 0 auto;
   }
 
   .addButton {
-    font-size: 0.9rem;
+    font-size: 0.82rem;
     font-weight: 800;
   }
 
@@ -274,56 +275,30 @@
     height: 16px;
   }
 
-  .summaryTriple {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
-  }
-
-  .summaryTriple span {
-    min-height: 52px;
-    border: 1px solid #e2e2e2;
-    border-radius: 6px;
-    background: #ffffff;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: #666666;
-  }
-
-  .hiddenInputs {
-    display: grid;
-    gap: 10px;
-  }
-
-  .hiddenInputs input {
-    min-height: 48px;
-  }
-
   .chips {
-    gap: 14px;
-    margin-top: 4px;
+    gap: 10px;
+    margin-top: 2px;
   }
 
   .chip {
-    min-height: 39px;
+    min-height: 34px;
     border-radius: 30px;
     border: 1.5px solid #1250a5;
     background: #d7e8ff;
     color: #5a86bd;
-    padding: 0 18px;
+    padding: 0 14px;
   }
 
   .chip span {
     color: #1250a5;
-    font-size: 1.45rem;
+    font-size: 1.2rem;
     font-weight: 700;
   }
 
   .submitButton {
-    min-height: 58px;
+    min-height: 50px;
     background: #1555a8;
-    font-size: 1.15rem;
+    font-size: 1rem;
     box-shadow: none;
   }
 }

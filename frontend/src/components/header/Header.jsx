@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { HiOutlineMenuAlt3 } from 'react-icons/hi'
 import { FiChevronDown, FiChevronRight } from 'react-icons/fi'
 import { IoClose } from 'react-icons/io5'
@@ -68,9 +68,16 @@ export default function Header() {
             <button
               className={styles.mobileCreateButton}
               type="button"
-              onClick={openCreatePoolModal}
+              onClick={() => {
+                if (user) {
+                  openCreatePoolModal()
+                  return
+                }
+
+                navigate('/login')
+              }}
             >
-              Create Pool
+              {user ? 'Create Pool' : 'Login'}
             </button>
           </div>
 
@@ -82,18 +89,18 @@ export default function Header() {
             </button>
 
             <nav className={styles.navLinks} aria-label="Primary navigation">
-              <NavLink className={styles.navLink} to="/">
+              <Link className={styles.navLink} to="/">
                 Home
-              </NavLink>
-              <NavLink className={styles.navLink} to="/?tab=SPORT">
+              </Link>
+              <Link className={styles.navLink} to="/?tab=SPORT">
                 Sport
-              </NavLink>
-              <NavLink className={styles.navLink} to="/?tab=EVENTS">
+              </Link>
+              <Link className={styles.navLink} to="/?tab=EVENTS">
                 Events
-              </NavLink>
-              <NavLink className={styles.navLink} to="/results">
+              </Link>
+              <Link className={styles.navLink} to="/results">
                 Results
-              </NavLink>
+              </Link>
             </nav>
 
             <div className={styles.authButtons}>

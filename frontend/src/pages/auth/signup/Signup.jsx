@@ -70,7 +70,7 @@ export default function Signup() {
             <h1 className={styles.title}>Sign Up</h1>
             <form className={styles.form} onSubmit={handleRegister} noValidate>
               <label className={styles.label} htmlFor="username">
-                Dummy user name
+                Username
               </label>
               <input
                 id="username"

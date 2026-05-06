@@ -3,38 +3,6 @@ import { FiInfo } from 'react-icons/fi'
 import { formatCurrencyAmount } from '../../utils/currency'
 import styles from './CreatePoolSubmissionForm.module.css'
 
-function splitDateParts(value) {
-  if (!value) {
-    return { day: 'Day', month: 'Month', year: 'Year' }
-  }
-
-  const [year, month, day] = value.split('-')
-  const monthLabel = new Date(`${value}T00:00:00`).toLocaleString(undefined, { month: 'short' })
-
-  return {
-    day,
-    month: monthLabel,
-    year,
-  }
-}
-
-function splitTimeParts(value) {
-  if (!value) {
-    return { hour: 'Hour', minute: 'Minute', meridiem: 'AM/PM' }
-  }
-
-  const [rawHour = '00', minute = '00'] = value.split(':')
-  const hourNumber = Number(rawHour)
-  const meridiem = hourNumber >= 12 ? 'PM' : 'AM'
-  const hour = ((hourNumber + 11) % 12) + 1
-
-  return {
-    hour: String(hour).padStart(2, '0'),
-    minute,
-    meridiem,
-  }
-}
-
 export default function CreatePoolSubmissionForm({
   categories,
   currencies,
@@ -46,8 +14,6 @@ export default function CreatePoolSubmissionForm({
 }) {
   const [draftOption, setDraftOption] = useState('')
   const descriptionLength = form.description.length
-  const endDateParts = splitDateParts(form.end_date)
-  const endTimeParts = splitTimeParts(form.end_time)
   const filledOptionsCount = form.options.filter((item) => item.trim()).length
 
   const handleAddOption = () => {
@@ -162,64 +128,6 @@ export default function CreatePoolSubmissionForm({
         </div>
       </div>
 
-      <div className={styles.field}>
-        <span className={styles.label}>End date</span>
-        <div className={styles.summaryTriple} aria-hidden="true">
-          <span>{endDateParts.day}</span>
-          <span>{endDateParts.month}</span>
-          <span>{endDateParts.year}</span>
-        </div>
-        <div className={styles.hiddenInputs}>
-          <input
-            className={styles.control}
-            type="date"
-            value={form.start_date}
-            onChange={(event) => setForm((current) => ({ ...current, start_date: event.target.value }))}
-          />
-          <input
-            className={styles.control}
-            type="date"
-            value={form.lock_date}
-            onChange={(event) => setForm((current) => ({ ...current, lock_date: event.target.value }))}
-          />
-          <input
-            className={styles.control}
-            type="date"
-            value={form.end_date}
-            onChange={(event) => setForm((current) => ({ ...current, end_date: event.target.value }))}
-          />
-        </div>
-      </div>
-
-      <div className={styles.field}>
-        <span className={styles.label}>End time</span>
-        <div className={styles.summaryTriple} aria-hidden="true">
-          <span>{endTimeParts.hour}</span>
-          <span>{endTimeParts.minute}</span>
-          <span>{endTimeParts.meridiem}</span>
-        </div>
-        <div className={styles.hiddenInputs}>
-          <input
-            className={styles.control}
-            type="time"
-            value={form.start_time}
-            onChange={(event) => setForm((current) => ({ ...current, start_time: event.target.value }))}
-          />
-          <input
-            className={styles.control}
-            type="time"
-            value={form.lock_time}
-            onChange={(event) => setForm((current) => ({ ...current, lock_time: event.target.value }))}
-          />
-          <input
-            className={styles.control}
-            type="time"
-            value={form.end_time}
-            onChange={(event) => setForm((current) => ({ ...current, end_time: event.target.value }))}
-          />
-        </div>
-      </div>
-
       <div className={styles.chips}>
         {form.options.map((option, index) =>
           option.trim() ? (
@@ -227,7 +135,6 @@ export default function CreatePoolSubmissionForm({
               key={`chip-${index + 1}`}
               type="button"
               className={styles.chip}
-              disabled={filledOptionsCount <= 2}
               onClick={() =>
                 setForm((current) => ({
                   ...current,
@@ -260,7 +167,9 @@ export default function CreatePoolSubmissionForm({
         </button>
       </div>
 
-      <div className={styles.scheduleGrid}>
+      <p className={styles.optionHint}>Tip: users need at least two options to publish a pool.</p>
+
+      <div className={styles.desktopSchedule}>
         <label className={styles.field}>
           <span className={styles.label}>Start date</span>
           <input

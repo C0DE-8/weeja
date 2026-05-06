@@ -17,7 +17,7 @@ export const INITIAL_FORM = {
   lock_time: '',
   end_date: '',
   end_time: '',
-  options: ['Yes', 'No'],
+  options: [],
 }
 
 function joinDateTime(date, time) {
@@ -126,6 +126,10 @@ export function useAccountWorkspace() {
           sort_order: index + 1,
         }))
         .filter((option) => option.option_label)
+
+      if (cleanedOptions.length < 2) {
+        throw new Error('Add at least two pool options before submitting.')
+      }
 
       await createUserPool({
         title: form.title.trim(),

@@ -4,7 +4,7 @@ import Login from './pages/auth/login/Login'
 import Signup from './pages/auth/signup/Signup'
 import VerifyEmail from './pages/auth/verifyEmail/VerifyEmail'
 import AdminLogin from './pages/admin/login/AdminLogin'
-import { CreatePoolModalProvider } from './components/createPoolModal/CreatePoolModalContext'
+import CreatePoolModalProvider from './components/createPoolModal/CreatePoolModalProvider'
 import RequireAuthRoute from './components/auth/RequireAuthRoute'
 import RequireAdminRoute from './components/auth/RequireAdminRoute'
 import RequireSuperAdminRoute from './components/auth/RequireSuperAdminRoute'
@@ -20,8 +20,8 @@ import PoolResultsPage from './pages/results/PoolResultsPage'
 
 function App() {
   return (
-    <BrowserRouter>
-      <CreatePoolModalProvider>
+    <CreatePoolModalProvider>
+      <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/results" element={<PoolResultsPage />} />
@@ -48,8 +48,8 @@ function App() {
             </Route>
           </Route>
         </Routes>
-      </CreatePoolModalProvider>
-    </BrowserRouter>
+      </BrowserRouter>
+    </CreatePoolModalProvider>
   )
 }
 
