@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react'
 import { FiChevronDown, FiClock, FiShare2 } from 'react-icons/fi'
+import { normalizeCurrencyInputValue } from '../../utils/currency'
+import WagerModal from '../wagerModal/WagerModal'
 import styles from './PoolCard.module.css'
 
 export default function PoolCard({
@@ -10,6 +12,7 @@ export default function PoolCard({
   status,
   amount,
   currency,
+  currencyDecimalPlaces,
   options,
   showMore,
   activeOption,
@@ -25,6 +28,7 @@ export default function PoolCard({
   const [feedback, setFeedback] = useState('')
   const [submitError, setSubmitError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [wagerOption, setWagerOption] = useState(null)
 
   const hasMoreOptions = useMemo(() => {
     if (typeof showMore === 'boolean') return showMore
@@ -41,6 +45,7 @@ export default function PoolCard({
     () => options?.find((option) => option.id === selectedOption)?.label || '',
     [options, selectedOption],
   )
+  const currencyMark = currency?.toUpperCase().includes('USDT') ? 'T' : currency?.charAt(0) || 'T'
 
   const canJoin = status === 'Open' && typeof onJoin === 'function'
 
@@ -69,7 +74,27 @@ export default function PoolCard({
     }
   }
 
+  const handleOptionClick = (option) => {
+    if (!canJoin) return
+
+    setSelectedOption(option.id)
+    setWagerOption(option)
+    setFeedback('')
+    setSubmitError('')
+  }
+
+  const handleWagerJoin = async (nextStakeAmount) => {
+    if (!wagerOption || !canJoin) return
+
+    await onJoin({
+      poolId: id,
+      optionId: wagerOption.id,
+      stakeAmount: nextStakeAmount,
+    })
+  }
+
   return (
+    <>
     <article className={styles.card}>
       <div className={styles.desktopTopRow}>
         <h3 className={styles.question}>{question}</h3>
@@ -103,7 +128,7 @@ export default function PoolCard({
           </span>
         </div>
         <div className={styles.amountBlock}>
-          <span className={styles.currencyMark}>{currency?.charAt(0) || 'T'}</span>
+          <span className={styles.currencyMark}>{currencyMark}</span>
           <strong className={styles.amountValue}>{amount}</strong>
         </div>
       </div>
@@ -115,7 +140,7 @@ export default function PoolCard({
               key={option.id}
               className={isActive ? styles.optionButtonActive : styles.optionButton}
               type="button"
-              onClick={() => setSelectedOption(option.id)}
+              onClick={() => handleOptionClick(option)}
             >
               {option.label}
             </button>
@@ -138,6 +163,11 @@ export default function PoolCard({
               step="0.01"
               value={stakeAmount}
               onChange={(event) => setStakeAmount(event.target.value)}
+              onBlur={() =>
+                setStakeAmount((current) =>
+                  normalizeCurrencyInputValue(current, currency, currencyDecimalPlaces),
+                )
+              }
               placeholder={`Minimum ${amount}`}
             />
           </label>
@@ -187,5 +217,18 @@ export default function PoolCard({
         </button>
       )}
     </article>
+    {wagerOption ? (
+      <WagerModal
+        question={question}
+        option={wagerOption}
+        amount={amount}
+        currency={currency}
+        currencyDecimalPlaces={currencyDecimalPlaces}
+        minStakeRaw={minStakeRaw}
+        onClose={() => setWagerOption(null)}
+        onJoin={handleWagerJoin}
+      />
+    ) : null}
+    </>
   )
 }

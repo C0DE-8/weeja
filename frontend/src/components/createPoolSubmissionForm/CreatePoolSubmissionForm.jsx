@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { FiInfo } from 'react-icons/fi'
-import { formatCurrencyAmount } from '../../utils/currency'
+import { formatCurrencyAmount, normalizeCurrencyInputValue } from '../../utils/currency'
 import styles from './CreatePoolSubmissionForm.module.css'
 
 export default function CreatePoolSubmissionForm({
@@ -15,6 +15,9 @@ export default function CreatePoolSubmissionForm({
   const [draftOption, setDraftOption] = useState('')
   const descriptionLength = form.description.length
   const filledOptionsCount = form.options.filter((item) => item.trim()).length
+  const selectedCurrency = currencies.find(
+    (currency) => String(currency.id) === String(form.currency_id),
+  )
 
   const handleAddOption = () => {
     if (!draftOption.trim()) {
@@ -111,6 +114,16 @@ export default function CreatePoolSubmissionForm({
             type="number"
             value={form.min_stake}
             onChange={(event) => setForm((current) => ({ ...current, min_stake: event.target.value }))}
+            onBlur={() =>
+              setForm((current) => ({
+                ...current,
+                min_stake: normalizeCurrencyInputValue(
+                  current.min_stake,
+                  selectedCurrency?.code,
+                  selectedCurrency?.decimal_places,
+                ),
+              }))
+            }
           />
         </label>
 

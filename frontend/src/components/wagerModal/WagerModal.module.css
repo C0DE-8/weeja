@@ -1,0 +1,277 @@
+.overlay {
+  position: fixed;
+  top: var(--weeja-header-height);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 15px 24px 24px;
+  overflow-y: auto;
+  background: rgba(33, 91, 166, 0.64);
+  box-sizing: border-box;
+}
+
+.card,
+.successCard {
+  width: min(100%, 366px);
+  min-height: 478px;
+  background: #ffffff;
+  border-radius: 4px;
+  box-sizing: border-box;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+}
+
+.card {
+  padding: 40px 16px 82px;
+}
+
+.successCard {
+  min-height: 600px;
+  padding: 188px 15px 36px;
+  text-align: center;
+}
+
+.question {
+  margin: 0 0 14px;
+  color: #202023;
+  font-size: 1.02rem;
+  line-height: 1.35;
+  font-weight: 800;
+}
+
+.answerBox {
+  display: grid;
+  gap: 9px;
+  margin-bottom: 25px;
+  padding: 13px 16px 14px;
+  border-radius: 4px;
+  background: #f6f6f7;
+  color: #202023;
+}
+
+.answerBox span,
+.amountField span,
+.approveDetails span {
+  color: #707073;
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.answerBox strong,
+.approveDetails strong {
+  color: #202023;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.amountField {
+  display: grid;
+  gap: 8px;
+}
+
+.amountField input {
+  width: 100%;
+  min-height: 45px;
+  border: 1px solid #dedede;
+  border-radius: 5px;
+  padding: 0 24px;
+  color: #202023;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  box-sizing: border-box;
+}
+
+.amountField input::placeholder {
+  color: #d9d9d9;
+}
+
+.amountField input:focus {
+  outline: none;
+  border-color: #ff9800;
+  box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.12);
+}
+
+.balance {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0 23px;
+  color: #777779;
+  font-size: 0.75rem;
+}
+
+.currencyMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: #1f5aae;
+  color: #ffffff;
+  font-size: 0.62rem;
+  font-weight: 900;
+}
+
+.primaryButton,
+.dangerButton {
+  width: 100%;
+  min-height: 40px;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 0.98rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.primaryButton {
+  border: none;
+  background: #ff990b;
+  color: #ffffff;
+}
+
+.primaryButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.dangerButton {
+  margin-top: 8px;
+  border: 1px solid #ff0019;
+  background: transparent;
+  color: #ff0019;
+}
+
+.errorText {
+  margin: -10px 0 14px;
+  color: #c5162e;
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 30px;
+  margin: -17px 0 35px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #616164;
+  font: inherit;
+  font-size: 0.98rem;
+  cursor: pointer;
+}
+
+.backButton svg {
+  width: 20px;
+  height: 20px;
+}
+
+.approveTitle {
+  margin: 0 0 35px;
+  color: #202023;
+  text-align: center;
+  font-size: 1.1rem;
+  line-height: 1.25;
+  font-weight: 800;
+}
+
+.approveCopy {
+  width: min(100%, 278px);
+  margin: 0 auto 25px;
+  color: #2e2e31;
+  text-align: center;
+  font-size: 1rem;
+  line-height: 1.42;
+}
+
+.approveCopy strong {
+  color: #ff0019;
+  font-weight: 500;
+}
+
+.approveDetails {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 26px;
+}
+
+.approveDetails h3 {
+  margin: 0;
+  color: #747477;
+  font-size: 1rem;
+  line-height: 1.35;
+  font-weight: 800;
+}
+
+.successIcon {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 39px;
+  position: relative;
+}
+
+.successIcon::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 6px solid #10bf31;
+  border-right-color: transparent;
+  border-radius: 50%;
+  transform: rotate(-28deg);
+}
+
+.successIcon::after {
+  content: '';
+  position: absolute;
+  width: 30px;
+  height: 16px;
+  left: 20px;
+  top: 17px;
+  border-left: 6px solid #10bf31;
+  border-bottom: 6px solid #10bf31;
+  border-radius: 3px;
+  transform: rotate(-45deg);
+}
+
+.successTitle {
+  width: min(100%, 286px);
+  margin: 0 auto 30px;
+  color: #202023;
+  font-size: 1.45rem;
+  line-height: 1.24;
+  font-weight: 900;
+}
+
+@media (min-width: 641px) {
+  .overlay {
+    top: 0;
+    align-items: center;
+    padding: 24px;
+    z-index: 1300;
+    background: rgba(15, 23, 42, 0.52);
+  }
+
+  .card,
+  .successCard {
+    max-width: 374px;
+  }
+}
+
+@media (max-width: 374px) {
+  .overlay {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .card {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+}
