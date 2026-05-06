@@ -221,7 +221,6 @@ export default function PoolCard({
       <WagerModal
         question={question}
         option={wagerOption}
-        amount={amount}
         currency={currency}
         currencyDecimalPlaces={currencyDecimalPlaces}
         minStakeRaw={minStakeRaw}

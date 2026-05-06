@@ -6,7 +6,6 @@ import styles from './WagerModal.module.css'
 export default function WagerModal({
   question,
   option,
-  amount,
   currency,
   currencyDecimalPlaces,
   minStakeRaw = 0,
