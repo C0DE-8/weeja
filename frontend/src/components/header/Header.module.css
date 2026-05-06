@@ -35,6 +35,7 @@
 
 .mobileBar {
   display: flex;
+  position: relative;
 }
 
 .mobileMenuButton {
@@ -52,16 +53,36 @@
   cursor: pointer;
 }
 
+.mobileLogoButton {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border: none;
+  background: transparent;
+  padding: 0;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+}
+
+.mobileLogo {
+  color: #ffffff;
+  font-size: clamp(1.6rem, 8vw, 2.2rem);
+  font-weight: 800;
+  letter-spacing: -0.06em;
+  line-height: 1;
+}
+
 .mobileCreateButton {
   min-width: 0;
-  max-width: calc(100vw - 78px);
+  max-width: 134px;
   background: #ff8b2b;
   border: none;
   border-radius: 999px;
   color: #ffffff;
-  padding: 12px 18px;
+  padding: 11px 18px;
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.86rem;
+  letter-spacing: 0.02em;
   line-height: 1;
   overflow: hidden;
   text-overflow: ellipsis;

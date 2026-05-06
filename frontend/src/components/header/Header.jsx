@@ -65,6 +65,11 @@ export default function Header() {
             >
               <HiOutlineMenuAlt3 />
             </button>
+            <button className={styles.mobileLogoButton} type="button" onClick={() => navigate('/')}>
+              <div className={styles.mobileLogo}>
+                Wee<span className={styles.logoAccent}>ja</span>
+              </div>
+            </button>
             <button
               className={styles.mobileCreateButton}
               type="button"
@@ -77,7 +82,7 @@ export default function Header() {
                 navigate('/login')
               }}
             >
-              {user ? 'Create Pool' : 'Login'}
+              {user ? 'Create Event' : 'Login'}
             </button>
           </div>
 

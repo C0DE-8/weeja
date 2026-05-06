@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { FiShare2, FiChevronDown } from 'react-icons/fi'
+import { FiChevronDown, FiClock, FiShare2 } from 'react-icons/fi'
 import styles from './PoolCard.module.css'
 
 export default function PoolCard({
@@ -19,7 +19,7 @@ export default function PoolCard({
   onJoin,
   totalPoolEntries = 0,
 }) {
-  const [selectedOption, setSelectedOption] = useState(activeOption ?? options?.[0]?.id ?? null)
+  const [selectedOption, setSelectedOption] = useState(activeOption ?? null)
   const [isExpanded, setIsExpanded] = useState(false)
   const [stakeAmount, setStakeAmount] = useState(String(minStakeRaw || ''))
   const [feedback, setFeedback] = useState('')
@@ -92,20 +92,24 @@ export default function PoolCard({
       </div>
       <div className={styles.infoRow}>
         <div className={styles.details}>
-          <span className={styles.metaLabel}>Ends</span>
-          <span className={styles.metaValue}>
-            {poolEndTime} · {poolEndDate}
+          <span className={styles.metaLine}>
+            <FiClock aria-hidden="true" />
+            <span className={styles.metaLabel}>Pool Ends:</span>
+            <span className={styles.metaValue}>{poolEndTime}</span>
           </span>
-          <span className={styles.status}>{status}</span>
+          <span className={styles.dateLine}>
+            <span>{poolEndDate}</span>
+            <span className={styles.status}>{status}</span>
+          </span>
         </div>
         <div className={styles.amountBlock}>
-          <span className={styles.currencyToken}>{currency}</span>
+          <span className={styles.currencyMark}>{currency?.charAt(0) || 'T'}</span>
           <strong className={styles.amountValue}>{amount}</strong>
         </div>
       </div>
       <div className={styles.optionsRow}>
-        {visibleOptions.map((option) => {
-          const isActive = option.id === selectedOption
+        {visibleOptions.map((option, index) => {
+          const isActive = selectedOption ? option.id === selectedOption : index % 2 === 1
           return (
             <button
               key={option.id}

@@ -3,11 +3,11 @@
   min-width: 0;
   max-width: 100%;
   width: 100%;
-  background: #ffffff;
-  border: 1px solid #dfe3ee;
-  border-radius: 24px;
+  background: #f8f8f9;
+  border: none;
+  border-radius: 4px;
   padding: 18px;
-  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+  box-shadow: none;
 }
 
 .desktopTopRow {
@@ -23,10 +23,10 @@
 }
 
 .question {
-  font-size: 1rem;
-  line-height: 1.4;
-  font-weight: 700;
-  color: #141b33;
+  font-size: 1.02rem;
+  line-height: 1.35;
+  font-weight: 800;
+  color: #202023;
   margin: 0;
   flex: 1;
   min-width: 0;
@@ -38,12 +38,12 @@
   align-items: center;
   justify-content: center;
   border: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  background: #f5f7fb;
-  color: #4f5c7a;
-  font-size: 1rem;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: transparent;
+  color: #6d6d6d;
+  font-size: 1.08rem;
   cursor: pointer;
   flex: 0 0 auto;
 }
@@ -55,71 +55,112 @@
 .infoRow {
   display: flex;
   justify-content: space-between;
-  gap: 16px;
-  align-items: center;
-  margin-top: 14px;
+  gap: 12px;
+  align-items: flex-start;
+  margin-top: 12px;
   min-width: 0;
 }
 
 .details {
   display: grid;
-  gap: 6px;
-  color: #54617b;
+  gap: 5px;
+  color: #4c4c4f;
+  min-width: 0;
+}
+
+.metaLine,
+.dateLine {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.metaLine {
+  gap: 7px;
+  font-size: 0.78rem;
+  line-height: 1.25;
+}
+
+.metaLine svg {
+  width: 14px;
+  height: 14px;
+  color: #626262;
+  flex: 0 0 auto;
 }
 
 .metaLabel {
-  display: inline-flex;
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: #8c97b4;
+  color: #4f4f52;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
 .metaValue {
-  font-size: 0.92rem;
-  color: #2d3854;
+  color: #4f4f52;
+  white-space: nowrap;
+}
+
+.dateLine {
+  gap: 15px;
+  padding-left: 21px;
+  color: #4f4f52;
+  font-size: 0.78rem;
+  line-height: 1.25;
 }
 
 .status {
   display: inline-flex;
-  padding: 6px 10px;
-  border-radius: 999px;
-  background: #eef4ff;
-  color: #255fdf;
-  font-size: 0.8rem;
-  font-weight: 700;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #00b72f;
+  font-size: 0.78rem;
+  font-weight: 500;
   max-width: fit-content;
 }
 
 .amountBlock {
   display: inline-flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 6px;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 7px;
   min-width: 0;
+  padding-top: 1px;
+  flex: 0 0 auto;
 }
 
-.currencyToken {
-  font-size: 0.78rem;
-  color: #8c97b4;
+.currencyMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: #ff2f45;
+  color: #ffffff;
+  font-size: 0.74rem;
+  font-weight: 900;
+  line-height: 1;
 }
 
 .amountValue {
-  color: #141b33;
-  font-size: 1.35rem;
+  color: #ff001f;
+  font-size: 0.98rem;
+  font-weight: 900;
   overflow-wrap: anywhere;
+  white-space: nowrap;
 }
 
 .optionsRow {
   display: grid;
-  gap: 10px;
-  margin-top: 18px;
+  gap: 9px;
+  margin-top: 17px;
 }
 
 .entryPanel {
+  display: none;
   margin-top: 16px;
   padding: 14px;
-  border-radius: 18px;
+  border-radius: 4px;
   background: #f8fbff;
   border: 1px solid #d9e6fb;
   min-width: 0;
@@ -226,11 +267,12 @@
 
 .optionButton,
 .optionButtonActive {
-  padding: 12px 14px;
+  min-height: 40px;
+  padding: 10px 18px;
   border-radius: 999px;
   border: 1px solid transparent;
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-size: 0.98rem;
+  font-weight: 800;
   transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
   cursor: pointer;
   min-width: 0;
@@ -238,31 +280,31 @@
 }
 
 .optionButton {
-  background: #f5f7fb;
-  color: #4d5c7a;
+  background: #2f61ad;
+  color: #ffffff;
 }
 
 .optionButtonActive {
-  background: #ffede0;
-  color: #d94f00;
-  border-color: #ffb58a;
+  background: #ffb039;
+  color: #ffffff;
+  border-color: transparent;
 }
 
 .moreButton {
   width: 100%;
-  margin-top: 16px;
+  min-height: 40px;
+  margin-top: 9px;
   display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+  justify-content: center;
+  gap: 9px;
   border: none;
-  background: #ffffff;
-  color: #255fdf;
-  font-size: 0.95rem;
-  font-weight: 700;
-  padding: 12px 14px;
-  border-radius: 16px;
-  border: 1px solid #dfe3ee;
+  background: #737373;
+  color: #ffffff;
+  font-size: 0.96rem;
+  font-weight: 800;
+  padding: 10px 16px;
+  border-radius: 999px;
   cursor: pointer;
 }
 
@@ -340,6 +382,7 @@
   }
 
   .entryPanel {
+    display: block;
     margin-top: 12px;
     padding: 12px;
     border-radius: 16px;
@@ -473,12 +516,11 @@
 }
 @media screen and (max-width: 525px) {
   .topRow {
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-start;
-    gap: 8px;
+    gap: 12px;
   }
 
-  .infoRow,
   .entryHeader {
     flex-direction: column;
     align-items: flex-start;
@@ -489,21 +531,21 @@
   }
 
   .shareButton {
-    width: 36px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
   }
 
   .card {
-    padding: 14px;
-    border-radius: 18px;
+    padding: 18px;
+    border-radius: 4px;
   }
 
   .question {
-    font-size: 0.92rem;
+    font-size: 1.02rem;
   }
 
   .amountValue {
-    font-size: 1.08rem;
+    font-size: 0.98rem;
   }
 
   .entryRow {

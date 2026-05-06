@@ -47,7 +47,7 @@ function formatPoolCard(pool) {
       id: option.id,
       label: option.option_label,
     })),
-    activeOption: pool.options?.[0]?.id || null,
+    activeOption: null,
     featured: pool.status === 'open',
     minStakeRaw: pool.min_stake,
     currencyDecimalPlaces: pool.currency_decimal_places,
@@ -65,22 +65,6 @@ export default function Home() {
   const [pools, setPools] = useState([])
   const [categoriesByType, setCategoriesByType] = useState({ sport: [], event: [] })
   const listTopRef = useRef(null)
-
-  const mobileCategories = useMemo(
-    () => [
-      ...(categoriesByType.sport || []).map((category) => ({
-        id: category.id,
-        name: category.name,
-        type: 'Sport',
-      })),
-      ...(categoriesByType.event || []).map((category) => ({
-        id: category.id,
-        name: category.name,
-        type: 'Event',
-      })),
-    ],
-    [categoriesByType],
-  )
 
   async function loadHomeData() {
     const [categoriesRes, nextPools] = await Promise.all([
@@ -208,26 +192,6 @@ export default function Home() {
             <div className={styles.panel}>
               <div className={styles.mobileBody}>
                 <SectionHeader />
-                {mobileCategories.length > 0 ? (
-                  <div className={styles.mobileCategoryBar}>
-                    <label className={styles.mobileCategoryField}>
-                      <span>Event category</span>
-                      <select
-                        value={mobileCategoryId}
-                        onChange={(event) => {
-                          setMobileCategoryId(event.target.value)
-                        }}
-                      >
-                        <option value="">All event pools</option>
-                        {mobileCategories.map((category) => (
-                          <option key={category.id} value={category.id}>
-                            {category.type}: {category.name}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                  </div>
-                ) : null}
                 <div className={styles.main}>
                   <div className={styles.cardGrid}>
                     {mobilePools.length > 0 ? (
