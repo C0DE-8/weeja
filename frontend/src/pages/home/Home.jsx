@@ -18,6 +18,25 @@ import styles from './Home.module.css'
 
 const TABS = ['OPEN', 'ALL', 'NEWEST', 'SPORT', 'EVENTS', 'LOCATION']
 
+function poolMatchesSearch(pool, query) {
+  const normalizedQuery = query.trim().toLowerCase()
+  if (!normalizedQuery) return true
+
+  const searchableText = [
+    pool.question,
+    pool.category,
+    pool.type,
+    pool.location,
+    pool.status,
+    ...(pool.options || []).map((option) => option.label),
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase()
+
+  return searchableText.includes(normalizedQuery)
+}
+
 function formatPoolCard(pool) {
   const lockDate = pool.lock_time ? new Date(pool.lock_time) : null
   const createdDate = pool.created_at ? new Date(pool.created_at) : null
@@ -62,6 +81,7 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState('OPEN')
   const [selectedCategoryId, setSelectedCategoryId] = useState(null)
   const [mobileCategoryId, setMobileCategoryId] = useState('')
+  const [mobileSearchQuery, setMobileSearchQuery] = useState('')
   const [pools, setPools] = useState([])
   const [categoriesByType, setCategoriesByType] = useState({ sport: [], event: [] })
   const listTopRef = useRef(null)
@@ -165,12 +185,12 @@ export default function Home() {
   }, [activeTab, pools, selectedCategoryId])
 
   const mobilePools = useMemo(() => {
-    if (!mobileCategoryId) {
-      return pools
-    }
+    const byCategory = mobileCategoryId
+      ? pools.filter((pool) => String(pool.categoryId) === String(mobileCategoryId))
+      : pools
 
-    return pools.filter((pool) => String(pool.categoryId) === String(mobileCategoryId))
-  }, [mobileCategoryId, pools])
+    return byCategory.filter((pool) => poolMatchesSearch(pool, mobileSearchQuery))
+  }, [mobileCategoryId, mobileSearchQuery, pools])
 
   return (
     <div className={styles.page}>
@@ -191,7 +211,10 @@ export default function Home() {
           <section className={styles.centerColumn}>
             <div className={styles.panel}>
               <div className={styles.mobileBody}>
-                <SectionHeader />
+                <SectionHeader
+                  searchValue={mobileSearchQuery}
+                  onSearchChange={setMobileSearchQuery}
+                />
                 <div className={styles.main}>
                   <div className={styles.cardGrid}>
                     {mobilePools.length > 0 ? (
@@ -200,7 +223,9 @@ export default function Home() {
                       ))
                     ) : (
                       <div className={styles.emptyState}>
-                        No pools match this category yet.
+                        {mobileSearchQuery.trim()
+                          ? 'No pools match your search.'
+                          : 'No pools match this category yet.'}
                       </div>
                     )}
                   </div>
