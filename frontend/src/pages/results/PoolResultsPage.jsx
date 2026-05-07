@@ -1,19 +1,46 @@
 import { useEffect, useMemo, useState } from 'react'
+import { FiChevronDown, FiChevronRight, FiSliders } from 'react-icons/fi'
 import Header from '../../components/header/Header'
 import Footer from '../../components/footer/Footer'
 import { fetchPublicPools } from '../../api/poolApi'
 import { formatCurrencyAmount } from '../../utils/currency'
 import styles from './PoolResultsPage.module.css'
 
-function getWinningOptionLabel(pool) {
-  const winningOption = (pool.options || []).find((option) => option.id === pool.winning_option_id)
-  return winningOption?.option_label || 'No result recorded'
+const DATE_FILTERS = [
+  { label: '24 Hours ago', days: 1 },
+  { label: '3 Days ago', days: 3 },
+  { label: '7 Days ago', days: 7 },
+  { label: '14 Days ago', days: 14 },
+]
+
+function getCurrencyMark(currencyCode) {
+  return String(currencyCode || '').toUpperCase().includes('USDT')
+    ? 'T'
+    : String(currencyCode || 'T').charAt(0)
+}
+
+function formatResultDate(value) {
+  if (!value) return 'Date not set'
+
+  return new Date(value).toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  })
+}
+
+function getResultDate(pool) {
+  return pool.end_time || pool.lock_time || pool.updated_at || pool.created_at
 }
 
 export default function PoolResultsPage() {
   const [pools, setPools] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [isFilterOpen, setIsFilterOpen] = useState(false)
+  const [isCountryOpen, setIsCountryOpen] = useState(false)
+  const [isDateOpen, setIsDateOpen] = useState(false)
+  const [selectedDateFilter, setSelectedDateFilter] = useState(null)
 
   useEffect(() => {
     let active = true
@@ -39,63 +66,147 @@ export default function PoolResultsPage() {
     }
   }, [])
 
-  const visiblePools = useMemo(() => pools.filter((pool) => pool.review_status === 'approved'), [pools])
+  const visiblePools = useMemo(() => {
+    const approvedPools = pools.filter((pool) => pool.review_status === 'approved')
+
+    if (!selectedDateFilter) return approvedPools
+
+    const now = Date.now()
+    const maxAge = selectedDateFilter.days * 24 * 60 * 60 * 1000
+
+    return approvedPools.filter((pool) => {
+      const resultDate = getResultDate(pool)
+      if (!resultDate) return false
+      return now - new Date(resultDate).getTime() <= maxAge
+    })
+  }, [pools, selectedDateFilter])
 
   return (
     <div className={styles.page}>
       <Header />
       <main className={styles.main}>
-        <section className={styles.hero}>
-          <p className={styles.eyebrow}>Settled markets</p>
-          <h1 className={styles.title}>Pool results</h1>
-          <p className={styles.subtitle}>
-            Review completed pools, winning outcomes, and total amounts paid into each market.
-          </p>
+        <section className={styles.toolbar}>
+          <h1 className={styles.title}>POOL RESULTS</h1>
+          <button
+            className={styles.filterButton}
+            type="button"
+            onClick={() => {
+              setIsFilterOpen((open) => !open)
+              setIsDateOpen(false)
+              setIsCountryOpen(false)
+            }}
+            aria-expanded={isFilterOpen}
+          >
+            <FiSliders />
+            <span>Filter</span>
+            <FiChevronDown className={isFilterOpen ? styles.chevronOpen : undefined} />
+          </button>
         </section>
 
-        {loading ? <div className={styles.messageCard}>Loading results...</div> : null}
-        {error ? <div className={styles.errorCard}>{error}</div> : null}
+        {isFilterOpen ? (
+          <section className={styles.filterPanel} aria-label="Filter pool results">
+            <button
+              className={styles.filterRow}
+              type="button"
+              onClick={() => {
+                setIsCountryOpen((open) => !open)
+                setIsDateOpen(false)
+              }}
+            >
+              <span>COUNTRY/REGION</span>
+              {isCountryOpen ? <FiChevronDown /> : <FiChevronRight />}
+            </button>
 
-        {!loading && !error ? (
-          <section className={styles.grid}>
+            {isCountryOpen ? (
+              <div className={styles.filterOptions}>
+                <button className={styles.filterOptionActive} type="button">
+                  All regions
+                </button>
+              </div>
+            ) : null}
+
+            <button
+              className={styles.filterRow}
+              type="button"
+              onClick={() => {
+                setIsDateOpen((open) => !open)
+                setIsCountryOpen(false)
+              }}
+            >
+              <span>DATE POSTED</span>
+              {isDateOpen ? <FiChevronDown /> : <FiChevronRight />}
+            </button>
+
+            {isDateOpen ? (
+              <div className={styles.dateOptions}>
+                {DATE_FILTERS.map((item) => (
+                  <button
+                    key={item.label}
+                    className={
+                      selectedDateFilter?.label === item.label
+                        ? styles.filterOptionActive
+                        : styles.filterOption
+                    }
+                    type="button"
+                    onClick={() => setSelectedDateFilter(item)}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </section>
+        ) : null}
+
+        <div className={isFilterOpen ? styles.resultsDimmed : styles.resultsWrap}>
+          {loading ? <div className={styles.messageCard}>Loading results...</div> : null}
+          {error ? <div className={styles.errorCard}>{error}</div> : null}
+
+          {!loading && !error ? (
+          <section className={styles.list}>
             {visiblePools.length > 0 ? (
               visiblePools.map((pool) => (
                 <article className={styles.card} key={pool.id}>
                   <div className={styles.cardTop}>
-                    <div>
-                      <h2 className={styles.cardTitle}>{pool.title}</h2>
-                      <p className={styles.meta}>
-                        {pool.category_name} · {pool.currency_code} · Settled
-                      </p>
+                    <h2 className={styles.cardTitle}>{pool.title}</h2>
+                    <div className={styles.amount}>
+                      <span className={styles.currencyMark}>{getCurrencyMark(pool.currency_code)}</span>
+                      <strong>
+                        {formatCurrencyAmount(
+                          pool.min_stake,
+                          pool.currency_code,
+                          pool.currency_decimal_places,
+                        )}
+                      </strong>
                     </div>
-                    <span className={styles.resultPill}>{getWinningOptionLabel(pool)}</span>
                   </div>
 
-                  <div className={styles.infoGrid}>
-                    <span>
-                      Total pool:{' '}
-                      {formatCurrencyAmount(
-                        pool.total_pool_amount,
-                        pool.currency_code,
-                        pool.currency_decimal_places,
-                      )}
-                    </span>
-                    <span>Entries: {pool.total_pool_entries || 0}</span>
-                    <span>
-                      Locked:{' '}
-                      {pool.lock_time ? new Date(pool.lock_time).toLocaleString() : 'Not set'}
-                    </span>
-                    <span>
-                      Ended: {pool.end_time ? new Date(pool.end_time).toLocaleString() : 'Not set'}
-                    </span>
+                  <div className={styles.options}>
+                    {(pool.options || []).map((option, index) => {
+                      const isWinner = option.id === pool.winning_option_id
+                      const variantClass = isWinner
+                        ? styles.optionWinner
+                        : index % 3 === 1
+                          ? styles.optionOrange
+                          : styles.optionBlue
+
+                      return (
+                        <span className={variantClass} key={option.id}>
+                          {option.option_label}
+                        </span>
+                      )
+                    })}
                   </div>
+
+                  <p className={styles.date}>{formatResultDate(getResultDate(pool))}</p>
                 </article>
               ))
             ) : (
               <div className={styles.messageCard}>No settled pool results are available yet.</div>
             )}
           </section>
-        ) : null}
+          ) : null}
+        </div>
       </main>
       <Footer />
     </div>
