@@ -55,7 +55,22 @@ export default function CreatePoolModal({ onClose }) {
             <IoClose />
           </button>
 
-          {loading ? <p className={styles.loadingCard}>Loading your creator workspace...</p> : null}
+          {loading ? (
+            <section className={styles.formCard}>
+              <div className={styles.formSkeleton} aria-label="Loading create pool form">
+                <span className={styles.skeletonTitle}></span>
+                <span className={styles.skeletonInput}></span>
+                <span className={styles.skeletonInput}></span>
+                <span className={styles.skeletonTextarea}></span>
+                <span className={styles.skeletonInput}></span>
+                <div className={styles.skeletonOptionRow}>
+                  <span></span>
+                  <span></span>
+                </div>
+                <span className={styles.skeletonButton}></span>
+              </div>
+            </section>
+          ) : null}
           {!loading && error ? <p className={styles.errorBanner}>{error}</p> : null}
 
           {!loading ? (

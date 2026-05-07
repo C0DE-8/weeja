@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { FiChevronDown } from 'react-icons/fi'
 import { useNavigate } from 'react-router-dom'
 import Header from '../../components/header/Header'
 import Footer from '../../components/footer/Footer'
@@ -8,17 +9,14 @@ import { formatCurrencyAmount } from '../../utils/currency'
 import styles from './AccountDashboard.module.css'
 import { useAccountWorkspace } from './useAccountWorkspace'
 
-function formatDateTime(value) {
-  if (!value) return 'Not set'
-  return new Date(value).toLocaleString()
-}
+function formatProfileDate(value) {
+  if (!value) return 'Date not set'
 
-function formatStatus(value) {
-  return String(value || '')
-    .split('_')
-    .filter(Boolean)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(' ')
+  return new Date(value).toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  })
 }
 
 function formatAccountId(id) {
@@ -31,6 +29,33 @@ function getTransactionTitle(transaction) {
   return transaction.description.replace(/^Joined pool\s+/i, '')
 }
 
+function getCurrencyMark(currencyCode) {
+  return String(currencyCode || '').toUpperCase().includes('USDT')
+    ? 'T'
+    : String(currencyCode || 'W').charAt(0)
+}
+
+function isRecent(value, days) {
+  if (!value) return false
+  return Date.now() - new Date(value).getTime() <= days * 24 * 60 * 60 * 1000
+}
+
+function getWalletAddress(wallet) {
+  return (
+    wallet?.address ||
+    wallet?.wallet_address ||
+    wallet?.public_address ||
+    wallet?.account_number ||
+    ''
+  )
+}
+
+function truncateAddress(value) {
+  if (!value) return 'No wallet connected'
+  if (String(value).length <= 18) return value
+  return `${String(value).slice(0, 12)}...`
+}
+
 export default function AccountDashboard() {
   const navigate = useNavigate()
   const {
@@ -41,6 +66,8 @@ export default function AccountDashboard() {
     error,
   } = useAccountWorkspace()
   const [activePanel, setActivePanel] = useState('history')
+  const [historyFilter, setHistoryFilter] = useState('win')
+  const [isHistoryFilterOpen, setIsHistoryFilterOpen] = useState(false)
   const [selectedWalletId, setSelectedWalletId] = useState(null)
 
   const selectedWallet = useMemo(() => {
@@ -53,15 +80,64 @@ export default function AccountDashboard() {
     return transactions.filter((transaction) => transaction.wallet_id === selectedWallet.id)
   }, [selectedWallet, transactions])
 
+  const historyTransactions = useMemo(
+    () =>
+      walletTransactions.filter((transaction) =>
+        historyFilter === 'win' ? transaction.type === 'credit' : transaction.type !== 'credit',
+      ),
+    [historyFilter, walletTransactions],
+  )
+
+  const recentEarnings = useMemo(() => {
+    if (!selectedWallet) return 0
+
+    return walletTransactions
+      .filter((transaction) => transaction.type === 'credit' && isRecent(transaction.created_at, 14))
+      .reduce((total, transaction) => total + Number(transaction.amount || 0), 0)
+  }, [selectedWallet, walletTransactions])
+
   const accountId = formatAccountId(profile?.id)
   const displayName = profile?.name || 'Weeja user'
+  const walletAddress = getWalletAddress(selectedWallet)
 
   if (loading) {
     return (
       <div className={styles.page}>
         <Header />
         <main className={styles.main}>
-          <section className={styles.loadingCard}>Loading your workspace...</section>
+          <section className={styles.profileShell}>
+            <header className={styles.profileHeader}>
+              <div className={styles.profileSkeletonUser}>
+                <span className={styles.profileSkeletonAvatar}></span>
+                <div>
+                  <span className={styles.profileSkeletonName}></span>
+                  <span className={styles.profileSkeletonId}></span>
+                </div>
+              </div>
+              <span className={styles.profileSkeletonLink}></span>
+              <div className={styles.earningCard}>
+                <span className={styles.profileSkeletonEarning}></span>
+                <span className={styles.profileSkeletonCaption}></span>
+              </div>
+            </header>
+            <div className={styles.profileDivider}></div>
+            <div className={styles.profileTabs}>
+              <span className={styles.profileSkeletonTab}></span>
+              <span className={styles.profileSkeletonTab}></span>
+            </div>
+            <section className={styles.profilePanel}>
+              {Array.from({ length: 2 }).map((_, index) => (
+                <article className={styles.historySkeleton} key={`profile-history-skeleton-${index + 1}`}>
+                  <div className={styles.skeletonHistoryHead}>
+                    <span></span>
+                    <span></span>
+                  </div>
+                  <span className={styles.skeletonStake}></span>
+                  <span className={styles.skeletonStatus}></span>
+                </article>
+              ))}
+            </section>
+          </section>
         </main>
         <Footer />
       </div>
@@ -96,7 +172,7 @@ export default function AccountDashboard() {
               <h2>
                 {selectedWallet
                   ? formatCurrencyAmount(
-                      selectedWallet.balance,
+                      recentEarnings,
                       selectedWallet.currency_code,
                       selectedWallet.decimal_places,
                     )
@@ -136,9 +212,14 @@ export default function AccountDashboard() {
                   : styles.profileTabButton
               }
               type="button"
-              onClick={() => setActivePanel('history')}
+              onClick={() => {
+                setActivePanel('history')
+                setIsHistoryFilterOpen((open) => !open)
+              }}
+              aria-expanded={activePanel === 'history' && isHistoryFilterOpen}
             >
-              Wallet History
+              Pool History
+              <FiChevronDown />
             </button>
             <button
               className={
@@ -155,8 +236,36 @@ export default function AccountDashboard() {
 
           {activePanel === 'history' ? (
             <section className={styles.profilePanel}>
-              {walletTransactions.length ? (
-                walletTransactions.map((transaction) => (
+              {isHistoryFilterOpen ? (
+                <div className={styles.historyFilterMenu}>
+                  <button
+                    className={historyFilter === 'win' ? styles.historyFilterActive : styles.historyFilterButton}
+                    type="button"
+                    onClick={() => {
+                      setHistoryFilter('win')
+                      setIsHistoryFilterOpen(false)
+                    }}
+                  >
+                    WIN
+                  </button>
+                  <button
+                    className={historyFilter === 'lost' ? styles.historyFilterActive : styles.historyFilterButton}
+                    type="button"
+                    onClick={() => {
+                      setHistoryFilter('lost')
+                      setIsHistoryFilterOpen(false)
+                    }}
+                  >
+                    LOST
+                  </button>
+                </div>
+              ) : null}
+
+              {historyTransactions.length ? (
+                historyTransactions.map((transaction) => {
+                  const isWin = transaction.type === 'credit'
+
+                  return (
                   <article className={styles.historyCard} key={transaction.id}>
                     <div className={styles.historyHead}>
                       <h2>{getTransactionTitle(transaction)}</h2>
@@ -167,7 +276,7 @@ export default function AccountDashboard() {
                             : styles.historyAmount
                         }
                       >
-                        <span>{transaction.currency_code?.charAt(0) || 'W'}</span>
+                        <span>{getCurrencyMark(transaction.currency_code)}</span>
                         <strong>
                           {formatCurrencyAmount(
                             transaction.amount,
@@ -178,37 +287,29 @@ export default function AccountDashboard() {
                       </div>
                     </div>
 
-                    <div className={styles.transactionDetails}>
-                      <p>Balance after</p>
-                      <strong>
-                        {formatCurrencyAmount(
-                          transaction.balance_after,
-                          transaction.currency_code,
-                          transaction.decimal_places,
-                        )}
-                      </strong>
-                    </div>
-
                     <div className={styles.stakeRow}>
                       <div>
-                        <p className={styles.stakeLabel}>{formatStatus(transaction.type)}</p>
+                        <p className={styles.stakeLabel}>
+                          My Stake: {isWin ? 'Yes' : 'No'}
+                        </p>
                         <p
                           className={
-                            transaction.status === 'completed'
+                            isWin
                               ? `${styles.historyStatus} ${styles.historyStatusWin}`
                               : styles.historyStatus
                           }
                         >
-                          {formatStatus(transaction.status)}
+                          {isWin ? 'Win' : 'Lost'}
                         </p>
                       </div>
-                      <p className={styles.historyDate}>{formatDateTime(transaction.created_at)}</p>
+                      <p className={styles.historyDate}>{formatProfileDate(transaction.created_at)}</p>
                     </div>
                   </article>
-                ))
+                  )
+                })
               ) : (
                 <div className={styles.emptyProfilePanel}>
-                  No transactions for this wallet yet.
+                  No {historyFilter === 'win' ? 'winning' : 'lost'} history for this wallet yet.
                 </div>
               )}
             </section>
@@ -245,16 +346,22 @@ export default function AccountDashboard() {
                 </div>
 
                 <div className={styles.settingRow}>
+                  <span className={`${styles.settingIcon} ${styles.iconPhone}`}></span>
+                  <p>{profile?.phone || profile?.phone_number || 'No phone number set'}</p>
+                  <span className={styles.settingAction}>
+                    {profile?.phone_verified ? 'Verified' : 'Verify'}
+                  </span>
+                </div>
+
+                <div className={styles.settingRow}>
                   <span className={`${styles.settingIcon} ${styles.iconLink}`}></span>
                   <div>
-                    <p>Selected Wallet</p>
-                    <p className={styles.walletLine}>
-                      {selectedWallet
-                        ? `${selectedWallet.currency_code} wallet #${selectedWallet.id}`
-                        : 'No wallet connected'}
-                    </p>
+                    <p>Connected Wallet Address</p>
+                    <p className={styles.walletLine}>{truncateAddress(walletAddress)}</p>
                   </div>
-                  <span className={styles.settingAction}>{formatStatus(selectedWallet?.status)}</span>
+                  <span className={styles.settingAction}>
+                    {selectedWallet ? 'Disconnect Wallet' : 'Connect Wallet'}
+                  </span>
                 </div>
 
                 <h3 className={styles.sectionLabel}>Security Settings</h3>

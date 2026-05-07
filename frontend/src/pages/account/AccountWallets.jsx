@@ -26,7 +26,19 @@ export default function AccountWallets() {
       <div className={styles.page}>
         <Header />
         <main className={styles.main}>
-          <section className={styles.loadingCard}>Loading your wallets...</section>
+          <section className={styles.card}>
+            <div className={styles.workspaceSkeleton}>
+              <span className={styles.workspaceSkeletonTitle}></span>
+              <div className={styles.workspaceSkeletonGrid}>
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <span className={styles.workspaceSkeletonRow}></span>
+              <span className={styles.workspaceSkeletonRow}></span>
+              <span className={styles.workspaceSkeletonRowShort}></span>
+            </div>
+          </section>
         </main>
         <Footer />
       </div>

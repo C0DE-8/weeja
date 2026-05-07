@@ -41,6 +41,47 @@
   font-size: 0.9rem;
 }
 
+.resultSkeleton {
+  display: grid;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.resultSkeleton span,
+.resultSkeleton strong {
+  display: block;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #e5e7eb 0%, #f8fafc 48%, #e5e7eb 100%);
+  background-size: 220% 100%;
+  animation: skeletonPulse 1.25s ease-in-out infinite;
+}
+
+.resultSkeleton span {
+  width: 88%;
+  height: 16px;
+}
+
+.resultSkeleton strong {
+  width: 92px;
+  height: 24px;
+  justify-self: end;
+  background: linear-gradient(90deg, #b9f0be 0%, #d8ffdb 48%, #b9f0be 100%);
+  background-size: 220% 100%;
+}
+
+@keyframes skeletonPulse {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
+  }
+}
+
 .question {
   margin: 0;
   font-size: 0.85rem;

@@ -159,7 +159,24 @@ export default function PoolResultsPage() {
         ) : null}
 
         <div className={isFilterOpen ? styles.resultsDimmed : styles.resultsWrap}>
-          {loading ? <div className={styles.messageCard}>Loading results...</div> : null}
+          {loading ? (
+            <section className={styles.list} aria-label="Loading pool results">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <article className={styles.resultSkeleton} key={`result-skeleton-${index + 1}`}>
+                  <div className={styles.skeletonHead}>
+                    <span className={styles.skeletonTitle}></span>
+                    <span className={styles.skeletonAmount}></span>
+                  </div>
+                  <div className={styles.skeletonOptions}>
+                    <span></span>
+                    <span></span>
+                    {index === 3 ? <span></span> : null}
+                  </div>
+                  <span className={styles.skeletonDate}></span>
+                </article>
+              ))}
+            </section>
+          ) : null}
           {error ? <div className={styles.errorCard}>{error}</div> : null}
 
           {!loading && !error ? (

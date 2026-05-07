@@ -42,7 +42,16 @@ export default function AccountCreate() {
       <div className={styles.page}>
         <Header />
         <main className={styles.main}>
-          <section className={styles.loadingCard}>Loading your creator workspace...</section>
+          <section className={styles.card}>
+            <div className={styles.workspaceSkeleton}>
+              <span className={styles.workspaceSkeletonTitle}></span>
+              <span className={styles.workspaceSkeletonRow}></span>
+              <span className={styles.workspaceSkeletonRow}></span>
+              <span className={styles.workspaceSkeletonBlock}></span>
+              <span className={styles.workspaceSkeletonRowShort}></span>
+              <span className={styles.workspaceSkeletonButton}></span>
+            </div>
+          </section>
         </main>
         <Footer />
       </div>

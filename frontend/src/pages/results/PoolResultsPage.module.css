@@ -262,6 +262,75 @@
   line-height: 1.3;
 }
 
+.resultSkeleton {
+  display: grid;
+  gap: 14px;
+  padding: 30px 25px 28px;
+  background: #ffffff;
+}
+
+.resultSkeleton:nth-child(odd) {
+  background: #f7f7f8;
+}
+
+.skeletonHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.skeletonTitle,
+.skeletonAmount,
+.skeletonOptions span,
+.skeletonDate {
+  display: block;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #e5e5e8 0%, #f4f4f6 48%, #e5e5e8 100%);
+  background-size: 220% 100%;
+  animation: skeletonPulse 1.25s ease-in-out infinite;
+}
+
+.skeletonTitle {
+  width: min(60%, 220px);
+  height: 22px;
+}
+
+.skeletonAmount {
+  width: 82px;
+  height: 20px;
+}
+
+.skeletonOptions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.skeletonOptions span {
+  height: 30px;
+}
+
+.skeletonOptions span:nth-child(2) {
+  background: linear-gradient(90deg, #b9f0be 0%, #d8ffdb 48%, #b9f0be 100%);
+  background-size: 220% 100%;
+}
+
+.skeletonDate {
+  width: 92px;
+  height: 16px;
+}
+
+@keyframes skeletonPulse {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
+  }
+}
+
 .messageCard,
 .errorCard {
   margin: 24px;

@@ -84,6 +84,7 @@ export default function Home() {
   const [mobileSearchQuery, setMobileSearchQuery] = useState('')
   const [pools, setPools] = useState([])
   const [categoriesByType, setCategoriesByType] = useState({ sport: [], event: [] })
+  const [loading, setLoading] = useState(true)
   const listTopRef = useRef(null)
 
   async function loadHomeData() {
@@ -127,6 +128,10 @@ export default function Home() {
         await loadHomeData()
       } catch (error) {
         console.error(error)
+      } finally {
+        if (active) {
+          setLoading(false)
+        }
       }
     }
 
@@ -217,7 +222,20 @@ export default function Home() {
                 />
                 <div className={styles.main}>
                   <div className={styles.cardGrid}>
-                    {mobilePools.length > 0 ? (
+                    {loading ? (
+                      Array.from({ length: 3 }).map((_, index) => (
+                        <article className={styles.poolSkeleton} key={`mobile-pool-skeleton-${index + 1}`}>
+                          <div className={styles.skeletonHead}>
+                            <span className={styles.skeletonTitle}></span>
+                            <span className={styles.skeletonAmount}></span>
+                          </div>
+                          <span className={styles.skeletonMeta}></span>
+                          <span className={styles.skeletonOption}></span>
+                          <span className={styles.skeletonOptionAlt}></span>
+                          <span className={styles.skeletonOption}></span>
+                        </article>
+                      ))
+                    ) : mobilePools.length > 0 ? (
                       mobilePools.map((pool) => (
                         <PoolCard key={pool.id} {...pool} onJoin={handleJoinPool} />
                       ))
@@ -242,7 +260,19 @@ export default function Home() {
                 />
 
                 <div className={styles.cardGridDesktop}>
-                  {featuredPools.length > 0 ? (
+                  {loading ? (
+                    Array.from({ length: 2 }).map((_, index) => (
+                      <article className={styles.poolSkeleton} key={`featured-skeleton-${index + 1}`}>
+                        <div className={styles.skeletonHead}>
+                          <span className={styles.skeletonTitle}></span>
+                          <span className={styles.skeletonAmount}></span>
+                        </div>
+                        <span className={styles.skeletonMeta}></span>
+                        <span className={styles.skeletonOption}></span>
+                        <span className={styles.skeletonOptionAlt}></span>
+                      </article>
+                    ))
+                  ) : featuredPools.length > 0 ? (
                     featuredPools.map((pool) => (
                       <PoolCard key={pool.id} {...pool} onJoin={handleJoinPool} />
                     ))
@@ -257,7 +287,19 @@ export default function Home() {
                 <PoolTabs activeTab={activeTab} onChange={setActiveTab} tabs={TABS} />
 
                 <div className={styles.cardGridDesktop}>
-                  {filteredPools.length > 0 ? (
+                  {loading ? (
+                    Array.from({ length: 3 }).map((_, index) => (
+                      <article className={styles.poolSkeleton} key={`desktop-pool-skeleton-${index + 1}`}>
+                        <div className={styles.skeletonHead}>
+                          <span className={styles.skeletonTitle}></span>
+                          <span className={styles.skeletonAmount}></span>
+                        </div>
+                        <span className={styles.skeletonMeta}></span>
+                        <span className={styles.skeletonOption}></span>
+                        <span className={styles.skeletonOptionAlt}></span>
+                      </article>
+                    ))
+                  ) : filteredPools.length > 0 ? (
                     filteredPools.map((pool) => (
                       <PoolCard key={pool.id} {...pool} onJoin={handleJoinPool} />
                     ))

@@ -66,6 +66,69 @@
   min-width: 0;
 }
 
+.formSkeleton {
+  display: grid;
+  gap: 14px;
+}
+
+.skeletonTitle,
+.skeletonInput,
+.skeletonTextarea,
+.skeletonButton,
+.skeletonOptionRow span {
+  display: block;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #e7e7ea 0%, #f6f6f7 48%, #e7e7ea 100%);
+  background-size: 220% 100%;
+  animation: skeletonPulse 1.25s ease-in-out infinite;
+}
+
+.skeletonTitle {
+  width: 150px;
+  height: 24px;
+  border-radius: 8px;
+}
+
+.skeletonInput {
+  width: 100%;
+  height: 46px;
+  border-radius: 8px;
+}
+
+.skeletonTextarea {
+  width: 100%;
+  height: 92px;
+  border-radius: 8px;
+}
+
+.skeletonOptionRow {
+  display: grid;
+  grid-template-columns: 1fr 78px;
+  gap: 10px;
+}
+
+.skeletonOptionRow span {
+  height: 42px;
+  border-radius: 8px;
+}
+
+.skeletonButton {
+  width: 100%;
+  height: 48px;
+  background: linear-gradient(90deg, #f0c07a 0%, #ffd99f 48%, #f0c07a 100%);
+  background-size: 220% 100%;
+}
+
+@keyframes skeletonPulse {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
+  }
+}
+
 @media (max-width: 640px) {
   .overlay {
     top: var(--weeja-header-height);

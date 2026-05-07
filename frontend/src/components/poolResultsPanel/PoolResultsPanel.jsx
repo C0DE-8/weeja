@@ -52,7 +52,16 @@ export default function PoolResultsPanel() {
       </div>
 
       <div className={styles.body}>
-        {loading ? <div className={styles.feedbackCard}>Loading pool results...</div> : null}
+        {loading ? (
+          <>
+            {Array.from({ length: 3 }).map((_, index) => (
+              <div className={styles.resultSkeleton} key={`panel-result-skeleton-${index + 1}`}>
+                <span></span>
+                <strong></strong>
+              </div>
+            ))}
+          </>
+        ) : null}
         {error ? <div className={styles.feedbackCard}>{error}</div> : null}
 
         {!loading && !error && visibleResults.map((item) => (

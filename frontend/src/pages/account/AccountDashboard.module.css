@@ -281,7 +281,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   white-space: nowrap;
+}
+
+.profileTabButton svg {
+  width: 18px;
+  height: 18px;
 }
 
 .profileTabButtonActive {
@@ -290,6 +296,33 @@
 
 .profilePanel {
   background: #fff;
+}
+
+.historyFilterMenu {
+  min-height: 180px;
+  display: grid;
+  gap: 28px;
+  align-content: center;
+  justify-items: center;
+  border-top: 1px solid #e8e8e8;
+  border-bottom: 1px solid #e8e8e8;
+  background: #fff;
+  box-shadow: 0 1px 1px rgba(15, 23, 42, 0.08);
+}
+
+.historyFilterButton,
+.historyFilterActive {
+  border: none;
+  background: transparent;
+  color: #222;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.historyFilterActive {
+  color: #ff9800;
 }
 
 .historyCard {
@@ -413,6 +446,127 @@
   font-weight: 800;
   text-align: center;
   border-bottom: 12px solid #f6f6f6;
+}
+
+.profileSkeletonUser {
+  display: grid;
+  grid-template-columns: 112px 1fr;
+  gap: 22px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.profileSkeletonUser > div {
+  display: grid;
+  gap: 14px;
+}
+
+.profileSkeletonAvatar,
+.profileSkeletonName,
+.profileSkeletonId,
+.profileSkeletonLink,
+.profileSkeletonEarning,
+.profileSkeletonCaption,
+.profileSkeletonTab,
+.historySkeleton span,
+.skeletonHistoryHead span,
+.skeletonStake,
+.skeletonStatus {
+  display: block;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #e5e5e8 0%, #f4f4f6 48%, #e5e5e8 100%);
+  background-size: 220% 100%;
+  animation: profileSkeletonPulse 1.25s ease-in-out infinite;
+}
+
+.profileSkeletonAvatar {
+  width: 106px;
+  height: 106px;
+  border-radius: 50%;
+}
+
+.profileSkeletonName {
+  width: 150px;
+  height: 28px;
+}
+
+.profileSkeletonId {
+  width: 110px;
+  height: 24px;
+}
+
+.profileSkeletonLink {
+  width: 132px;
+  height: 20px;
+  margin-top: 4px;
+  background: linear-gradient(90deg, #f0c07a 0%, #ffd99f 48%, #f0c07a 100%);
+  background-size: 220% 100%;
+}
+
+.profileSkeletonEarning {
+  width: 120px;
+  height: 42px;
+  background: linear-gradient(90deg, #aec9ef 0%, #d7e8ff 48%, #aec9ef 100%);
+  background-size: 220% 100%;
+}
+
+.profileSkeletonCaption {
+  width: 230px;
+  height: 20px;
+  background: linear-gradient(90deg, #aec9ef 0%, #d7e8ff 48%, #aec9ef 100%);
+  background-size: 220% 100%;
+}
+
+.profileSkeletonTab {
+  width: 150px;
+  height: 22px;
+  justify-self: center;
+}
+
+.historySkeleton {
+  padding: 34px 30px 38px;
+  border-bottom: 12px solid #f6f6f6;
+}
+
+.skeletonHistoryHead {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.skeletonHistoryHead span:first-child {
+  width: min(66%, 280px);
+  height: 24px;
+  border-radius: 8px;
+}
+
+.skeletonHistoryHead span:last-child {
+  width: 82px;
+  height: 20px;
+}
+
+.skeletonStake {
+  width: 120px;
+  height: 18px;
+  margin-bottom: 10px;
+}
+
+.skeletonStatus {
+  width: 42px;
+  height: 18px;
+  background: linear-gradient(90deg, #b9f0be 0%, #d8ffdb 48%, #b9f0be 100%);
+  background-size: 220% 100%;
+}
+
+@keyframes profileSkeletonPulse {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
+  }
 }
 
 .settingsTop {
@@ -603,6 +757,34 @@
   right: -1px;
 }
 
+.iconPhone {
+  border: 0;
+}
+
+.iconPhone::before {
+  content: "";
+  position: absolute;
+  width: 13px;
+  height: 22px;
+  left: 6px;
+  top: 1px;
+  border: 3px solid #444;
+  border-radius: 8px 8px 10px 10px;
+  transform: rotate(-28deg);
+}
+
+.iconPhone::after {
+  content: "";
+  position: absolute;
+  width: 5px;
+  height: 3px;
+  left: 13px;
+  top: 17px;
+  border-radius: 999px;
+  background: #444;
+  transform: rotate(-28deg);
+}
+
 .grid,
 .gridSingle,
 .gridWide {
@@ -630,6 +812,64 @@
   padding: 24px;
   box-shadow: 0 20px 48px rgba(15, 23, 42, 0.08);
   backdrop-filter: blur(10px);
+}
+
+.workspaceSkeleton {
+  display: grid;
+  gap: 16px;
+}
+
+.workspaceSkeletonTitle,
+.workspaceSkeletonGrid span,
+.workspaceSkeletonRow,
+.workspaceSkeletonRowShort,
+.workspaceSkeletonBlock,
+.workspaceSkeletonButton {
+  display: block;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #e5e5e8 0%, #f4f4f6 48%, #e5e5e8 100%);
+  background-size: 220% 100%;
+  animation: profileSkeletonPulse 1.25s ease-in-out infinite;
+}
+
+.workspaceSkeletonTitle {
+  width: 220px;
+  height: 28px;
+}
+
+.workspaceSkeletonGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.workspaceSkeletonGrid span {
+  height: 112px;
+  border-radius: 16px;
+}
+
+.workspaceSkeletonRow,
+.workspaceSkeletonRowShort {
+  width: 100%;
+  height: 48px;
+  border-radius: 10px;
+}
+
+.workspaceSkeletonRowShort {
+  width: 68%;
+}
+
+.workspaceSkeletonBlock {
+  width: 100%;
+  height: 118px;
+  border-radius: 10px;
+}
+
+.workspaceSkeletonButton {
+  width: 100%;
+  height: 48px;
+  background: linear-gradient(90deg, #f0c07a 0%, #ffd99f 48%, #f0c07a 100%);
+  background-size: 220% 100%;
 }
 
 .createCard {
@@ -872,6 +1112,11 @@
 }
 
 @media (max-width: 640px) {
+  .page {
+    background: #ffffff;
+    padding-top: var(--weeja-header-height);
+  }
+
   .createCard {
     padding: 22px 18px;
     border-radius: 18px;
@@ -882,7 +1127,12 @@
   }
 
   .main {
-    padding: 24px 0 64px;
+    padding: 0 0 calc(var(--weeja-footer-height) + 16px);
+    max-width: 414px;
+  }
+
+  .main > nav {
+    display: none;
   }
 
   .profileShell {
@@ -891,7 +1141,7 @@
   }
 
   .profileHeader {
-    padding: 24px;
+    padding: 25px 24px 18px;
   }
 
   .userRow {
@@ -899,7 +1149,17 @@
     gap: 18px;
   }
 
+  .profileSkeletonUser {
+    grid-template-columns: 96px 1fr;
+    gap: 18px;
+  }
+
   .avatarWrap {
+    width: 92px;
+    height: 92px;
+  }
+
+  .profileSkeletonAvatar {
     width: 92px;
     height: 92px;
   }
@@ -918,40 +1178,75 @@
   }
 
   .changePictureButton {
-    font-size: 18px;
+    margin-top: 2px;
+    font-size: 0.92rem;
   }
 
   .earningCard {
-    min-height: 140px;
+    min-height: 118px;
+    margin-top: 24px;
+    border-radius: 8px;
+    background: #cfe1ff;
   }
 
   .earningCard h2 {
+    margin-bottom: 14px;
     font-size: 30px;
     overflow-wrap: anywhere;
   }
 
   .earningCard p {
-    font-size: 18px;
+    font-size: 0.92rem;
+  }
+
+  .walletSwitcher {
+    display: none;
+  }
+
+  .profileDivider {
+    height: 8px;
+  }
+
+  .profileTabs {
+    min-height: 58px;
+    border-bottom: 1px solid #e1e1e1;
   }
 
   .profileTabButton {
-    font-size: 15px;
+    height: 58px;
+    font-size: 0.96rem;
     padding: 0 8px;
   }
 
   .historyCard {
-    padding: 30px 24px 34px;
+    padding: 34px 24px 13px;
+    border-bottom: none;
+  }
+
+  .historySkeleton {
+    padding: 34px 24px 24px;
+    border-bottom: none;
   }
 
   .historyHead h2 {
-    font-size: 20px;
+    font-size: 1rem;
     max-width: 260px;
   }
 
-  .historyAmount,
+  .historyAmount {
+    gap: 7px;
+    font-size: 0.98rem;
+  }
+
+  .historyAmount span {
+    width: 18px;
+    height: 18px;
+    font-size: 0.74rem;
+  }
+
   .stakeLabel,
   .historyStatus {
-    font-size: 16px;
+    font-size: 0.88rem;
   }
 
   .transactionDetails {
@@ -959,7 +1254,7 @@
   }
 
   .historyDate {
-    font-size: 17px;
+    font-size: 0.86rem;
   }
 
   .settingsTop,
@@ -977,28 +1272,42 @@
 
   .settingRow p,
   .securityRow span {
-    font-size: 16px;
+    font-size: 1rem;
   }
 
   .settingAction,
   .settingActionGreen,
   .securityRow button {
-    font-size: 16px;
+    font-size: 0.9rem;
+  }
+
+  .workspaceSkeletonGrid {
+    grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 430px) {
   .profileHeader {
-    padding-left: 18px;
-    padding-right: 18px;
+    padding-left: 24px;
+    padding-right: 24px;
   }
 
   .userRow {
     grid-template-columns: 78px 1fr;
-    gap: 14px;
+    gap: 16px;
+  }
+
+  .profileSkeletonUser {
+    grid-template-columns: 78px 1fr;
+    gap: 16px;
   }
 
   .avatarWrap {
+    width: 76px;
+    height: 76px;
+  }
+
+  .profileSkeletonAvatar {
     width: 76px;
     height: 76px;
   }
@@ -1009,11 +1318,12 @@
   }
 
   .userName {
-    font-size: 22px;
+    font-size: 1.28rem;
+    margin-bottom: 12px;
   }
 
   .userId {
-    font-size: 18px;
+    font-size: 1.05rem;
   }
 
   .walletSwitcher {
@@ -1021,21 +1331,12 @@
   }
 
   .profileTabs {
-    grid-template-columns: 1fr;
-  }
-
-  .profileTabButton {
-    height: 62px;
+    grid-template-columns: 1fr 1fr;
   }
 
   .historyHead,
   .stakeRow {
-    flex-direction: column;
-  }
-
-  .historyAmount,
-  .historyDate {
-    align-self: flex-end;
+    flex-direction: row;
   }
 
   .settingRow {
