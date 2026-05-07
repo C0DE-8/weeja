@@ -21,7 +21,7 @@ export default function Header() {
   const navigate = useNavigate()
   const { openCreatePoolModal } = useCreatePoolModal()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isAllPoolOpen, setIsAllPoolOpen] = useState(true)
+  const [isAllPoolOpen, setIsAllPoolOpen] = useState(false)
   const [categoriesByType, setCategoriesByType] = useState({ sport: [], event: [] })
   const user = getStoredUser()
   const adminUser = isAdminUser(user)

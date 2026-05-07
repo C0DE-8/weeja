@@ -35,11 +35,6 @@ function getCurrencyMark(currencyCode) {
     : String(currencyCode || 'W').charAt(0)
 }
 
-function isRecent(value, days) {
-  if (!value) return false
-  return Date.now() - new Date(value).getTime() <= days * 24 * 60 * 60 * 1000
-}
-
 function getWalletAddress(wallet) {
   return (
     wallet?.address ||
@@ -87,14 +82,6 @@ export default function AccountDashboard() {
       ),
     [historyFilter, walletTransactions],
   )
-
-  const recentEarnings = useMemo(() => {
-    if (!selectedWallet) return 0
-
-    return walletTransactions
-      .filter((transaction) => transaction.type === 'credit' && isRecent(transaction.created_at, 14))
-      .reduce((total, transaction) => total + Number(transaction.amount || 0), 0)
-  }, [selectedWallet, walletTransactions])
 
   const accountId = formatAccountId(profile?.id)
   const displayName = profile?.name || 'Weeja user'
@@ -172,7 +159,7 @@ export default function AccountDashboard() {
               <h2>
                 {selectedWallet
                   ? formatCurrencyAmount(
-                      recentEarnings,
+                      selectedWallet.balance,
                       selectedWallet.currency_code,
                       selectedWallet.decimal_places,
                     )

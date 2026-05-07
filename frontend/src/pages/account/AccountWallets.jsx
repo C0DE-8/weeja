@@ -1,3 +1,4 @@
+import { useMemo, useState } from 'react'
 import Header from '../../components/header/Header'
 import Footer from '../../components/footer/Footer'
 import AccountWorkspaceNav from '../../components/accountWorkspaceNav/AccountWorkspaceNav'
@@ -20,6 +21,17 @@ function formatStatus(value) {
 
 export default function AccountWallets() {
   const { profile, wallets, transactions, loading, error } = useAccountWorkspace()
+  const [selectedWalletId, setSelectedWalletId] = useState(null)
+
+  const selectedWallet = useMemo(() => {
+    if (!wallets.length) return null
+    return wallets.find((wallet) => wallet.id === selectedWalletId) || wallets[0]
+  }, [selectedWalletId, wallets])
+
+  const walletTransactions = useMemo(() => {
+    if (!selectedWallet) return transactions
+    return transactions.filter((transaction) => transaction.wallet_id === selectedWallet.id)
+  }, [selectedWallet, transactions])
 
   if (loading) {
     return (
@@ -71,19 +83,32 @@ export default function AccountWallets() {
           <section className={styles.card}>
             <div className={styles.cardHeader}>
               <h2>Wallets</h2>
-              <span>Creation fees and pool entries use the matching wallet currency.</span>
+              <span>
+                {selectedWallet
+                  ? `Viewing ${selectedWallet.currency_code} wallet activity.`
+                  : 'Creation fees and pool entries use the matching wallet currency.'}
+              </span>
             </div>
 
-            <div className={styles.walletGrid}>
+            <div className={styles.walletGrid} aria-label="Wallet selector">
               {wallets.map((wallet) => (
-                <article className={styles.walletCard} key={wallet.id}>
+                <button
+                  className={
+                    selectedWallet?.id === wallet.id
+                      ? `${styles.walletCard} ${styles.walletCardActive}`
+                      : styles.walletCard
+                  }
+                  key={wallet.id}
+                  type="button"
+                  onClick={() => setSelectedWalletId(wallet.id)}
+                >
                   <strong>{wallet.currency_code}</strong>
                   <span>{wallet.currency_name}</span>
                   <h3>
                     {formatCurrencyAmount(wallet.balance, wallet.currency_code, wallet.decimal_places)}
                   </h3>
                   <small>{formatStatus(wallet.status)}</small>
-                </article>
+                </button>
               ))}
             </div>
           </section>
@@ -91,11 +116,15 @@ export default function AccountWallets() {
           <section className={styles.card}>
             <div className={styles.cardHeader}>
               <h2>Recent transactions</h2>
-              <span>Latest wallet movements across your currencies.</span>
+              <span>
+                {selectedWallet
+                  ? `${selectedWallet.currency_code} wallet movements.`
+                  : 'Latest wallet movements across your currencies.'}
+              </span>
             </div>
 
             <div className={styles.transactionList}>
-              {transactions.map((transaction) => (
+              {walletTransactions.length ? walletTransactions.map((transaction) => (
                 <div className={styles.transactionRow} key={transaction.id}>
                   <div>
                     <strong>{transaction.description || transaction.reference}</strong>
@@ -112,7 +141,9 @@ export default function AccountWallets() {
                     <span>{formatStatus(transaction.type)}</span>
                   </div>
                 </div>
-              ))}
+              )) : (
+                <div className={styles.emptyProfilePanel}>No transactions for this wallet yet.</div>
+              )}
             </div>
           </section>
         </div>

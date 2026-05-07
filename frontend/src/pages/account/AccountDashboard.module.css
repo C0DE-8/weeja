@@ -980,6 +980,21 @@
   background: #ffffff;
 }
 
+.walletCard {
+  display: block;
+  width: 100%;
+  color: inherit;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.walletCardActive {
+  border-color: #ff9800;
+  background: #fff8ec;
+  box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.12);
+}
+
 .walletCard h3,
 .submissionCard h3 {
   margin: 8px 0 0;
@@ -1200,7 +1215,20 @@
   }
 
   .walletSwitcher {
+    display: flex;
+    gap: 10px;
+    margin: 16px -2px 0;
+    overflow-x: auto;
+    padding: 2px 2px 6px;
+    scrollbar-width: none;
+  }
+
+  .walletSwitcher::-webkit-scrollbar {
     display: none;
+  }
+
+  .walletSwitchButton {
+    flex: 0 0 132px;
   }
 
   .profileDivider {
@@ -1327,7 +1355,7 @@
   }
 
   .walletSwitcher {
-    grid-template-columns: 1fr;
+    display: flex;
   }
 
   .profileTabs {
