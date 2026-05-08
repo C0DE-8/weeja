@@ -107,20 +107,50 @@ async function ensurePoolScheduleSchema() {
 
 async function fetchPoolOptions(connection, poolId) {
   const [rows] = await connection.execute(
-    `SELECT id, pool_id, option_label, option_key, sort_order, created_at, updated_at
-     FROM pool_options
-     WHERE pool_id = ?
-     ORDER BY sort_order ASC, id ASC`,
+    `SELECT
+        po.id,
+        po.pool_id,
+        po.option_label,
+        po.option_key,
+        po.sort_order,
+        COALESCE(option_summary.total_entries, 0) AS total_entries,
+        COALESCE(option_summary.total_staked, 0) AS total_staked,
+        po.created_at,
+        po.updated_at
+     FROM pool_options po
+     LEFT JOIN (
+       SELECT
+         pool_option_id,
+         COUNT(*) AS total_entries,
+         COALESCE(SUM(stake_amount), 0) AS total_staked
+       FROM pool_entries
+       GROUP BY pool_option_id
+     ) option_summary ON option_summary.pool_option_id = po.id
+     WHERE po.pool_id = ?
+     ORDER BY po.sort_order ASC, po.id ASC`,
     [poolId]
   );
 
   return rows;
 }
 
+async function advanceEndedPools(connection = db) {
+  await ensurePoolScheduleSchema();
+
+  await connection.execute(
+    `UPDATE pools
+     SET status = 'awaiting_result'
+     WHERE end_time IS NOT NULL
+       AND end_time <= NOW()
+       AND status IN ('pending', 'open', 'locked')`
+  );
+}
+
 async function fetchPoolWithOptions(connection, poolId) {
   await ensurePoolScheduleSchema();
   await ensurePoolCreationSchema();
   await ensureCurrencyDecimalPlacesSchema();
+  await advanceEndedPools(connection);
 
   const [pools] = await connection.execute(
     `SELECT
@@ -378,6 +408,7 @@ async function fetchPoolsWithOptions(filters = {}) {
   await ensurePoolScheduleSchema();
   await ensurePoolCreationSchema();
   await ensureCurrencyDecimalPlacesSchema();
+  await advanceEndedPools();
 
   const { status, categoryId, type, currencyId, reviewStatus, createdByRole, createdByUserId } = filters;
   const where = [];
@@ -506,10 +537,27 @@ async function fetchPoolsWithOptions(filters = {}) {
 
   const poolIds = pools.map((pool) => pool.id);
   const [options] = await db.query(
-    `SELECT id, pool_id, option_label, option_key, sort_order, created_at, updated_at
-     FROM pool_options
-     WHERE pool_id IN (?)
-     ORDER BY pool_id ASC, sort_order ASC, id ASC`,
+    `SELECT
+        po.id,
+        po.pool_id,
+        po.option_label,
+        po.option_key,
+        po.sort_order,
+        COALESCE(option_summary.total_entries, 0) AS total_entries,
+        COALESCE(option_summary.total_staked, 0) AS total_staked,
+        po.created_at,
+        po.updated_at
+     FROM pool_options po
+     LEFT JOIN (
+       SELECT
+         pool_option_id,
+         COUNT(*) AS total_entries,
+         COALESCE(SUM(stake_amount), 0) AS total_staked
+       FROM pool_entries
+       GROUP BY pool_option_id
+     ) option_summary ON option_summary.pool_option_id = po.id
+     WHERE po.pool_id IN (?)
+     ORDER BY po.pool_id ASC, po.sort_order ASC, po.id ASC`,
     [poolIds]
   );
 
@@ -532,6 +580,7 @@ async function fetchPoolsWithOptions(filters = {}) {
 module.exports = {
   POOL_STATUSES,
   buildPoolUpdateFields,
+  advanceEndedPools,
   createWalletTransaction,
   ensurePoolIsEditable,
   fetchPoolOptions,

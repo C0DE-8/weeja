@@ -16,6 +16,7 @@ const {
   toDecimal,
 } = require("../utils/poolUtils");
 const { ensurePoolCreationSchema } = require("../utils/poolCreationUtils");
+const { ensureWalletsForUser } = require("../utils/userWallets");
 
 // Creates the admin pool management router.
 const router = express.Router();
@@ -550,6 +551,7 @@ router.post("/:id/settle", async (req, res) => {
       return res.status(400).json({ message: "Invalid pool id" });
     }
 
+    await ensureWalletsForUser(req.user.id);
     await connection.beginTransaction();
     inTransaction = true;
 
@@ -653,6 +655,39 @@ router.post("/:id/settle", async (req, res) => {
     );
     const feeAmount = (totalLosingStake * Number(pool.platform_fee_percent)) / 100;
     const rewardPool = totalLosingStake - feeAmount;
+
+    if (feeAmount > 0) {
+      const [adminWalletRows] = await connection.execute(
+        `SELECT id, balance
+         FROM user_wallets
+         WHERE user_id = ? AND currency_id = ?
+         FOR UPDATE`,
+        [req.user.id, pool.currency_id]
+      );
+
+      if (adminWalletRows.length === 0) {
+        throw new Error("Admin wallet not found for pool currency");
+      }
+
+      const adminWallet = adminWalletRows[0];
+      const adminBalance = Number(adminWallet.balance) + feeAmount;
+
+      await connection.execute(
+        `UPDATE user_wallets
+         SET balance = ?
+         WHERE id = ?`,
+        [adminBalance, adminWallet.id]
+      );
+
+      await createWalletTransaction(connection, {
+        walletId: adminWallet.id,
+        type: "credit",
+        amount: feeAmount,
+        balanceAfter: adminBalance,
+        reference: `pool-platform-fee-${poolId}`,
+        description: `Platform fee for settled pool ${pool.title}`,
+      });
+    }
 
     for (const entry of winningEntries) {
       const stake = Number(entry.stake_amount);

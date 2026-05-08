@@ -6,6 +6,7 @@ import {
   lockAdminPool,
   setAdminPoolResult,
   settleAdminPool,
+  updateAdminPool,
 } from '../../../api/adminPoolApi'
 import { fetchAdminCategories } from '../../../api/categoryApi'
 import Toast from '../../../components/toast/Toast'
@@ -55,8 +56,15 @@ const CURRENCIES = [
 
 const EXISTING_POOL_TABS = [
   { id: 'ongoing', label: 'Ongoing Pools' },
+  { id: 'pending', label: 'Pending Pools' },
   { id: 'upcoming', label: 'Upcoming Pools' },
   { id: 'cancelled', label: 'Cancelled Pools' },
+]
+
+const EDITABLE_POOL_STATUSES = [
+  { value: 'pending', label: 'Pending' },
+  { value: 'open', label: 'Open' },
+  { value: 'locked', label: 'Locked' },
 ]
 
 function combineDateTime(date, time) {
@@ -153,7 +161,12 @@ function formatAdminDate(value) {
 
 function getPoolTab(pool) {
   if (pool.status === 'cancelled') return 'cancelled'
-  if (pool.status === 'pending') return 'upcoming'
+  if (pool.status === 'pending') return 'pending'
+
+  if (pool.start_time && new Date(pool.start_time) > new Date()) {
+    return 'upcoming'
+  }
+
   return 'ongoing'
 }
 
@@ -335,6 +348,7 @@ export default function AdminPools({ view = 'create' }) {
   const [categories, setCategories] = useState([])
   const [form, setForm] = useState(INITIAL_FORM)
   const [winningOptionIds, setWinningOptionIds] = useState({})
+  const [updatingStatusIds, setUpdatingStatusIds] = useState({})
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
@@ -428,6 +442,26 @@ export default function AdminPools({ view = 'create' }) {
     }
   }
 
+  const handleStatusChange = async (poolId, status) => {
+    setError('')
+    setSuccess('')
+    setUpdatingStatusIds((current) => ({ ...current, [poolId]: true }))
+
+    try {
+      await updateAdminPool(poolId, { status })
+      await loadPools()
+      setSuccess('Pool status updated.')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not update pool status.')
+    } finally {
+      setUpdatingStatusIds((current) => {
+        const next = { ...current }
+        delete next[poolId]
+        return next
+      })
+    }
+  }
+
   return (
     <section className={styles.section}>
       <Toast
@@ -443,7 +477,7 @@ export default function AdminPools({ view = 'create' }) {
         <div>
           <p className={styles.eyebrow}>Pool Management</p>
           <h2 className={styles.title}>
-            {showCreate && !showExisting ? 'Create a new pool' : 'Manage existing pools'}
+            {showCreate && !showExisting ? 'Create a new pool' : 'List of pools'}
           </h2>
           <p className={styles.subtitle}>
             {showCreate && !showExisting
@@ -671,10 +705,10 @@ export default function AdminPools({ view = 'create' }) {
                   <th>Category</th>
                   <th>Country</th>
                   <th>Start &amp; End Date</th>
-                  <th>Wager Amount</th>
-                  <th>Pool Size &amp; Entries</th>
-                  <th>Payout</th>
-                  <th>3% Payout</th>
+                  <th>Minimum Stake</th>
+                  <th>Total Wagered &amp; Entries</th>
+                  <th>Winner Payout Pool</th>
+                  <th>Platform Fee</th>
                   <th>Pool Status</th>
                 </tr>
               </thead>
@@ -690,9 +724,25 @@ export default function AdminPools({ view = 'create' }) {
                   </tr>
                 ) : null}
                 {!loading && visibleExistingPools.map((pool) => {
-                  const totalPool = Number(pool.total_pool_amount || 0)
-                  const payout = totalPool > 0 ? totalPool : Number(pool.min_stake || 0) * 20
-                  const platformPayout = payout * 0.03
+                  const totalWagered = Number(pool.total_pool_amount || 0)
+                  const platformFeePercent = Number(pool.platform_fee_percent || 0)
+                  const selectedWinningOptionId = Number(winningOptionIds[pool.id] || pool.winning_option_id || 0)
+                  const selectedWinningOption = pool.options.find(
+                    (option) => Number(option.id) === selectedWinningOptionId,
+                  )
+                  const totalWinningStake = Number(selectedWinningOption?.total_staked || 0)
+                  const totalLosingStake = selectedWinningOption
+                    ? Math.max(totalWagered - totalWinningStake, 0)
+                    : 0
+                  const platformFee = (totalLosingStake * platformFeePercent) / 100
+                  const winnerPayoutPool = selectedWinningOption
+                    ? totalWinningStake + Math.max(totalLosingStake - platformFee, 0)
+                    : 0
+                  const canEditSimpleStatus = !['awaiting_result', 'settled', 'cancelled'].includes(pool.status)
+                  const canSetWinner = ['locked', 'awaiting_result'].includes(pool.status)
+                  const canSettlePool = pool.status === 'awaiting_result'
+                  const canLockPool = ['pending', 'open'].includes(pool.status)
+                  const canCancelPool = !['settled', 'cancelled'].includes(pool.status)
 
                   return (
                     <tr key={pool.id}>
@@ -700,63 +750,77 @@ export default function AdminPools({ view = 'create' }) {
                       <td>{getPoolUserName(pool)}</td>
                       <td className={styles.poolTitleCell}>
                         <strong>{pool.title}</strong>
-                        <div className={styles.tableOptionGrid}>
-                          {pool.options.map((option) => (
-                            <label className={styles.tableOption} key={option.id}>
-                              <input
-                                checked={String(winningOptionIds[pool.id] || pool.winning_option_id || '') === String(option.id)}
-                                name={`winning-option-${pool.id}`}
-                                type="radio"
-                                value={option.id}
-                                onChange={(event) =>
-                                  setWinningOptionIds((current) => ({
-                                    ...current,
-                                    [pool.id]: event.target.value,
-                                  }))
-                                }
-                              />
-                              <span>{option.option_label}</span>
-                            </label>
-                          ))}
-                        </div>
+                        {canSetWinner ? (
+                          <div className={styles.tableOptionGrid}>
+                            {pool.options.map((option) => (
+                              <label className={styles.tableOption} key={option.id}>
+                                <input
+                                  checked={String(winningOptionIds[pool.id] || pool.winning_option_id || '') === String(option.id)}
+                                  name={`winning-option-${pool.id}`}
+                                  type="radio"
+                                  value={option.id}
+                                  onChange={(event) =>
+                                    setWinningOptionIds((current) => ({
+                                      ...current,
+                                      [pool.id]: event.target.value,
+                                    }))
+                                  }
+                                />
+                                <span>
+                                  {option.option_label}
+                                  {' - '}
+                                  {formatCurrencyAmount(option.total_staked, pool.currency_code, pool.currency_decimal_places)}
+                                </span>
+                              </label>
+                            ))}
+                          </div>
+                        ) : null}
                         <div className={styles.tableActions}>
-                          <button
-                            className={styles.votedButton}
-                            type="button"
-                            onClick={() =>
-                              runPoolAction(
-                                () => setAdminPoolResult(pool.id, Number(winningOptionIds[pool.id] || pool.winning_option_id || 0)),
-                                'Pool result recorded.',
-                              )
-                            }
-                          >
-                            Voted
-                          </button>
-                          <button
-                            className={styles.endPoolButton}
-                            type="button"
-                            onClick={() =>
-                              runPoolAction(() => settleAdminPool(pool.id), 'Pool settled successfully.')
-                            }
-                          >
-                            End Pool
-                          </button>
-                          <button
-                            className={styles.lockTableButton}
-                            type="button"
-                            onClick={() => runPoolAction(() => lockAdminPool(pool.id), 'Pool locked.')}
-                          >
-                            Lock
-                          </button>
-                          <button
-                            className={styles.cancelTableButton}
-                            type="button"
-                            onClick={() =>
-                              runPoolAction(() => cancelAdminPool(pool.id), 'Pool cancelled and refunded.')
-                            }
-                          >
-                            Cancel
-                          </button>
+                          {canSetWinner ? (
+                            <button
+                              className={styles.votedButton}
+                              type="button"
+                              onClick={() =>
+                                runPoolAction(
+                                  () => setAdminPoolResult(pool.id, Number(winningOptionIds[pool.id] || pool.winning_option_id || 0)),
+                                  'Pool winner recorded.',
+                                )
+                              }
+                            >
+                              Set Winner
+                            </button>
+                          ) : null}
+                          {canSettlePool ? (
+                            <button
+                              className={styles.endPoolButton}
+                              type="button"
+                              onClick={() =>
+                                runPoolAction(() => settleAdminPool(pool.id), 'Pool settled successfully.')
+                              }
+                            >
+                              End Pool
+                            </button>
+                          ) : null}
+                          {canLockPool ? (
+                            <button
+                              className={styles.lockTableButton}
+                              type="button"
+                              onClick={() => runPoolAction(() => lockAdminPool(pool.id), 'Pool locked.')}
+                            >
+                              Lock
+                            </button>
+                          ) : null}
+                          {canCancelPool ? (
+                            <button
+                              className={styles.cancelTableButton}
+                              type="button"
+                              onClick={() =>
+                                runPoolAction(() => cancelAdminPool(pool.id), 'Pool cancelled and refunded.')
+                              }
+                            >
+                              Cancel
+                            </button>
+                          ) : null}
                         </div>
                       </td>
                       <td>{pool.category_name || pool.category_type || 'Uncategorized'}</td>
@@ -768,17 +832,53 @@ export default function AdminPools({ view = 'create' }) {
                       <td>{formatCurrencyAmount(pool.min_stake, pool.currency_code, pool.currency_decimal_places)}</td>
                       <td>
                         <span className={styles.dateStack}>
-                          {formatCurrencyAmount(pool.total_pool_amount, pool.currency_code, pool.currency_decimal_places)}
+                          {formatCurrencyAmount(totalWagered, pool.currency_code, pool.currency_decimal_places)}
                         </span>
                         <span className={styles.dateStack}>{pool.total_pool_entries || 0} Entries</span>
                       </td>
                       <td className={styles.boldMoney}>
-                        {formatCurrencyAmount(payout, pool.currency_code, pool.currency_decimal_places)}
+                        {selectedWinningOption ? (
+                          <>
+                            <span className={styles.dateStack}>
+                              {formatCurrencyAmount(winnerPayoutPool, pool.currency_code, pool.currency_decimal_places)}
+                            </span>
+                            <span className={styles.dateStack}>
+                              Winners staked {formatCurrencyAmount(totalWinningStake, pool.currency_code, pool.currency_decimal_places)}
+                            </span>
+                          </>
+                        ) : (
+                          <span className={styles.dateStack}>Set winner first</span>
+                        )}
                       </td>
                       <td className={styles.boldMoney}>
-                        {formatCurrencyAmount(platformPayout, pool.currency_code, pool.currency_decimal_places)}
+                        {selectedWinningOption ? (
+                          <>
+                            <span className={styles.dateStack}>
+                              {formatCurrencyAmount(platformFee, pool.currency_code, pool.currency_decimal_places)}
+                            </span>
+                            <span className={styles.dateStack}>
+                              {platformFeePercent}% of losing stake
+                            </span>
+                          </>
+                        ) : (
+                          <span className={styles.dateStack}>Set winner first</span>
+                        )}
                       </td>
                       <td>
+                        {canEditSimpleStatus ? (
+                          <select
+                            className={styles.statusSelect}
+                            disabled={Boolean(updatingStatusIds[pool.id])}
+                            value={pool.status}
+                            onChange={(event) => handleStatusChange(pool.id, event.target.value)}
+                          >
+                            {EDITABLE_POOL_STATUSES.map((statusOption) => (
+                              <option key={statusOption.value} value={statusOption.value}>
+                                {statusOption.label}
+                              </option>
+                            ))}
+                          </select>
+                        ) : null}
                         <span className={`${styles.tableStatus} ${getStatusClassName(pool.status)}`}>
                           {pool.status === 'settled' ? 'Completed' : pool.status}
                         </span>

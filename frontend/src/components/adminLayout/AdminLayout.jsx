@@ -39,7 +39,7 @@ export default function AdminLayout() {
       icon: FiGrid,
       children: [
         { to: '/admin/pools/create', label: 'Create pool' },
-        { to: '/admin/pools/existing', label: 'Existing pools' },
+        { to: '/admin/pools', label: 'List of pools' },
         { to: '/admin/pools/submissions', label: 'User submissions' },
       ],
     },
