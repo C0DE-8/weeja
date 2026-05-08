@@ -10,6 +10,7 @@ import {
   FiKey,
   FiLogOut,
   FiMenu,
+  FiCreditCard,
   FiX,
 } from 'react-icons/fi'
 import { clearSession, getStoredUser, isSuperAdminUser } from '../../api/session'
@@ -33,6 +34,7 @@ export default function AdminLayout() {
 
   const navItems = [
     { to: '/admin/dashboard', label: 'Dashboard', icon: FiHome },
+    { to: '/admin/account', label: 'Account', icon: FiCreditCard },
     {
       to: '/admin/pools/create',
       label: 'Pools',

@@ -751,39 +751,41 @@ export default function AdminPools({ view = 'create' }) {
                       <td className={styles.poolTitleCell}>
                         <strong>{pool.title}</strong>
                         {canSetWinner ? (
-                          <div className={styles.tableOptionGrid}>
-                            {pool.options.map((option) => (
-                              <label className={styles.tableOption} key={option.id}>
-                                <input
-                                  checked={String(winningOptionIds[pool.id] || pool.winning_option_id || '') === String(option.id)}
-                                  name={`winning-option-${pool.id}`}
-                                  type="radio"
-                                  value={option.id}
-                                  onChange={(event) =>
-                                    setWinningOptionIds((current) => ({
-                                      ...current,
-                                      [pool.id]: event.target.value,
-                                    }))
-                                  }
-                                />
-                                <span>
+                          <label className={styles.winnerSelectField}>
+                            <span>Winner option</span>
+                            <select
+                              value={String(winningOptionIds[pool.id] || pool.winning_option_id || '')}
+                              onChange={(event) =>
+                                setWinningOptionIds((current) => ({
+                                  ...current,
+                                  [pool.id]: event.target.value,
+                                }))
+                              }
+                            >
+                              <option value="">Select pool option</option>
+                              {pool.options.map((option) => (
+                                <option key={option.id} value={option.id}>
                                   {option.option_label}
-                                  {' - '}
+                                  {' - staked '}
                                   {formatCurrencyAmount(option.total_staked, pool.currency_code, pool.currency_decimal_places)}
-                                </span>
-                              </label>
-                            ))}
-                          </div>
+                                </option>
+                              ))}
+                            </select>
+                          </label>
                         ) : null}
                         <div className={styles.tableActions}>
                           {canSetWinner ? (
                             <button
                               className={styles.votedButton}
+                              disabled={!selectedWinningOptionId}
                               type="button"
                               onClick={() =>
                                 runPoolAction(
-                                  () => setAdminPoolResult(pool.id, Number(winningOptionIds[pool.id] || pool.winning_option_id || 0)),
-                                  'Pool winner recorded.',
+                                  async () => {
+                                    await setAdminPoolResult(pool.id, selectedWinningOptionId)
+                                    await settleAdminPool(pool.id)
+                                  },
+                                  'Pool winner set and pool settled.',
                                 )
                               }
                             >

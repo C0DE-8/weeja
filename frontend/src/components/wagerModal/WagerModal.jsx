@@ -9,6 +9,8 @@ export default function WagerModal({
   currency,
   currencyDecimalPlaces,
   minStakeRaw = 0,
+  walletBalanceDisplay = '',
+  walletBalanceRaw = null,
   onClose,
   onJoin,
 }) {
@@ -32,10 +34,16 @@ export default function WagerModal({
     currencyLabel,
     currencyDecimalPlaces,
   )
+  const availableBalance = walletBalanceDisplay || `0 ${currencyLabel}`
 
   const handleConfirmAmount = () => {
     if (!stakeAmount || Number(stakeAmount) <= 0) {
       setError('Enter a wager amount to continue.')
+      return
+    }
+
+    if (walletBalanceRaw !== null && Number(stakeAmount) > Number(walletBalanceRaw)) {
+      setError('Wager amount cannot be more than your available balance.')
       return
     }
 
@@ -93,7 +101,7 @@ export default function WagerModal({
             <p className={styles.balance}>
               Available Balance:
               <span className={styles.currencyMark}>{currencyMark}</span>
-              <span>50 {currencyLabel}</span>
+              <span>{availableBalance}</span>
             </p>
 
             {error ? <p className={styles.errorText}>{error}</p> : null}

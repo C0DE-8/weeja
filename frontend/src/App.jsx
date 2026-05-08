@@ -11,6 +11,7 @@ import RequireSuperAdminRoute from './components/auth/RequireSuperAdminRoute'
 import AdminLayout from './components/adminLayout/AdminLayout'
 import AdminDashboard from './pages/admin/dashboard/AdminDashboard'
 import AdminPools from './pages/admin/pools/AdminPools'
+import AdminAccount from './pages/admin/account/AdminAccount'
 import AdminRegister from './pages/admin/register/AdminRegister'
 import AdminPasskeys from './pages/admin/passkeys/AdminPasskeys'
 import AdminPoolSubmissions from './pages/admin/poolSubmissions/AdminPoolSubmissions'
@@ -38,6 +39,7 @@ function App() {
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<Navigate to="/admin/dashboard" replace />} />
               <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="account" element={<AdminAccount />} />
               <Route path="pools" element={<AdminPools view="existing" />} />
               <Route path="pools/create" element={<AdminPools view="create" />} />
               <Route path="pools/existing" element={<Navigate to="/admin/pools" replace />} />

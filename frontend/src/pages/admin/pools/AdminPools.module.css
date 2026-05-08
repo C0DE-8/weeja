@@ -447,26 +447,25 @@
   line-height: 1.35;
 }
 
-.tableOptionGrid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px 22px;
-  margin-top: 16px;
-}
-
-.tableOption {
-  min-width: 0;
-  display: inline-flex;
-  align-items: center;
+.winnerSelectField {
+  display: flex;
+  flex-direction: column;
   gap: 7px;
+  margin-top: 16px;
   color: #47474a;
-  font-size: 0.94rem;
+  font-size: 0.9rem;
+  font-weight: 700;
 }
 
-.tableOption input {
-  width: 16px;
-  height: 16px;
-  accent-color: #1d5cc7;
+.winnerSelectField select {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #34363a;
+  font: inherit;
+  padding: 0 10px;
 }
 
 .tableActions {
@@ -504,6 +503,11 @@
 
 .cancelTableButton {
   background: #ff0019;
+}
+
+.votedButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
 }
 
 .dateStack {

@@ -128,6 +128,22 @@
   flex: 0 0 auto;
 }
 
+.amountText {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+}
+
+.amountText small,
+.desktopAmountLabel {
+  color: #64748b;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
 .currencyMark {
   display: inline-flex;
   align-items: center;

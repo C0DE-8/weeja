@@ -11,8 +11,11 @@ export default function PoolCard({
   poolEndDate,
   status,
   amount,
+  minStakeDisplay,
   currency,
   currencyDecimalPlaces,
+  walletBalanceDisplay,
+  walletBalanceRaw,
   options,
   showMore,
   activeOption,
@@ -103,6 +106,7 @@ export default function PoolCard({
             <FiShare2 />
           </button>
           <div className={styles.desktopAmount}>
+            <span className={styles.desktopAmountLabel}>Wagered</span>
             <strong className={styles.desktopAmountValue}>{amount}</strong>
             <span className={styles.desktopCurrencyToken}>{currency}</span>
           </div>
@@ -129,7 +133,10 @@ export default function PoolCard({
         </div>
         <div className={styles.amountBlock}>
           <span className={styles.currencyMark}>{currencyMark}</span>
-          <strong className={styles.amountValue}>{amount}</strong>
+          <span className={styles.amountText}>
+            <small>Wagered</small>
+            <strong className={styles.amountValue}>{amount}</strong>
+          </span>
         </div>
       </div>
       <div className={styles.optionsRow}>
@@ -168,7 +175,7 @@ export default function PoolCard({
                   normalizeCurrencyInputValue(current, currency, currencyDecimalPlaces),
                 )
               }
-              placeholder={`Minimum ${amount}`}
+              placeholder={`Minimum ${minStakeDisplay || amount}`}
             />
           </label>
 
@@ -191,6 +198,9 @@ export default function PoolCard({
         <div className={styles.desktopInfoLeft}>
           <span className={styles.desktopInfoItem}>
             <span className={styles.desktopInfoLabel}>Pool Size:</span> {poolSize}
+          </span>
+          <span className={styles.desktopInfoItem}>
+            <span className={styles.desktopInfoLabel}>Minimum:</span> {minStakeDisplay || amount}
           </span>
           <span className={styles.desktopInfoItem}>
             <span className={styles.desktopInfoLabel}>Entries:</span> {weejians}
@@ -224,6 +234,8 @@ export default function PoolCard({
         currency={currency}
         currencyDecimalPlaces={currencyDecimalPlaces}
         minStakeRaw={minStakeRaw}
+        walletBalanceDisplay={walletBalanceDisplay}
+        walletBalanceRaw={walletBalanceRaw}
         onClose={() => setWagerOption(null)}
         onJoin={handleWagerJoin}
       />

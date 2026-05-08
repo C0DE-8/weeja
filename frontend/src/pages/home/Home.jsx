@@ -11,6 +11,7 @@ import PoolResultsPanel from '../../components/poolResultsPanel/PoolResultsPanel
 import { fetchActiveCategories } from '../../api/categoryApi'
 import { fetchPublicPools, joinPool } from '../../api/poolApi'
 import { getStoredUser } from '../../api/session'
+import { fetchWallets } from '../../api/walletApi'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { formatCurrencyAmount } from '../../utils/currency'
@@ -37,9 +38,12 @@ function poolMatchesSearch(pool, query) {
   return searchableText.includes(normalizedQuery)
 }
 
-function formatPoolCard(pool) {
+function formatPoolCard(pool, wallets = []) {
   const lockDate = pool.lock_time ? new Date(pool.lock_time) : null
   const createdDate = pool.created_at ? new Date(pool.created_at) : null
+  const poolWallet = wallets.find(
+    (wallet) => Number(wallet.currency_id) === Number(pool.currency_id),
+  )
 
   return {
     id: pool.id,
@@ -50,7 +54,20 @@ function formatPoolCard(pool) {
     location: pool.category_type === 'sport' ? 'Sports' : 'Events',
     status: pool.status?.charAt(0).toUpperCase() + pool.status?.slice(1),
     currency: pool.currency_code,
-    amount: formatCurrencyAmount(pool.min_stake, pool.currency_code, pool.currency_decimal_places),
+    walletBalanceRaw: poolWallet?.balance ?? null,
+    walletBalanceDisplay: poolWallet
+      ? formatCurrencyAmount(poolWallet.balance, pool.currency_code, pool.currency_decimal_places)
+      : '',
+    amount: formatCurrencyAmount(
+      pool.total_pool_amount,
+      pool.currency_code,
+      pool.currency_decimal_places,
+    ),
+    minStakeDisplay: formatCurrencyAmount(
+      pool.min_stake,
+      pool.currency_code,
+      pool.currency_decimal_places,
+    ),
     poolSize: formatCurrencyAmount(
       pool.total_pool_amount,
       pool.currency_code,
@@ -88,13 +105,15 @@ export default function Home() {
   const listTopRef = useRef(null)
 
   async function loadHomeData() {
-    const [categoriesRes, nextPools] = await Promise.all([
+    const user = getStoredUser()
+    const [categoriesRes, nextPools, wallets] = await Promise.all([
       fetchActiveCategories(),
       fetchPublicPools(),
+      user ? fetchWallets().catch(() => []) : Promise.resolve([]),
     ])
 
     setCategoriesByType(categoriesRes.grouped || { sport: [], event: [] })
-    setPools(nextPools.map(formatPoolCard))
+    setPools(nextPools.map((pool) => formatPoolCard(pool, wallets)))
 
     setSelectedCategoryId((current) => {
       if (current) return current
