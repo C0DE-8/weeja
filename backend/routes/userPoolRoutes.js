@@ -18,8 +18,10 @@ const {
   fetchCreationFeeSettings,
 } = require("../utils/poolCreationUtils");
 
+// Creates the user pool submission router.
 const router = express.Router();
 
+// Loads metadata needed to submit a user-created pool.
 router.get("/meta", async (req, res) => {
   try {
     await ensurePoolCreationSchema();
@@ -43,6 +45,7 @@ router.get("/meta", async (req, res) => {
   }
 });
 
+// Lists pool submissions created by the current user.
 router.get("/", async (req, res) => {
   try {
     const pools = await fetchPoolsWithOptions({
@@ -56,6 +59,7 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Loads one pool submission owned by the current user.
 router.get("/:id", async (req, res) => {
   const connection = await db.getConnection();
 
@@ -81,6 +85,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// Submits a new user-created pool for admin review.
 router.post("/", async (req, res) => {
   const connection = await db.getConnection();
   let inTransaction = false;

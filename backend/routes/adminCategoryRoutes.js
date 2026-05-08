@@ -1,10 +1,12 @@
 const express = require("express");
 const db = require("../config/db");
 
+// Creates the admin category router.
 const router = express.Router();
 
 const CATEGORY_TYPES = new Set(["sport", "event"]);
 
+// Validates and trims a category name.
 function normalizeCategoryName(value) {
   if (typeof value !== "string" || !value.trim()) {
     throw new Error("name is required");
@@ -13,6 +15,7 @@ function normalizeCategoryName(value) {
   return value.trim();
 }
 
+// Requires a category type to be sport or event.
 function requireCategoryType(value) {
   if (!CATEGORY_TYPES.has(value)) {
     throw new Error("type must be either sport or event");
@@ -21,6 +24,7 @@ function requireCategoryType(value) {
   return value;
 }
 
+// Converts an optional active flag into a database-ready number.
 function normalizeActiveFlag(value) {
   if (value === undefined) {
     return undefined;
@@ -37,6 +41,7 @@ function normalizeActiveFlag(value) {
   throw new Error("is_active must be a boolean");
 }
 
+// Lists all categories for the admin dashboard.
 router.get("/", async (req, res) => {
   try {
     const [rows] = await db.execute(
@@ -52,6 +57,7 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Creates a new category.
 router.post("/", async (req, res) => {
   try {
     const name = normalizeCategoryName(req.body.name);
@@ -81,6 +87,7 @@ router.post("/", async (req, res) => {
   }
 });
 
+// Updates an existing category.
 router.patch("/:id", async (req, res) => {
   try {
     const categoryId = Number(req.params.id);
@@ -139,6 +146,7 @@ router.patch("/:id", async (req, res) => {
   }
 });
 
+// Deletes a category or deactivates it when it is already used by pools.
 router.delete("/:id", async (req, res) => {
   try {
     const categoryId = Number(req.params.id);
@@ -185,6 +193,7 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// Deactivates a category without deleting it.
 router.post("/:id/deactivate", async (req, res) => {
   try {
     const categoryId = Number(req.params.id);

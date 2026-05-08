@@ -17,9 +17,10 @@ const {
 } = require("../utils/poolUtils");
 const { ensurePoolCreationSchema } = require("../utils/poolCreationUtils");
 
+// Creates the admin pool management router.
 const router = express.Router();
 
-// api/admin/pools
+// Lists pools for admins with optional filters.
 router.get("/", async (req, res) => {
   try {
     const pools = await fetchPoolsWithOptions({
@@ -38,7 +39,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// api/admin/pools/:id
+// Creates an admin-approved pool with options.
 router.post("/", async (req, res) => {
   const connection = await db.getConnection();
   let inTransaction = false;
@@ -191,7 +192,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// api/admin/pools/:id
+// Updates an editable pool.
 router.patch("/:id", async (req, res) => {
   const connection = await db.getConnection();
 
@@ -256,6 +257,7 @@ router.patch("/:id", async (req, res) => {
   }
 });
 
+// Adds an option to an editable pool.
 router.post("/:id/options", async (req, res) => {
   const connection = await db.getConnection();
 
@@ -310,7 +312,7 @@ router.post("/:id/options", async (req, res) => {
   }
 });
 
-// update api/admin/pools/:id/options/:optionId
+// Updates an option on an editable pool.
 router.patch("/:id/options/:optionId", async (req, res) => {
   const connection = await db.getConnection();
 
@@ -390,7 +392,7 @@ router.patch("/:id/options/:optionId", async (req, res) => {
   }
 });
 
-// delete api/admin/pools/:id/options/:optionId 
+// Deletes an unused option from an editable pool.
 router.delete("/:id/options/:optionId", async (req, res) => {
   const connection = await db.getConnection();
 
@@ -454,6 +456,7 @@ router.delete("/:id/options/:optionId", async (req, res) => {
   }
 });
 
+// Locks a pending or open pool.
 router.post("/:id/lock", async (req, res) => {
   try {
     const poolId = Number(req.params.id);
@@ -480,6 +483,7 @@ router.post("/:id/lock", async (req, res) => {
   }
 });
 
+// Records the winning option for a locked pool.
 router.post("/:id/result", async (req, res) => {
   const connection = await db.getConnection();
 
@@ -534,6 +538,7 @@ router.post("/:id/result", async (req, res) => {
   }
 });
 
+// Settles a pool by paying winners or refunding entries when needed.
 router.post("/:id/settle", async (req, res) => {
   const connection = await db.getConnection();
   let inTransaction = false;
@@ -727,7 +732,7 @@ router.post("/:id/settle", async (req, res) => {
   }
 });
 
-// api/admin/pools/:id/cancel
+// Cancels a pool and refunds active entries.
 router.post("/:id/cancel", async (req, res) => {
   const connection = await db.getConnection();
   let inTransaction = false;

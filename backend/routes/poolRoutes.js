@@ -10,8 +10,10 @@ const {
   toDecimal,
 } = require("../utils/poolUtils");
 
+// Creates the public pool router.
 const router = express.Router();
 
+// Lists approved pools with optional filters.
 router.get("/", async (req, res) => {
   try {
     const pools = await fetchPoolsWithOptions({
@@ -29,6 +31,7 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Loads one approved pool by id.
 router.get("/:id", async (req, res) => {
   const poolId = Number(req.params.id);
 
@@ -54,6 +57,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// Loads totals and status details for one approved pool.
 router.get("/:id/totals", async (req, res) => {
   const poolId = Number(req.params.id);
 
@@ -86,6 +90,7 @@ router.get("/:id/totals", async (req, res) => {
   }
 });
 
+// Joins an open pool by debiting the user's wallet and creating an entry.
 router.post("/:id/join", authenticateToken, async (req, res) => {
   const connection = await db.getConnection();
   let inTransaction = false;

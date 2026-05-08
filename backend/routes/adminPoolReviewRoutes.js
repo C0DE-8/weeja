@@ -14,8 +14,10 @@ const {
   fetchCreationFeeSettings,
 } = require("../utils/poolCreationUtils");
 
+// Creates the admin pool review router.
 const router = express.Router();
 
+// Loads pool creation fee settings.
 router.get("/settings", async (req, res) => {
   try {
     const settings = await fetchCreationFeeSettings();
@@ -26,6 +28,7 @@ router.get("/settings", async (req, res) => {
   }
 });
 
+// Updates the pool creation fee for a currency.
 router.put("/settings/:currencyId", async (req, res) => {
   try {
     await ensurePoolCreationSchema();
@@ -72,6 +75,7 @@ router.put("/settings/:currencyId", async (req, res) => {
   }
 });
 
+// Lists user-created pool submissions for admin review.
 router.get("/", async (req, res) => {
   try {
     const pools = await fetchPoolsWithOptions({
@@ -86,6 +90,7 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Approves a pool submission and publishes it.
 router.post("/:id/approve", async (req, res) => {
   const connection = await db.getConnection();
 
@@ -199,6 +204,7 @@ router.post("/:id/approve", async (req, res) => {
   }
 });
 
+// Rejects a pool submission and refunds its creation fee when applicable.
 router.post("/:id/reject", async (req, res) => {
   const connection = await db.getConnection();
   let inTransaction = false;
