@@ -54,7 +54,10 @@
 }
 
 .listCard {
-  padding: 22px;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 0;
+  background: #ffffff;
 }
 
 .cardHeader {
@@ -375,6 +378,165 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
+}
+
+.tableTabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  min-height: 80px;
+  background: #f4f4f5;
+}
+
+.tableTab {
+  border: none;
+  background: transparent;
+  color: #202023;
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.tableTabActive {
+  color: #ff9800;
+}
+
+.adminTableWrap {
+  width: 100%;
+  overflow-x: auto;
+  background: #ffffff;
+}
+
+.adminPoolTable {
+  width: 100%;
+  min-width: 1540px;
+  border-collapse: collapse;
+  background: #ffffff;
+  color: #3f3f42;
+}
+
+.adminPoolTable th {
+  padding: 18px 18px;
+  border: 1px solid #e5e5e5;
+  background: #cfe2ff;
+  color: #34363a;
+  text-align: center;
+  font-size: 1rem;
+  line-height: 1.25;
+  font-weight: 900;
+}
+
+.adminPoolTable td {
+  min-width: 116px;
+  padding: 20px 14px;
+  border: 1px solid #e5e5e5;
+  vertical-align: top;
+  font-size: 0.96rem;
+  line-height: 1.45;
+}
+
+.poolTitleCell {
+  width: 300px;
+  min-width: 300px !important;
+}
+
+.poolTitleCell strong {
+  display: block;
+  color: #3a3a3d;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.tableOptionGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 22px;
+  margin-top: 16px;
+}
+
+.tableOption {
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #47474a;
+  font-size: 0.94rem;
+}
+
+.tableOption input {
+  width: 16px;
+  height: 16px;
+  accent-color: #1d5cc7;
+}
+
+.tableActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+  margin-top: 20px;
+}
+
+.votedButton,
+.endPoolButton,
+.lockTableButton,
+.cancelTableButton {
+  min-width: 96px;
+  min-height: 36px;
+  border: none;
+  border-radius: 999px;
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.votedButton {
+  background: #b0f8bc;
+}
+
+.endPoolButton {
+  background: #ff9ca6;
+}
+
+.lockTableButton {
+  background: #ffd79b;
+}
+
+.cancelTableButton {
+  background: #ff0019;
+}
+
+.dateStack {
+  display: block;
+}
+
+.boldMoney {
+  color: #34363a;
+  font-weight: 900;
+}
+
+.tableStatus {
+  text-transform: capitalize;
+  font-weight: 500;
+}
+
+.statusLocked,
+.statusCancelled {
+  color: #ff0019;
+}
+
+.statusCompleted {
+  color: #ff00d4;
+}
+
+.statusOpen {
+  color: #00a83b;
+}
+
+.tableEmpty {
+  padding: 30px !important;
+  color: #64748b;
+  text-align: center;
 }
 
 .poolCard {

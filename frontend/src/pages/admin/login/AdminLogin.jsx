@@ -56,9 +56,6 @@ export default function AdminLogin() {
         <div className={styles.copy}>
           <p className={styles.eyebrow}>Weeja Admin</p>
           <h1 className={styles.title}>Sign in to manage pools</h1>
-          <p className={styles.subtitle}>
-            Super admins can create admin passkeys. New admins can register with username, passkey, and password.
-          </p>
         </div>
 
         <form className={styles.form} onSubmit={handleSubmit} noValidate>

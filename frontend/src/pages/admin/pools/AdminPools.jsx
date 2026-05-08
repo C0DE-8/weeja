@@ -6,7 +6,6 @@ import {
   lockAdminPool,
   setAdminPoolResult,
   settleAdminPool,
-  updateAdminPool,
 } from '../../../api/adminPoolApi'
 import { fetchAdminCategories } from '../../../api/categoryApi'
 import { formatCurrencyAmount } from '../../../utils/currency'
@@ -53,26 +52,18 @@ const CURRENCIES = [
   { id: 3, label: 'CRYPTO' },
 ]
 
+const EXISTING_POOL_TABS = [
+  { id: 'ongoing', label: 'Ongoing Pools' },
+  { id: 'upcoming', label: 'Upcoming Pools' },
+  { id: 'cancelled', label: 'Cancelled Pools' },
+]
+
 function combineDateTime(date, time) {
   if (!date || !time) {
     return ''
   }
 
   return `${date}T${time}`
-}
-
-function splitDateTime(value) {
-  if (!value) {
-    return { date: '', time: '' }
-  }
-
-  const normalized = String(value).replace(' ', 'T')
-  const [date = '', time = ''] = normalized.split('T')
-
-  return {
-    date,
-    time: time.slice(0, 5),
-  }
 }
 
 function parseDateValue(dateValue) {
@@ -149,17 +140,35 @@ function splitTimeParts(timeValue) {
   return { hour, minute }
 }
 
-function buildScheduleForm(pool) {
-  const start = splitDateTime(pool.start_time)
-  const lock = splitDateTime(pool.lock_time)
+function formatAdminDate(value) {
+  if (!value) return 'Not set'
 
-  return {
-    status: pool.status || 'pending',
-    start_date: start.date,
-    start_time: start.time,
-    lock_date: lock.date,
-    lock_time: lock.time,
-  }
+  return new Date(value).toLocaleDateString(undefined, {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  })
+}
+
+function getPoolTab(pool) {
+  if (pool.status === 'cancelled') return 'cancelled'
+  if (pool.status === 'pending') return 'upcoming'
+  return 'ongoing'
+}
+
+function getPoolUserId(pool) {
+  return pool.created_by_id || pool.user_id || pool.creator_id || pool.id
+}
+
+function getPoolUserName(pool) {
+  return pool.created_by_name || pool.user_name || pool.creator_name || 'Admin'
+}
+
+function getStatusClassName(status) {
+  if (status === 'cancelled') return styles.statusCancelled
+  if (status === 'settled') return styles.statusCompleted
+  if (status === 'locked' || status === 'awaiting_result') return styles.statusLocked
+  return styles.statusOpen
 }
 
 function PoolDateTimePicker({
@@ -325,12 +334,11 @@ export default function AdminPools({ view = 'create' }) {
   const [categories, setCategories] = useState([])
   const [form, setForm] = useState(INITIAL_FORM)
   const [winningOptionIds, setWinningOptionIds] = useState({})
-  const [scheduleForms, setScheduleForms] = useState({})
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
   const [creating, setCreating] = useState(false)
-  const [savingPoolId, setSavingPoolId] = useState(null)
+  const [activeExistingTab, setActiveExistingTab] = useState('ongoing')
 
   async function loadPools() {
     setLoading(true)
@@ -338,15 +346,6 @@ export default function AdminPools({ view = 'create' }) {
       const nextPools = await fetchAdminPools()
       setPools(nextPools)
       setError('')
-      setScheduleForms((current) => {
-        const next = {}
-
-        for (const pool of nextPools) {
-          next[pool.id] = current[pool.id] || buildScheduleForm(pool)
-        }
-
-        return next
-      })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not load pools.')
     } finally {
@@ -375,6 +374,7 @@ export default function AdminPools({ view = 'create' }) {
 
   const startTimestamp = combineDateTime(form.start_date, form.start_time)
   const lockTimestamp = combineDateTime(form.lock_date, form.lock_time)
+  const visibleExistingPools = pools.filter((pool) => getPoolTab(pool) === activeExistingTab)
 
   const handleCreatePool = async (event) => {
     event.preventDefault()
@@ -424,60 +424,6 @@ export default function AdminPools({ view = 'create' }) {
       setSuccess(successMessage)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Pool action failed.')
-    }
-  }
-
-  const handleScheduleChange = (poolId, field, value) => {
-    setScheduleForms((current) => ({
-      ...current,
-      [poolId]: {
-        ...current[poolId],
-        [field]: value,
-      },
-    }))
-  }
-
-  const handleScheduleSave = async (poolId) => {
-    const currentForm = scheduleForms[poolId]
-
-    if (!currentForm) {
-      return
-    }
-
-    const payload = {
-      status: currentForm.status,
-      start_time: combineDateTime(currentForm.start_date, currentForm.start_time) || null,
-      lock_time: combineDateTime(currentForm.lock_date, currentForm.lock_time) || null,
-    }
-
-    if (!payload.start_time && payload.lock_time) {
-      setError('Set a start time before adding a lock time.')
-      setSuccess('')
-      return
-    }
-
-    if (payload.lock_time && new Date(payload.lock_time).getTime() <= new Date(payload.start_time).getTime()) {
-      setError('Lock time must be later than start time.')
-      setSuccess('')
-      return
-    }
-
-    setError('')
-    setSuccess('')
-    setSavingPoolId(poolId)
-
-    try {
-      const response = await updateAdminPool(poolId, payload)
-      setPools((current) => current.map((pool) => (pool.id === poolId ? response.pool : pool)))
-      setScheduleForms((current) => ({
-        ...current,
-        [poolId]: buildScheduleForm(response.pool),
-      }))
-      setSuccess('Pool schedule updated.')
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Could not update pool schedule.')
-    } finally {
-      setSavingPoolId(null)
     }
   }
 
@@ -691,213 +637,150 @@ export default function AdminPools({ view = 'create' }) {
 
         {showExisting ? (
         <div className={styles.listCard}>
-          <div className={styles.cardHeader}>
-            <h3>Existing pools</h3>
-            <span>{loading ? 'Loading...' : `${pools.length} total`}</span>
+          <div className={styles.tableTabs} aria-label="Existing pool filters">
+            {EXISTING_POOL_TABS.map((tab) => (
+              <button
+                className={
+                  activeExistingTab === tab.id
+                    ? `${styles.tableTab} ${styles.tableTabActive}`
+                    : styles.tableTab
+                }
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveExistingTab(tab.id)}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
 
-          <div className={styles.poolList}>
-            {pools.length === 0 ? (
-              <p className={styles.emptyState}>No pools found.</p>
-            ) : (
-              pools.map((pool) => (
-                <article className={styles.poolCard} key={pool.id}>
-                  <div className={styles.poolTop}>
-                    <div>
-                      <h4>{pool.title}</h4>
-                      <p>
-                        {pool.category_name} · {pool.category_type} · {pool.currency_code} · {pool.status}
-                      </p>
-                    </div>
-                    <span className={styles.pill}>#{pool.id}</span>
-                  </div>
+          <div className={styles.adminTableWrap}>
+            <table className={styles.adminPoolTable}>
+              <thead>
+                <tr>
+                  <th>User ID</th>
+                  <th>User Name</th>
+                  <th>Pool Title</th>
+                  <th>Category</th>
+                  <th>Country</th>
+                  <th>Start &amp; End Date</th>
+                  <th>Wager Amount</th>
+                  <th>Pool Size &amp; Entries</th>
+                  <th>Payout</th>
+                  <th>3% Payout</th>
+                  <th>Pool Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr>
+                    <td colSpan="11" className={styles.tableEmpty}>Loading pools...</td>
+                  </tr>
+                ) : null}
+                {!loading && visibleExistingPools.length === 0 ? (
+                  <tr>
+                    <td colSpan="11" className={styles.tableEmpty}>No pools found for this view.</td>
+                  </tr>
+                ) : null}
+                {!loading && visibleExistingPools.map((pool) => {
+                  const totalPool = Number(pool.total_pool_amount || 0)
+                  const payout = totalPool > 0 ? totalPool : Number(pool.min_stake || 0) * 20
+                  const platformPayout = payout * 0.03
 
-                  <p className={styles.descriptionText}>
-                    {pool.description || 'No description supplied for this pool.'}
-                  </p>
-
-                  <div className={styles.metaGrid}>
-                    <span>
-                      Total pool:{' '}
-                      {formatCurrencyAmount(
-                        pool.total_pool_amount,
-                        pool.currency_code,
-                        pool.currency_decimal_places,
-                      )}
-                    </span>
-                    <span>Entries: {pool.total_pool_entries || 0}</span>
-                    <span>
-                      Min stake:{' '}
-                      {formatCurrencyAmount(
-                        pool.min_stake,
-                        pool.currency_code,
-                        pool.currency_decimal_places,
-                      )}
-                    </span>
-                    <span>Fee: {pool.platform_fee_percent}%</span>
-                    <span>
-                      Start: {pool.start_time ? new Date(pool.start_time).toLocaleString() : 'Not set'}
-                    </span>
-                    <span>
-                      Lock: {pool.lock_time ? new Date(pool.lock_time).toLocaleString() : 'Not set'}
-                    </span>
-                    <span>
-                      End: {pool.end_time ? new Date(pool.end_time).toLocaleString() : 'Not set'}
-                    </span>
-                    <span>Status: {pool.status}</span>
-                  </div>
-
-                  <div className={styles.optionBadges}>
-                    {pool.options.map((option) => (
-                      <span className={styles.optionBadge} key={option.id}>
-                        {option.option_label}
-                      </span>
-                    ))}
-                  </div>
-
-                  {scheduleForms[pool.id] ? (
-                    <div className={styles.scheduleCard}>
-                      <div className={styles.cardHeader}>
-                        <h4>Schedule and status</h4>
-                        <span>Manual update</span>
-                      </div>
-
-                      <div className={styles.scheduleGrid}>
-                        <label className={styles.field}>
-                          <span>Status</span>
-                          <select
-                            value={scheduleForms[pool.id].status}
-                            onChange={(event) =>
-                              handleScheduleChange(pool.id, 'status', event.target.value)
+                  return (
+                    <tr key={pool.id}>
+                      <td>{getPoolUserId(pool)}</td>
+                      <td>{getPoolUserName(pool)}</td>
+                      <td className={styles.poolTitleCell}>
+                        <strong>{pool.title}</strong>
+                        <div className={styles.tableOptionGrid}>
+                          {pool.options.map((option) => (
+                            <label className={styles.tableOption} key={option.id}>
+                              <input
+                                checked={String(winningOptionIds[pool.id] || pool.winning_option_id || '') === String(option.id)}
+                                name={`winning-option-${pool.id}`}
+                                type="radio"
+                                value={option.id}
+                                onChange={(event) =>
+                                  setWinningOptionIds((current) => ({
+                                    ...current,
+                                    [pool.id]: event.target.value,
+                                  }))
+                                }
+                              />
+                              <span>{option.option_label}</span>
+                            </label>
+                          ))}
+                        </div>
+                        <div className={styles.tableActions}>
+                          <button
+                            className={styles.votedButton}
+                            type="button"
+                            onClick={() =>
+                              runPoolAction(
+                                () => setAdminPoolResult(pool.id, Number(winningOptionIds[pool.id] || pool.winning_option_id || 0)),
+                                'Pool result recorded.',
+                              )
                             }
                           >
-                            <option value="pending">pending</option>
-                            <option value="open">open</option>
-                            <option value="locked">locked</option>
-                            <option value="awaiting_result">awaiting_result</option>
-                            <option value="settled">settled</option>
-                            <option value="cancelled">cancelled</option>
-                          </select>
-                        </label>
-
-                        <div className={styles.field}>
-                          <PoolDateTimePicker
-                            dateValue={scheduleForms[pool.id].start_date}
-                            hint="Set start now or leave it for later."
-                            label="Start time"
-                            onDateChange={(value) =>
-                              handleScheduleChange(pool.id, 'start_date', value)
+                            Voted
+                          </button>
+                          <button
+                            className={styles.endPoolButton}
+                            type="button"
+                            onClick={() =>
+                              runPoolAction(() => settleAdminPool(pool.id), 'Pool settled successfully.')
                             }
-                            onTimeChange={(value) =>
-                              handleScheduleChange(pool.id, 'start_time', value)
+                          >
+                            End Pool
+                          </button>
+                          <button
+                            className={styles.lockTableButton}
+                            type="button"
+                            onClick={() => runPoolAction(() => lockAdminPool(pool.id), 'Pool locked.')}
+                          >
+                            Lock
+                          </button>
+                          <button
+                            className={styles.cancelTableButton}
+                            type="button"
+                            onClick={() =>
+                              runPoolAction(() => cancelAdminPool(pool.id), 'Pool cancelled and refunded.')
                             }
-                            timeValue={scheduleForms[pool.id].start_time}
-                          />
+                          >
+                            Cancel
+                          </button>
                         </div>
-
-                        <div className={styles.field}>
-                          <PoolDateTimePicker
-                            dateValue={scheduleForms[pool.id].lock_date}
-                            hint="Lock time must be later than start time."
-                            label="Lock time"
-                            minDate={scheduleForms[pool.id].start_date}
-                            onDateChange={(value) =>
-                              handleScheduleChange(pool.id, 'lock_date', value)
-                            }
-                            onTimeChange={(value) =>
-                              handleScheduleChange(pool.id, 'lock_time', value)
-                            }
-                            timeValue={scheduleForms[pool.id].lock_time}
-                          />
-                        </div>
-
-                        <div className={styles.field}>
-                          <span>End time</span>
-                          <div className={styles.readOnlyValue}>
-                            {pool.end_time
-                              ? new Date(pool.end_time).toLocaleString()
-                              : 'Will be set automatically when a winner is recorded.'}
-                          </div>
-                          <small className={styles.fieldHint}>
-                            End time is managed automatically by the system.
-                          </small>
-                        </div>
-                      </div>
-
-                      <button
-                        className={styles.primaryInlineButton}
-                        type="button"
-                        onClick={() => handleScheduleSave(pool.id)}
-                        disabled={savingPoolId === pool.id}
-                      >
-                        {savingPoolId === pool.id ? 'Saving...' : 'Update schedule'}
-                      </button>
-                    </div>
-                  ) : null}
-
-                  <div className={styles.actionRow}>
-                    <button
-                      className={styles.secondaryButton}
-                      type="button"
-                      onClick={() => runPoolAction(() => lockAdminPool(pool.id), 'Pool locked.')}
-                    >
-                      Lock
-                    </button>
-
-                    <select
-                      value={winningOptionIds[pool.id] || ''}
-                      onChange={(event) =>
-                        setWinningOptionIds((current) => ({
-                          ...current,
-                          [pool.id]: event.target.value,
-                        }))
-                      }
-                    >
-                      <option value="">Winning option</option>
-                      {pool.options.map((option) => (
-                        <option key={option.id} value={option.id}>
-                          {option.option_label}
-                        </option>
-                      ))}
-                    </select>
-
-                    <button
-                      className={styles.secondaryButton}
-                      type="button"
-                      onClick={() =>
-                        runPoolAction(
-                          () =>
-                            setAdminPoolResult(pool.id, Number(winningOptionIds[pool.id] || 0)),
-                          'Pool result recorded.',
-                        )
-                      }
-                    >
-                      Set Result
-                    </button>
-
-                    <button
-                      className={styles.secondaryButton}
-                      type="button"
-                      onClick={() =>
-                        runPoolAction(() => settleAdminPool(pool.id), 'Pool settled successfully.')
-                      }
-                    >
-                      Settle
-                    </button>
-
-                    <button
-                      className={styles.dangerButton}
-                      type="button"
-                      onClick={() =>
-                        runPoolAction(() => cancelAdminPool(pool.id), 'Pool cancelled and refunded.')
-                      }
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </article>
-              ))
-            )}
+                      </td>
+                      <td>{pool.category_name || pool.category_type || 'Uncategorized'}</td>
+                      <td>{pool.country || pool.country_name || 'Nigeria'}</td>
+                      <td>
+                        <span className={styles.dateStack}>{formatAdminDate(pool.start_time)}</span>
+                        <span className={styles.dateStack}>{formatAdminDate(pool.end_time || pool.lock_time)}</span>
+                      </td>
+                      <td>{formatCurrencyAmount(pool.min_stake, pool.currency_code, pool.currency_decimal_places)}</td>
+                      <td>
+                        <span className={styles.dateStack}>
+                          {formatCurrencyAmount(pool.total_pool_amount, pool.currency_code, pool.currency_decimal_places)}
+                        </span>
+                        <span className={styles.dateStack}>{pool.total_pool_entries || 0} Entries</span>
+                      </td>
+                      <td className={styles.boldMoney}>
+                        {formatCurrencyAmount(payout, pool.currency_code, pool.currency_decimal_places)}
+                      </td>
+                      <td className={styles.boldMoney}>
+                        {formatCurrencyAmount(platformPayout, pool.currency_code, pool.currency_decimal_places)}
+                      </td>
+                      <td>
+                        <span className={`${styles.tableStatus} ${getStatusClassName(pool.status)}`}>
+                          {pool.status === 'settled' ? 'Completed' : pool.status}
+                        </span>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
           </div>
         </div>
         ) : null}
