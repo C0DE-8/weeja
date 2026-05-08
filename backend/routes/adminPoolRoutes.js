@@ -49,7 +49,7 @@ router.post("/", async (req, res) => {
     await ensurePoolCreationSchema();
 
     const title = normalizeRequiredText(req.body.title, "title");
-    const description = normalizeOptionalText(req.body.description);
+    const description = normalizeOptionalText(req.body.description) ?? null;
     const categoryId = Number(req.body.category_id);
     const currencyId = Number(req.body.currency_id);
     const minStake = toDecimal(req.body.min_stake ?? 0, "min_stake");
@@ -57,9 +57,9 @@ router.post("/", async (req, res) => {
       req.body.platform_fee_percent ?? 0,
       "platform_fee_percent"
     );
-    const startTime = normalizeOptionalDateTime(req.body.start_time, "start_time");
-    const lockTime = normalizeOptionalDateTime(req.body.lock_time, "lock_time");
-    const endTime = normalizeOptionalDateTime(req.body.end_time, "end_time");
+    const startTime = normalizeOptionalDateTime(req.body.start_time, "start_time") ?? null;
+    const lockTime = normalizeOptionalDateTime(req.body.lock_time, "lock_time") ?? null;
+    const endTime = normalizeOptionalDateTime(req.body.end_time, "end_time") ?? null;
     const status = requireStatus(req.body.status ?? "pending", POOL_STATUSES);
     const optionsPayload = Array.isArray(req.body.options) ? req.body.options : [];
 

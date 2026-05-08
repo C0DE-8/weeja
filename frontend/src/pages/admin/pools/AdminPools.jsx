@@ -8,6 +8,7 @@ import {
   settleAdminPool,
 } from '../../../api/adminPoolApi'
 import { fetchAdminCategories } from '../../../api/categoryApi'
+import Toast from '../../../components/toast/Toast'
 import { formatCurrencyAmount } from '../../../utils/currency'
 import styles from './AdminPools.module.css'
 
@@ -429,6 +430,15 @@ export default function AdminPools({ view = 'create' }) {
 
   return (
     <section className={styles.section}>
+      <Toast
+        message={error || success}
+        type={error ? 'error' : 'success'}
+        onClose={() => {
+          setError('')
+          setSuccess('')
+        }}
+      />
+
       <div className={styles.pageHeader}>
         <div>
           <p className={styles.eyebrow}>Pool Management</p>
@@ -442,9 +452,6 @@ export default function AdminPools({ view = 'create' }) {
           </p>
         </div>
       </div>
-
-      {error && <p className={styles.feedbackError}>{error}</p>}
-      {success && <p className={styles.feedbackSuccess}>{success}</p>}
 
       <div className={`${styles.layout} ${!showCreate || !showExisting ? styles.layoutSingle : ''}`}>
         {showCreate ? (
