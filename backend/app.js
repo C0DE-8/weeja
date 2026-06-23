@@ -16,6 +16,7 @@ const superAdminRoutes = require("./routes/superAdminRoutes");
 const userPoolRoutes = require("./routes/userPoolRoutes");
 const { authenticateToken } = require("./middleware/authMiddleware");
 const { authorizeRoles } = require("./middleware/roleMiddleware");
+const db = require("./config/db");
 
 const app = express();
 
@@ -23,6 +24,23 @@ app.use(express.json());
 app.use(cors());
 app.get("/", (req, res) => {
   res.json({ message: "API is running..." });
+});
+
+app.get("/health/dbms", async (req, res) => {
+  try {
+    const status = await db.status();
+
+    res.json({
+      ok: true,
+      dbms: status,
+    });
+  } catch (err) {
+    res.status(503).json({
+      ok: false,
+      message: "Could not connect to DBMS",
+      error: err.message,
+    });
+  }
 });
 
 app.use("/api/auth", authRoutes);
