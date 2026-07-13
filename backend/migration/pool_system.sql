@@ -1,0 +1,591 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: localhost
+-- Generation Time: Jul 13, 2026 at 12:43 PM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.2.4
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `pool_system`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `admin_registration_passkeys`
+--
+
+CREATE TABLE `admin_registration_passkeys` (
+  `id` int(11) NOT NULL,
+  `passkey_hash` varchar(255) NOT NULL,
+  `passkey_value` varchar(255) DEFAULT NULL,
+  `label` varchar(120) DEFAULT NULL,
+  `created_by` int(11) NOT NULL,
+  `used_by` int(11) DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `expires_at` datetime DEFAULT NULL,
+  `used_at` datetime DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `admin_registration_passkeys`
+--
+
+INSERT INTO `admin_registration_passkeys` (`id`, `passkey_hash`, `passkey_value`, `label`, `created_by`, `used_by`, `is_active`, `expires_at`, `used_at`, `created_at`, `updated_at`) VALUES
+(2, '$2b$10$U2D5adFbwEeZEDlC2OMTne/ED32V42PHFYI2O4QWbQWxkKuqI7l/y', '123456', 'admin upboarding', 1, NULL, 1, NULL, NULL, '2026-04-30 10:40:30', '2026-04-30 10:40:30');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `categories`
+--
+
+CREATE TABLE `categories` (
+  `id` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `type` enum('sport','event') NOT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `categories`
+--
+
+INSERT INTO `categories` (`id`, `name`, `type`, `is_active`, `created_at`, `updated_at`) VALUES
+(1, 'Soccer', 'sport', 1, '2026-04-30 11:02:25', '2026-04-30 11:02:25'),
+(2, 'Basketball', 'sport', 1, '2026-04-30 11:02:25', '2026-04-30 11:02:25'),
+(3, 'Volleyball', 'sport', 1, '2026-04-30 11:02:25', '2026-04-30 11:02:25'),
+(4, 'Baseball', 'sport', 1, '2026-04-30 11:02:25', '2026-04-30 11:02:25'),
+(5, 'Boxing', 'sport', 1, '2026-04-30 11:02:25', '2026-04-30 11:02:25'),
+(6, 'Hockey', 'sport', 1, '2026-04-30 11:02:25', '2026-04-30 11:02:25'),
+(7, 'Tennis', 'sport', 1, '2026-04-30 11:02:25', '2026-04-30 11:02:25'),
+(8, 'Competitions', 'event', 1, '2026-04-30 11:02:25', '2026-04-30 11:02:25'),
+(9, 'Politics', 'event', 1, '2026-04-30 11:02:25', '2026-04-30 11:02:25'),
+(10, 'Reality Show', 'event', 1, '2026-04-30 11:02:25', '2026-04-30 11:02:25'),
+(11, 'Cryptocurrency', 'event', 1, '2026-04-30 11:02:25', '2026-04-30 11:02:25'),
+(12, 'Sports', 'event', 1, '2026-04-30 11:02:25', '2026-04-30 11:02:25');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `currencies`
+--
+
+CREATE TABLE `currencies` (
+  `id` int(11) NOT NULL,
+  `code` varchar(20) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `decimal_places` tinyint(3) UNSIGNED NOT NULL DEFAULT 2,
+  `status` enum('active','inactive') NOT NULL DEFAULT 'active',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `currencies`
+--
+
+INSERT INTO `currencies` (`id`, `code`, `name`, `decimal_places`, `status`, `created_at`, `updated_at`) VALUES
+(1, 'USD', 'US Dollar', 2, 'active', '2026-04-12 14:01:00', '2026-04-12 14:01:00'),
+(2, 'NGN', 'Nigerian Naira', 2, 'active', '2026-04-12 14:01:00', '2026-04-12 14:01:00'),
+(3, 'CRYPTO', 'Cryptocurrency', 8, 'active', '2026-04-12 14:01:00', '2026-04-30 19:40:44');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pools`
+--
+
+CREATE TABLE `pools` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `category_id` int(11) NOT NULL,
+  `currency_id` int(11) NOT NULL,
+  `min_stake` decimal(24,8) NOT NULL DEFAULT 0.00000000,
+  `platform_fee_percent` decimal(5,2) NOT NULL DEFAULT 0.00,
+  `start_time` datetime DEFAULT NULL,
+  `lock_time` datetime DEFAULT NULL,
+  `end_time` datetime DEFAULT NULL,
+  `status` enum('pending','open','locked','awaiting_result','settled','cancelled') NOT NULL DEFAULT 'pending',
+  `review_status` enum('approved','under_review','rejected') NOT NULL DEFAULT 'approved',
+  `review_notes` varchar(255) DEFAULT NULL,
+  `reviewed_by` int(11) DEFAULT NULL,
+  `reviewed_at` datetime DEFAULT NULL,
+  `approved_at` datetime DEFAULT NULL,
+  `rejected_at` datetime DEFAULT NULL,
+  `winning_option_id` int(11) DEFAULT NULL,
+  `created_by` int(11) NOT NULL,
+  `creation_fee_amount` decimal(24,8) NOT NULL DEFAULT 0.00000000,
+  `creation_fee_wallet_id` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `pools`
+--
+
+INSERT INTO `pools` (`id`, `title`, `description`, `category_id`, `currency_id`, `min_stake`, `platform_fee_percent`, `start_time`, `lock_time`, `end_time`, `status`, `review_status`, `review_notes`, `reviewed_by`, `reviewed_at`, `approved_at`, `rejected_at`, `winning_option_id`, `created_by`, `creation_fee_amount`, `creation_fee_wallet_id`, `created_at`, `updated_at`) VALUES
+(1, 'Arsenal vs Chelsea Winner', 'Test pool created without schedule so admin can set start, lock, and end later.', 1, 1, 5.00000000, 8.50, NULL, NULL, '2026-05-08 02:36:37', 'settled', 'approved', NULL, NULL, NULL, NULL, NULL, 2, 1, 0.00000000, NULL, '2026-04-30 14:25:15', '2026-05-08 09:39:17'),
+(2, 'Presidential Debate Outcome', 'Test event pool with start, lock, and end already set.', 9, 2, 1000.00000000, 10.00, NULL, '2026-05-01 18:00:00', '2026-05-01 21:00:00', 'awaiting_result', 'approved', NULL, NULL, NULL, NULL, NULL, NULL, 1, 0.00000000, NULL, '2026-04-30 14:25:15', '2026-05-08 09:15:34'),
+(3, 'Lakers vs Celtics Total Points', 'Test pool for status updates after lock.', 1, 1, 10.00000000, 7.50, '2026-05-02 12:00:00', '2026-05-02 15:00:00', '2026-05-02 17:00:00', 'cancelled', 'approved', NULL, NULL, NULL, NULL, NULL, NULL, 1, 0.00000000, NULL, '2026-04-30 14:25:15', '2026-05-07 00:44:26'),
+(4, 'man vs woman', 'let the fight start', 10, 2, 100.00000000, 20.00, NULL, NULL, '2026-05-08 02:50:28', 'settled', 'approved', NULL, NULL, NULL, '2026-05-08 01:56:47', NULL, 10, 1, 0.00000000, NULL, '2026-05-08 08:56:47', '2026-05-08 09:50:29');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pool_creation_fee_settings`
+--
+
+CREATE TABLE `pool_creation_fee_settings` (
+  `id` int(11) NOT NULL,
+  `currency_id` int(11) NOT NULL,
+  `amount` decimal(24,8) NOT NULL DEFAULT 0.00000000,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `created_by` int(11) DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `pool_creation_fee_settings`
+--
+
+INSERT INTO `pool_creation_fee_settings` (`id`, `currency_id`, `amount`, `is_active`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
+(1, 3, 0.00010000, 1, NULL, NULL, '2026-04-30 15:31:51', '2026-04-30 20:22:40'),
+(2, 2, 5000.00000000, 1, NULL, NULL, '2026-04-30 15:31:51', '2026-04-30 20:22:40'),
+(3, 1, 5.00000000, 1, NULL, NULL, '2026-04-30 15:31:51', '2026-04-30 20:22:40');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pool_entries`
+--
+
+CREATE TABLE `pool_entries` (
+  `id` int(11) NOT NULL,
+  `pool_id` int(11) NOT NULL,
+  `pool_option_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `wallet_id` int(11) NOT NULL,
+  `stake_amount` decimal(24,8) NOT NULL,
+  `payout_amount` decimal(24,8) NOT NULL DEFAULT 0.00000000,
+  `status` enum('active','won','lost','refunded') NOT NULL DEFAULT 'active',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `pool_entries`
+--
+
+INSERT INTO `pool_entries` (`id`, `pool_id`, `pool_option_id`, `user_id`, `wallet_id`, `stake_amount`, `payout_amount`, `status`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 2, 1, 5.00000000, 0.00000000, 'lost', '2026-04-30 20:47:25', '2026-05-08 09:39:17'),
+(2, 1, 1, 2, 1, 5.00000000, 0.00000000, 'lost', '2026-04-30 20:47:29', '2026-05-08 09:39:17'),
+(3, 1, 1, 2, 1, 5.00000000, 0.00000000, 'lost', '2026-04-30 20:47:31', '2026-05-08 09:39:17'),
+(4, 1, 1, 2, 1, 5.00000000, 0.00000000, 'lost', '2026-04-30 20:51:11', '2026-05-08 09:39:17'),
+(5, 1, 1, 2, 1, 5.00000000, 0.00000000, 'lost', '2026-04-30 20:51:13', '2026-05-08 09:39:17'),
+(6, 1, 1, 2, 1, 5.00000000, 0.00000000, 'lost', '2026-04-30 20:51:16', '2026-05-08 09:39:17'),
+(7, 1, 1, 2, 1, 5.00000000, 0.00000000, 'lost', '2026-04-30 20:51:20', '2026-05-08 09:39:17'),
+(8, 1, 1, 14, 507, 5.00000000, 0.00000000, 'lost', '2026-05-06 23:45:34', '2026-05-08 09:39:17'),
+(9, 1, 3, 14, 507, 5.00000000, 0.00000000, 'lost', '2026-05-08 09:23:43', '2026-05-08 09:39:17'),
+(10, 1, 3, 14, 507, 5.00000000, 0.00000000, 'lost', '2026-05-08 09:23:53', '2026-05-08 09:39:17'),
+(11, 1, 3, 14, 507, 15.00000000, 0.00000000, 'lost', '2026-05-08 09:25:27', '2026-05-08 09:39:17'),
+(12, 1, 1, 8, 215, 5.00000000, 0.00000000, 'lost', '2026-05-08 09:27:53', '2026-05-08 09:39:17'),
+(13, 1, 1, 8, 215, 5.00000000, 0.00000000, 'lost', '2026-05-08 09:34:43', '2026-05-08 09:39:17'),
+(14, 1, 1, 8, 215, 5.00000000, 0.00000000, 'lost', '2026-05-08 09:35:06', '2026-05-08 09:39:17'),
+(15, 1, 2, 14, 507, 5.00000000, 78.20000000, 'won', '2026-05-08 09:35:29', '2026-05-08 09:39:17'),
+(16, 4, 9, 14, 508, 2000.00000000, 0.00000000, 'lost', '2026-05-08 09:49:00', '2026-05-08 09:50:29'),
+(17, 4, 10, 8, 216, 500.00000000, 2100.00000000, 'won', '2026-05-08 09:49:34', '2026-05-08 09:50:29');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pool_options`
+--
+
+CREATE TABLE `pool_options` (
+  `id` int(11) NOT NULL,
+  `pool_id` int(11) NOT NULL,
+  `option_label` varchar(255) NOT NULL,
+  `option_key` varchar(100) NOT NULL,
+  `sort_order` int(11) NOT NULL DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `pool_options`
+--
+
+INSERT INTO `pool_options` (`id`, `pool_id`, `option_label`, `option_key`, `sort_order`, `created_at`, `updated_at`) VALUES
+(1, 1, 'Arsenal', 'arsenal', 1, '2026-04-30 14:25:15', '2026-04-30 14:25:15'),
+(2, 1, 'Chelsea', 'chelsea', 2, '2026-04-30 14:25:15', '2026-04-30 14:25:15'),
+(3, 1, 'Draw', 'draw', 3, '2026-04-30 14:25:15', '2026-04-30 14:25:15'),
+(4, 2, 'Candidate A', 'candidate_a', 1, '2026-04-30 14:25:15', '2026-04-30 14:25:15'),
+(5, 2, 'Candidate B', 'candidate_b', 2, '2026-04-30 14:25:15', '2026-04-30 14:25:15'),
+(6, 2, 'No Clear Winner', 'no_clear_winner', 3, '2026-04-30 14:25:15', '2026-04-30 14:25:15'),
+(7, 3, 'Over 210.5', 'over_210_5', 1, '2026-04-30 14:25:15', '2026-04-30 14:25:15'),
+(8, 3, 'Under 210.5', 'under_210_5', 2, '2026-04-30 14:25:15', '2026-04-30 14:25:15'),
+(9, 4, 'man wins', 'man_wins', 1, '2026-05-08 08:56:47', '2026-05-08 08:56:47'),
+(10, 4, 'woman wins', 'woman_wins', 2, '2026-05-08 08:56:47', '2026-05-08 08:56:47'),
+(11, 4, 'draw', 'draw', 3, '2026-05-08 08:56:47', '2026-05-08 08:56:47');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL,
+  `name` varchar(100) DEFAULT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `email_verified` tinyint(1) NOT NULL DEFAULT 0,
+  `verification_token_hash` varchar(64) DEFAULT NULL,
+  `verification_expires_at` datetime DEFAULT NULL,
+  `role` enum('user','admin','super_admin') DEFAULT 'user',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `name`, `email`, `password`, `email_verified`, `verification_token_hash`, `verification_expires_at`, `role`, `created_at`) VALUES
+(1, 'Super Admin', 'admin@weeja.com', '$2b$10$57OmnYGe3az9DfP5VECwqORuv0BtxpdUQq10FWE8ntOCj0xOg8.1S', 1, NULL, NULL, 'super_admin', '2026-04-30 10:04:09'),
+(2, 'Samuel Oghenchovwe', '8am@gmail.com', '$2b$10$57OmnYGe3az9DfP5VECwqORuv0BtxpdUQq10FWE8ntOCj0xOg8.1S', 1, NULL, NULL, 'user', '2026-04-30 10:10:19'),
+(8, 'one', 'one@gmail.com', '$2b$10$BkGtoHJKLoGPZ/Ed/iG/.uUByz4iPYJN9q.gjtWO1tWyDjhT2z20y', 1, NULL, NULL, 'user', '2026-04-30 21:23:48'),
+(9, 'two', 'two@gmail.com', '$2b$10$xlHx3vCf8sFkZWwD2qsJSu9FkeBUJBCfp9D6N/UmOxK3wWPG/EpJ.', 1, NULL, NULL, 'user', '2026-04-30 21:25:47'),
+(10, 'three', 'three@gmail.com', '$2b$10$683.uVN/iVnOYL0Li760TukZI7Y5ZgFEXgX6EqdwHRlLW3DPt.MwW', 1, NULL, NULL, 'user', '2026-04-30 21:26:18'),
+(11, 'four', 'four@gmail.com', '$2b$10$W2Lbg.HD1GGQamKxWxCkZ.NikESJOOq2/HVRhC6kis0dlPVduva7W', 1, NULL, NULL, 'user', '2026-04-30 21:26:52'),
+(12, 'five', 'five@gmail.com', '$2b$10$Z7tDgf8k0.UDadp2GC5fP.gyQ/Ph3ddzqfHhRA4yqZkTMInt1Sw4e', 1, NULL, NULL, 'user', '2026-04-30 21:27:19'),
+(13, 'sam', '8amjoker@gmail.com', '$2b$10$koNyspapqkYnXYZBHVz01ehl35WVpnuKzgcXiayYiE88SQSreqBBe', 1, NULL, NULL, 'user', '2026-05-05 22:51:11'),
+(14, 'sam', '8amlight@gmail.com', '$2b$10$dZy3kncYCntyYngxAMt2Qu2wcZ.G4oPhs1LVEX1ucIzTyFSUQJBVa', 1, NULL, NULL, 'user', '2026-05-06 19:10:37');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_wallets`
+--
+
+CREATE TABLE `user_wallets` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `currency_id` int(11) NOT NULL,
+  `balance` decimal(24,8) NOT NULL DEFAULT 0.00000000,
+  `status` enum('active','frozen') NOT NULL DEFAULT 'active',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `user_wallets`
+--
+
+INSERT INTO `user_wallets` (`id`, `user_id`, `currency_id`, `balance`, `status`, `created_at`, `updated_at`) VALUES
+(1, 2, 1, 965.00000000, 'active', '2026-04-30 10:11:18', '2026-04-30 20:51:20'),
+(2, 2, 2, 7000.00000000, 'active', '2026-04-30 10:11:18', '2026-04-30 20:46:23'),
+(3, 2, 3, 1000.00000000, 'active', '2026-04-30 10:11:18', '2026-04-30 20:45:13'),
+(28, 1, 2, 400.00000000, 'active', '2026-04-30 19:34:33', '2026-05-08 09:50:29'),
+(29, 1, 3, 0.00000000, 'active', '2026-04-30 19:34:33', '2026-04-30 19:34:33'),
+(142, 1, 1, 6.80000000, 'active', '2026-04-30 19:34:33', '2026-05-08 09:39:17'),
+(215, 8, 1, 25.00000000, 'active', '2026-04-30 21:24:55', '2026-05-08 09:35:06'),
+(216, 8, 2, 2600.00000000, 'active', '2026-04-30 21:24:55', '2026-05-08 09:50:29'),
+(217, 8, 3, 3000.00000000, 'active', '2026-04-30 21:24:55', '2026-05-08 09:27:47'),
+(272, 13, 1, 0.00000000, 'active', '2026-05-05 22:52:53', '2026-05-05 22:52:53'),
+(275, 13, 2, 0.00000000, 'active', '2026-05-05 22:52:53', '2026-05-05 22:52:53'),
+(276, 13, 3, 0.00000000, 'active', '2026-05-05 22:52:53', '2026-05-05 22:52:53'),
+(507, 14, 1, 143.20000000, 'active', '2026-05-06 19:13:56', '2026-05-08 09:39:17'),
+(508, 14, 2, 7000.00000000, 'active', '2026-05-06 19:13:56', '2026-05-08 09:49:00'),
+(510, 14, 3, 1000.00000000, 'active', '2026-05-06 19:13:56', '2026-05-06 23:44:35');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `wallet_transactions`
+--
+
+CREATE TABLE `wallet_transactions` (
+  `id` int(11) NOT NULL,
+  `wallet_id` int(11) NOT NULL,
+  `type` enum('credit','debit') NOT NULL,
+  `amount` decimal(24,8) NOT NULL,
+  `balance_after` decimal(24,8) NOT NULL,
+  `reference` varchar(100) DEFAULT NULL,
+  `status` enum('pending','completed','failed','cancelled') NOT NULL DEFAULT 'pending',
+  `description` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `wallet_transactions`
+--
+
+INSERT INTO `wallet_transactions` (`id`, `wallet_id`, `type`, `amount`, `balance_after`, `reference`, `status`, `description`, `created_at`) VALUES
+(1, 1, 'debit', 5.00000000, 995.00000000, 'pool-join-1-be43e0cb-4bda-42c1-bd35-8d872c2706b1', 'completed', 'Joined pool Arsenal vs Chelsea Winner with option Arsenal', '2026-04-30 20:47:25'),
+(2, 1, 'debit', 5.00000000, 990.00000000, 'pool-join-1-8ea4fcba-6aad-4fa5-9286-2d67bcffc778', 'completed', 'Joined pool Arsenal vs Chelsea Winner with option Arsenal', '2026-04-30 20:47:29'),
+(3, 1, 'debit', 5.00000000, 985.00000000, 'pool-join-1-e0e9e1eb-6729-4c3a-b897-51cc1ea30c68', 'completed', 'Joined pool Arsenal vs Chelsea Winner with option Arsenal', '2026-04-30 20:47:31'),
+(4, 1, 'debit', 5.00000000, 980.00000000, 'pool-join-1-abd1635f-aabe-4dcb-ae35-507db14dbc51', 'completed', 'Joined pool Arsenal vs Chelsea Winner with option Arsenal', '2026-04-30 20:51:11'),
+(5, 1, 'debit', 5.00000000, 975.00000000, 'pool-join-1-00047f45-9f8e-4473-a866-d1a9c3a2b87e', 'completed', 'Joined pool Arsenal vs Chelsea Winner with option Arsenal', '2026-04-30 20:51:13'),
+(6, 1, 'debit', 5.00000000, 970.00000000, 'pool-join-1-bcadce08-3b64-4fe9-869f-bc39e6b1e14c', 'completed', 'Joined pool Arsenal vs Chelsea Winner with option Arsenal', '2026-04-30 20:51:16'),
+(7, 1, 'debit', 5.00000000, 965.00000000, 'pool-join-1-be98ad85-7cdf-44b3-99f3-24bdd960ad0f', 'completed', 'Joined pool Arsenal vs Chelsea Winner with option Arsenal', '2026-04-30 20:51:20'),
+(8, 507, 'debit', 5.00000000, 95.00000000, 'pool-join-1-70cdb8f3-fb8c-4115-90b2-e098720fe13b', 'completed', 'Joined pool Arsenal vs Chelsea Winner with option Arsenal', '2026-05-06 23:45:34'),
+(9, 507, 'debit', 5.00000000, 90.00000000, 'pool-join-1-6b554ec9-d8b4-4d19-9584-6873b8f0e5dc', 'completed', 'Joined pool Arsenal vs Chelsea Winner with option Draw', '2026-05-08 09:23:43'),
+(10, 507, 'debit', 5.00000000, 85.00000000, 'pool-join-1-909514e0-718c-45c4-ae5c-d541bc1a2a3b', 'completed', 'Joined pool Arsenal vs Chelsea Winner with option Draw', '2026-05-08 09:23:53'),
+(11, 507, 'debit', 15.00000000, 70.00000000, 'pool-join-1-d4401a3f-0469-411e-8a7a-a23011631a9e', 'completed', 'Joined pool Arsenal vs Chelsea Winner with option Draw', '2026-05-08 09:25:27'),
+(12, 215, 'debit', 5.00000000, 35.00000000, 'pool-join-1-df953b7f-b65a-49dd-b8e9-841f43e60b0b', 'completed', 'Joined pool Arsenal vs Chelsea Winner with option Arsenal', '2026-05-08 09:27:53'),
+(13, 215, 'debit', 5.00000000, 30.00000000, 'pool-join-1-e09bfa70-a049-4429-89c5-ad16e7a3a0aa', 'completed', 'Joined pool Arsenal vs Chelsea Winner with option Arsenal', '2026-05-08 09:34:42'),
+(14, 215, 'debit', 5.00000000, 25.00000000, 'pool-join-1-2c4112a2-f098-486d-ae7d-c8e013017ea7', 'completed', 'Joined pool Arsenal vs Chelsea Winner with option Arsenal', '2026-05-08 09:35:06'),
+(15, 507, 'debit', 5.00000000, 65.00000000, 'pool-join-1-185bbd00-d375-45ad-a29f-e8ed5b9b8b78', 'completed', 'Joined pool Arsenal vs Chelsea Winner with option Chelsea', '2026-05-08 09:35:29'),
+(16, 142, 'credit', 6.80000000, 6.80000000, 'pool-platform-fee-1', 'completed', 'Platform fee for settled pool Arsenal vs Chelsea Winner', '2026-05-08 09:39:17'),
+(17, 507, 'credit', 78.20000000, 143.20000000, 'pool-payout-1-15', 'completed', 'Payout for winning pool entry in Arsenal vs Chelsea Winner', '2026-05-08 09:39:17'),
+(18, 508, 'debit', 2000.00000000, 7000.00000000, 'pool-join-4-cf97eb0d-f592-4547-b9cb-8a74ee2cb3e1', 'completed', 'Joined pool man vs woman with option man wins', '2026-05-08 09:49:00'),
+(19, 216, 'debit', 500.00000000, 500.00000000, 'pool-join-4-19dfc15d-5436-4ac7-b03a-f48b359cb54f', 'completed', 'Joined pool man vs woman with option woman wins', '2026-05-08 09:49:34'),
+(20, 28, 'credit', 400.00000000, 400.00000000, 'pool-platform-fee-4', 'completed', 'Platform fee for settled pool man vs woman', '2026-05-08 09:50:29'),
+(21, 216, 'credit', 2100.00000000, 2600.00000000, 'pool-payout-4-17', 'completed', 'Payout for winning pool entry in man vs woman', '2026-05-08 09:50:29');
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `admin_registration_passkeys`
+--
+ALTER TABLE `admin_registration_passkeys`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_admin_passkeys_created_by` (`created_by`),
+  ADD KEY `idx_admin_passkeys_used_by` (`used_by`),
+  ADD KEY `idx_admin_passkeys_active` (`is_active`);
+
+--
+-- Indexes for table `categories`
+--
+ALTER TABLE `categories`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_categories_name` (`name`),
+  ADD KEY `idx_categories_type_active` (`type`,`is_active`);
+
+--
+-- Indexes for table `currencies`
+--
+ALTER TABLE `currencies`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `code` (`code`);
+
+--
+-- Indexes for table `pools`
+--
+ALTER TABLE `pools`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_pools_currency` (`currency_id`),
+  ADD KEY `idx_pools_status` (`status`),
+  ADD KEY `idx_pools_lock_time` (`lock_time`),
+  ADD KEY `idx_pools_created_by` (`created_by`),
+  ADD KEY `idx_pools_winning_option` (`winning_option_id`),
+  ADD KEY `idx_pools_category` (`category_id`),
+  ADD KEY `idx_pools_end_time` (`end_time`),
+  ADD KEY `idx_pools_review_status` (`review_status`),
+  ADD KEY `idx_pools_reviewed_by` (`reviewed_by`),
+  ADD KEY `idx_pools_creation_fee_wallet` (`creation_fee_wallet_id`);
+
+--
+-- Indexes for table `pool_creation_fee_settings`
+--
+ALTER TABLE `pool_creation_fee_settings`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_pool_creation_fee_currency` (`currency_id`),
+  ADD KEY `idx_pool_creation_fee_active` (`is_active`),
+  ADD KEY `idx_pool_creation_fee_created_by` (`created_by`),
+  ADD KEY `idx_pool_creation_fee_updated_by` (`updated_by`);
+
+--
+-- Indexes for table `pool_entries`
+--
+ALTER TABLE `pool_entries`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_pool_entries_pool` (`pool_id`),
+  ADD KEY `idx_pool_entries_option` (`pool_option_id`),
+  ADD KEY `idx_pool_entries_user` (`user_id`),
+  ADD KEY `idx_pool_entries_wallet` (`wallet_id`),
+  ADD KEY `idx_pool_entries_status` (`status`);
+
+--
+-- Indexes for table `pool_options`
+--
+ALTER TABLE `pool_options`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_pool_option_key` (`pool_id`,`option_key`),
+  ADD KEY `idx_pool_options_pool` (`pool_id`),
+  ADD KEY `idx_pool_options_sort` (`pool_id`,`sort_order`);
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`);
+
+--
+-- Indexes for table `user_wallets`
+--
+ALTER TABLE `user_wallets`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `user_currency` (`user_id`,`currency_id`),
+  ADD KEY `idx_user_wallets_user` (`user_id`),
+  ADD KEY `idx_user_wallets_currency` (`currency_id`);
+
+--
+-- Indexes for table `wallet_transactions`
+--
+ALTER TABLE `wallet_transactions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_wallet_transactions_wallet` (`wallet_id`),
+  ADD KEY `idx_wallet_transactions_status` (`status`),
+  ADD KEY `idx_wallet_transactions_created` (`created_at`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `admin_registration_passkeys`
+--
+ALTER TABLE `admin_registration_passkeys`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `categories`
+--
+ALTER TABLE `categories`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT for table `currencies`
+--
+ALTER TABLE `currencies`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `pools`
+--
+ALTER TABLE `pools`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `pool_creation_fee_settings`
+--
+ALTER TABLE `pool_creation_fee_settings`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `pool_entries`
+--
+ALTER TABLE `pool_entries`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+
+--
+-- AUTO_INCREMENT for table `pool_options`
+--
+ALTER TABLE `pool_options`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+
+--
+-- AUTO_INCREMENT for table `user_wallets`
+--
+ALTER TABLE `user_wallets`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1049;
+
+--
+-- AUTO_INCREMENT for table `wallet_transactions`
+--
+ALTER TABLE `wallet_transactions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `admin_registration_passkeys`
+--
+ALTER TABLE `admin_registration_passkeys`
+  ADD CONSTRAINT `fk_admin_passkeys_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `fk_admin_passkeys_used_by` FOREIGN KEY (`used_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `pools`
+--
+ALTER TABLE `pools`
+  ADD CONSTRAINT `fk_pools_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`),
+  ADD CONSTRAINT `fk_pools_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `fk_pools_creation_fee_wallet` FOREIGN KEY (`creation_fee_wallet_id`) REFERENCES `user_wallets` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_pools_currency` FOREIGN KEY (`currency_id`) REFERENCES `currencies` (`id`),
+  ADD CONSTRAINT `fk_pools_reviewed_by` FOREIGN KEY (`reviewed_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_pools_winning_option` FOREIGN KEY (`winning_option_id`) REFERENCES `pool_options` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `pool_creation_fee_settings`
+--
+ALTER TABLE `pool_creation_fee_settings`
+  ADD CONSTRAINT `fk_pool_creation_fee_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_pool_creation_fee_currency` FOREIGN KEY (`currency_id`) REFERENCES `currencies` (`id`),
+  ADD CONSTRAINT `fk_pool_creation_fee_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `pool_entries`
+--
+ALTER TABLE `pool_entries`
+  ADD CONSTRAINT `fk_pool_entries_option` FOREIGN KEY (`pool_option_id`) REFERENCES `pool_options` (`id`),
+  ADD CONSTRAINT `fk_pool_entries_pool` FOREIGN KEY (`pool_id`) REFERENCES `pools` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_pool_entries_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_pool_entries_wallet` FOREIGN KEY (`wallet_id`) REFERENCES `user_wallets` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `pool_options`
+--
+ALTER TABLE `pool_options`
+  ADD CONSTRAINT `fk_pool_options_pool` FOREIGN KEY (`pool_id`) REFERENCES `pools` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `user_wallets`
+--
+ALTER TABLE `user_wallets`
+  ADD CONSTRAINT `fk_user_wallets_currency` FOREIGN KEY (`currency_id`) REFERENCES `currencies` (`id`),
+  ADD CONSTRAINT `fk_user_wallets_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `wallet_transactions`
+--
+ALTER TABLE `wallet_transactions`
+  ADD CONSTRAINT `fk_wallet_transactions_wallet` FOREIGN KEY (`wallet_id`) REFERENCES `user_wallets` (`id`) ON DELETE CASCADE;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
