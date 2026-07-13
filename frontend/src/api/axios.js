@@ -4,7 +4,7 @@ import axios from 'axios'
 export const TOKEN_STORAGE_KEY = 'weeja_token'
 
 const baseURL =
-  import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'
+  import.meta.env.VITE_API_BASE_URL || 'https://weeja-3ony.vercel.app/api'
 
 const api = axios.create({
   baseURL,
